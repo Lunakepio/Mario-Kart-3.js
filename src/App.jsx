@@ -38,7 +38,6 @@ function App() {
       <Suspense fallback={null}>
         <Physics
           gravity={[0, -90, 0]}
-          predictionDistance={0.001}
         >
           <KeyboardControls map={map}>
             <Experience />

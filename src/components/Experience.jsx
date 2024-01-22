@@ -4,7 +4,7 @@ import { RigidBody } from '@react-three/rapier'
 import { PlayerController } from './PlayerController'
 import { Track } from './models/Spafrancorchamps-REALISTIC'
 import { Paris } from './models/Tour_paris_promenade'
-import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation, SMAA } from '@react-three/postprocessing'
+import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation, SMAA, ChromaticAberration, Vignette } from '@react-three/postprocessing'
 
 export const Experience = () => {
   return (
@@ -34,24 +34,28 @@ export const Experience = () => {
       <EffectComposer
         multisampling={0}
         disableNormalPass
+        disableSSAO
+        disableDepthPass
+        
       >
         <SMAA />
-        {/* <N8AO distanceFalloff={1} aoRadius={1} intensity={4} /> */}
+        <N8AO distanceFalloff={1} aoRadius={1} intensity={3} />
         <Bloom
           luminanceThreshold={0}
           mipmapBlur
           luminanceSmoothing={0.01}
           intensity={0.5}
         />
-        <DepthOfField
-          target={[0, 0, 13]}
-          focalLength={0.3}
+        {/* <DepthOfField
+          target={[0, 0, 12]}
+          focalLength={10}
           bokehScale={20}
-          // height={700}
-          resolutionScale={0.3}
-        />
-        {/* <TiltShift2/> */}
+          resolutionScale={1}
+        /> */}
+        <TiltShift2/>
+        <ChromaticAberration offset={[0.001, 0.001]} />
         <HueSaturation saturation={0.1} />
+        <Vignette eskil={false} offset={0.1} darkness={0.4} />
       </EffectComposer>
     </>
   )
