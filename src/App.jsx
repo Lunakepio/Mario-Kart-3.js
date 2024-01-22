@@ -44,8 +44,10 @@ function App() {
         <KeyboardControls map={map}>
             <Experience />
         </KeyboardControls>
+        {/* <Stats /> */}
         </Physics>
       </Suspense>
+
     </Canvas>
   );
 }

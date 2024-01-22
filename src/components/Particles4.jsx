@@ -1,13 +1,14 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Trail } from "@react-three/drei";
 
-export const Particles1 = ({ turboColor, scale, ...props }) => {
+export const Particles4 = ({ turboColor, scale, ...props }) => {
   const ref = useRef();
   const frame = useRef(0);
 
   const velocity = useRef({
-    x: -Math.random() * 0.1,
-    y: Math.random() * 0.05,
+    x: Math.random() * 0.1,
+    y: Math.random() * 0.2,
     z: Math.random() * 0.05,
   });
   const gravity = -0.003;
@@ -23,10 +24,10 @@ export const Particles1 = ({ turboColor, scale, ...props }) => {
     position.z += velocity.current.z;
 
     if (position.y < 0) {
-      position.set(-0.6, 0.05, 0.5);
+      position.set(0.6, 0.05, 0.5);
       velocity.current = {
-        x: -Math.random() * 0.1,
-        y: Math.random() * 0.05,
+        x: Math.random() * 0.1,
+        y: Math.random() * 0.1,
         z: Math.random() * 0.05,
       };
     }
@@ -35,12 +36,12 @@ export const Particles1 = ({ turboColor, scale, ...props }) => {
   });
 
   return (
-    <mesh ref={ref} position={[-0.6, 0.05, 0.5]} scale={scale}>
-      <boxGeometry args={[0.05, 0.1, 0.05]} />
+    <mesh ref={ref} position={[0.6, 0.05, 0.5]} scale={scale}>
+      <boxGeometry args={[0.1, 0.1, 0.1]} />
       <meshStandardMaterial
         emissive={turboColor}
         toneMapped={false}
-        emissiveIntensity={10}
+        emissiveIntensity={50}
       />
     </mesh>
   );

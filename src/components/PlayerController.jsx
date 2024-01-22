@@ -14,6 +14,9 @@ import { FrontLeftWheel } from "./models/Front_Left_Wheel";
 import { RearWheels } from "./models/Rear_wheels";
 import gsap from "gsap";
 import { Mario } from "./models/Mario_kart";
+import { Particles1 } from "./Particles1";
+import { DriftParticlesLeft } from "./DriftParticlesLeft";
+import { DriftParticlesRight } from "./DriftParticlesRight";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -91,9 +94,13 @@ export const PlayerController = () => {
     if (upPressed && currentSpeed < maxSpeed) {
       // Accelerate the kart within the maximum speed limit
       setCurrentSpeed(Math.min(currentSpeed + acceleration, maxSpeed));
-    } else if (upPressed && currentSpeed > maxSpeed && boostDuration.current > 0){
+    } else if (
+      upPressed &&
+      currentSpeed > maxSpeed &&
+      boostDuration.current > 0
+    ) {
       setCurrentSpeed(Math.max(currentSpeed - decceleration, maxSpeed));
-      }
+    }
 
     if (upPressed) {
       if (currentSteeringSpeed < MaxSteeringSpeed) {
@@ -115,7 +122,6 @@ export const PlayerController = () => {
       }
       setCurrentSpeed(Math.max(currentSpeed - decceleration, 0));
     }
-
 
     // Update the kart's rotation based on the steering angle
     kart.current.rotation.y += steeringAngle;
@@ -179,7 +185,6 @@ export const PlayerController = () => {
       );
       setTurboColor(0xffffff);
       accumulatedDriftPower.current = 0;
-      
     }
 
     if (driftLeft.current) {
@@ -187,7 +192,7 @@ export const PlayerController = () => {
       driftForce.current = 0.4;
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
-        (steeringAngle * 50 + 0.5),
+        steeringAngle * 50 + 0.5,
         0.1
       );
       accumulatedDriftPower.current += 0.1 * (steeringAngle + 1);
@@ -223,22 +228,21 @@ export const PlayerController = () => {
       boostDuration.current = 250;
     }
 
-    if(driftLeft.current || driftRight.current){
+    if (driftLeft.current || driftRight.current) {
       const oscillation = Math.sin(time * 1000) * 0.1;
 
       const vibration = oscillation + 0.9;
       setScale(vibration);
     }
-    // RELEASING DRIFT 
+    // RELEASING DRIFT
 
     if (boostDuration.current > 1 && !jumpIsHeld.current) {
       setCurrentSpeed(boostSpeed);
       boostDuration.current -= 1;
       targetZPosition = 10;
-    }  else if (boostDuration.current <= 1) {
+    } else if (boostDuration.current <= 1) {
       targetZPosition = 8;
     }
-    
 
     // CAMERA WORK
 
@@ -249,7 +253,7 @@ export const PlayerController = () => {
       targetXPosition,
       0.01
     );
-    
+
     cam.current.position.z = THREE.MathUtils.lerp(
       cam.current.position.z,
       targetZPosition,
@@ -268,7 +272,6 @@ export const PlayerController = () => {
 
     // Update the kart's rotation based on the steering angle
     setSteeringAngleWheels(steeringAngle * 25);
-    console.log(scale)
   });
 
   return (
@@ -276,7 +279,7 @@ export const PlayerController = () => {
       <RigidBody
         ref={body}
         type="dynamic"
-        colliders="ball"
+        colliders={"ball"}
         position={[0, 20, 0]}
         centerOfMass={[0, -1, 0]}
         onCollisionEnter={(event) => {
@@ -291,29 +294,44 @@ export const PlayerController = () => {
 
       <group ref={kart}>
         <group ref={mario}>
-          <Mario currentSpeed={currentSpeed} steeringAngleWheels={steeringAngleWheels}/>
+          <Mario
+            currentSpeed={currentSpeed}
+            steeringAngleWheels={steeringAngleWheels}
+          />
           <pointLight
             position={[0.6, 0.05, 0.5]}
             intensity={scale}
             color={turboColor}
             distance={1}
-            
           />
           <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.1, 16, 16]} />
-            <meshStandardMaterial emissive={turboColor} toneMapped={false} emissiveIntensity={2} transparent opacity={1}/>
+            <meshStandardMaterial
+              emissive={turboColor}
+              toneMapped={false}
+              emissiveIntensity={50}
+              transparent
+              opacity={1}
+            />
           </mesh>
           <pointLight
             position={[-0.6, 0.05, 0.5]}
             intensity={scale}
             color={turboColor}
             distance={1}
-
           />
-                    <mesh position={[-0.6, 0.05, 0.5]} scale={scale}>
+          <mesh position={[-0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.1, 16, 16]} />
-            <meshStandardMaterial emissive={turboColor} toneMapped={false} emissiveIntensity={2} transparent opacity={1}/>
+            <meshStandardMaterial
+              emissive={turboColor}
+              toneMapped={false}
+              emissiveIntensity={50}
+              transparent
+              opacity={1}
+            />
           </mesh>
+          <DriftParticlesLeft turboColor={turboColor} scale={scale}/>
+          <DriftParticlesRight turboColor={turboColor} scale={scale}/>
         </group>
 
         {/* <ContactShadows frames={1} /> */}

@@ -9,7 +9,7 @@ import { RigidBody } from "@react-three/rapier";
 import { PlayerController } from "./PlayerController";
 import { Track } from "./models/Spafrancorchamps-REALISTIC";
 import { Paris } from "./models/Tour_paris_promenade";
-import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation} from '@react-three/postprocessing'
+import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation, SMAA} from '@react-three/postprocessing'
 
 export const Experience = () => {
   return (
@@ -34,7 +34,8 @@ export const Experience = () => {
       {/* <ambientLight intensity={0.2} /> */}
       {/* <spotLight position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow shadow-mapSize={1024} /> */}
       <Paris position={[0, 0, 0]} />
-      <EffectComposer multisampling={0}>
+      <EffectComposer multisampling={4}>
+      <SMAA/>
         {/* <N8AO distanceFalloff={1} aoRadius={1} intensity={4} /> */}
         <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.01} intensity={0.5} />
         <DepthOfField target={[0, 0, 13]} focalLength={0.3} bokehScale={15} height={700} />
