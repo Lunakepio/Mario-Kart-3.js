@@ -3,6 +3,23 @@
   height: 100vh;
 }
 
+*
 body {
   margin: 0;
+  cursor:none;
+  overflow-y: none;
+  overflow-x: none;
+
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+img {
+position:absolute;
+z-index: 100;
+top:0;
+width: 200px;
+opacity: 0.2;
 }
