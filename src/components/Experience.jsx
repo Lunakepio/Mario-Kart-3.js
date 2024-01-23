@@ -39,7 +39,7 @@ export const Experience = () => {
         
       >
         <SMAA />
-        {/* <N8AO distanceFalloff={1} aoRadius={1} intensity={3} /> */}
+        <N8AO distanceFalloff={1} aoRadius={1} intensity={3} />
         <Bloom
           luminanceThreshold={0}
           mipmapBlur

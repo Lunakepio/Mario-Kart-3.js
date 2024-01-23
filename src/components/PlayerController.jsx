@@ -21,6 +21,8 @@ import { DriftParticlesLeft } from "./DriftParticlesLeft";
 import { DriftParticlesRight } from "./DriftParticlesRight";
 import FakeGlowMaterial from "./FakeGlow/FakeGlowMaterial";
 import { PointParticle } from "./PointParticle";
+import { FlameParticle } from "./FlameParticle";
+import { FlameParticles } from "./FlameParticles";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -41,7 +43,7 @@ export const PlayerController = () => {
   const MaxSteeringSpeed = 0.01;
   const [currentSteeringSpeed, setCurrentSteeringSpeed] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(initialSpeed);
-  const camMaxOffset = 0.5;
+  const camMaxOffset = 1;
   let steeringAngle = 0;
   const isOnFloor = useRef(false);
   const jumpForce = useRef(0);
@@ -57,7 +59,7 @@ export const PlayerController = () => {
   const purpleTurboThreshold = 60;
   const [turboColor, setTurboColor] = useState(0xffffff);
   const boostDuration = useRef(0);
-  const isBoosting = useRef(false);
+  const [isBoosting, setIsBoosting] = useState(false);
   let targetXPosition = 0;
   let targetZPosition = 8;
   const [steeringAngleWheels, setSteeringAngleWheels] = useState(0);
@@ -261,8 +263,10 @@ export const PlayerController = () => {
       setCurrentSpeed(boostSpeed);
       boostDuration.current -= 1;
       targetZPosition = 10;
+      setIsBoosting(true);
     } else if (boostDuration.current <= 1) {
       targetZPosition = 8;
+      setIsBoosting(false);
     }
 
     // CAMERA WORK
@@ -355,7 +359,8 @@ export const PlayerController = () => {
               opacity={0.4}
             />
           </mesh>
-
+          {/* <Flame/> */}
+          <FlameParticles isBoosting={isBoosting}/>
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
           <PointParticle position={[-0.6, 0.05, 0.5]} png="./circle.png" turboColor={turboColor}/>
