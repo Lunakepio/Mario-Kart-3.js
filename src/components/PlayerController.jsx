@@ -20,6 +20,7 @@ import { Particles1 } from "./Particles1";
 import { DriftParticlesLeft } from "./DriftParticlesLeft";
 import { DriftParticlesRight } from "./DriftParticlesRight";
 import FakeGlowMaterial from "./FakeGlow/FakeGlowMaterial";
+import { PointParticle } from "./PointParticle";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -357,6 +358,10 @@ export const PlayerController = () => {
 
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
+          <PointParticle position={[-0.6, 0.05, 0.5]} png="./circle.png" turboColor={turboColor}/>
+          <PointParticle position={[0.6, 0.05, 0.5]} png="./circle.png" turboColor={turboColor}/>
+          <PointParticle position={[-0.6, 0.05, 0.5]} png="./star.png" turboColor={turboColor}/>
+          <PointParticle position={[0.6, 0.05, 0.5]} png="./star.png" turboColor={turboColor}/>
         </group>
 
         {/* <ContactShadows frames={1} /> */}
