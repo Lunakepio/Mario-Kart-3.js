@@ -6,6 +6,8 @@ import {
   ContactShadows,
   Sphere,
   OrbitControls,
+  Trail,
+  PositionalAudio,
 } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -63,6 +65,7 @@ export const PlayerController = () => {
   let targetXPosition = 0;
   let targetZPosition = 8;
   const [steeringAngleWheels, setSteeringAngleWheels] = useState(0);
+  const engineSound = useRef();
 
   const [scale, setScale] = useState(0);
 
@@ -264,7 +267,7 @@ export const PlayerController = () => {
       boostDuration.current -= 1;
       targetZPosition = 10;
       setIsBoosting(true);
-    } else if (boostDuration.current <= 1) {
+    } else if (boostDuration.current <= 1 ) {
       targetZPosition = 8;
       setIsBoosting(false);
     }
@@ -296,6 +299,11 @@ export const PlayerController = () => {
 
     // Update the kart's rotation based on the steering angle
     setSteeringAngleWheels(steeringAngle * 25);
+
+    // SOUND WORK 
+
+
+    console.log(body.current.translation())
   });
 
   return (
@@ -303,7 +311,7 @@ export const PlayerController = () => {
       <RigidBody
         ref={body}
         colliders={false}
-        position={[0, 20, 0]}
+        position={[8, 20, -96]}
         centerOfMass={[0, -1, 0]}
         mass={3}
       >
@@ -320,7 +328,7 @@ export const PlayerController = () => {
         }}
       </RigidBody>
 
-      <group ref={kart}>
+      <group ref={kart} rotation={[0, Math.PI / 2, 0]}>
         <group ref={mario}>
           <Mario
             currentSpeed={currentSpeed}
@@ -376,6 +384,8 @@ export const PlayerController = () => {
           fov={50}
           ref={cam}
         />
+        {/* <PositionalAudio ref={engineSound} url="./sounds/engine.wav" autoplay loop distance={10}/> */}
+
       </group>
     </group>
   );

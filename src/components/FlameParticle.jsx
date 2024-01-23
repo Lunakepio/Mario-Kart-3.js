@@ -25,7 +25,7 @@ export const FlameParticle = ({ position, png, turboColor, delay = 0 }) => {
     return geom;
   }, [position]);
 
-  useFrame(() => {
+  useFrame(({clock}) => {
     if (!initialized) return;
 
     pointsRef.current.position.y += 0.03;
