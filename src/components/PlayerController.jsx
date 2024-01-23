@@ -75,7 +75,6 @@ export const PlayerController = () => {
       0,
       -Math.cos(kartRotation)
     );
-    console.log(forwardDirection);
 
     if (leftPressed && currentSpeed > 0) {
       steeringAngle = currentSteeringSpeed;
@@ -248,7 +247,12 @@ export const PlayerController = () => {
       const oscillation = Math.sin(time * 1000) * 0.1;
 
       const vibration = oscillation + 0.9;
-      setScale(vibration);
+      
+      if (turboColor === 0xffffff) {
+        setScale(vibration * 0.8);
+      } else {
+        setScale(vibration);
+      }
     }
     // RELEASING DRIFT
 
@@ -329,9 +333,9 @@ export const PlayerController = () => {
             <meshStandardMaterial
               emissive={turboColor}
               toneMapped={false}
-              emissiveIntensity={50}
+              emissiveIntensity={100}
               transparent
-              opacity={1}
+              opacity={0.4}
             />
           </mesh>
           <pointLight
@@ -345,9 +349,9 @@ export const PlayerController = () => {
             <meshStandardMaterial
               emissive={turboColor}
               toneMapped={false}
-              emissiveIntensity={50}
+              emissiveIntensity={100}
               transparent
-              opacity={1}
+              opacity={0.4}
             />
           </mesh>
 
