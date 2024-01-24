@@ -198,6 +198,7 @@ export const PlayerController = () => {
 
     if (driftLeft.current || driftRight.current) {
       const oscillation = Math.sin(time * 1000) * 0.1
+      const vibration = oscillation+ 0.9 
 
       if (turboColor === 0xffffff) {
         setScale(vibration * 0.8)
@@ -258,11 +259,12 @@ export const PlayerController = () => {
           onCollisionEnter={(event) => {
             isOnFloor.current = true
           }}
+          onCollisionExit={(event) => {
+            isOnFloor.current = false
+          }}
+
         />
-        {/* onCollisionEnter=
-        {(event) => {
-          isOnFloor.current = false
-        }} */}
+
       </RigidBody>
 
       <group

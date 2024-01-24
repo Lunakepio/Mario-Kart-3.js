@@ -16,8 +16,7 @@ export const Experience = () => {
       <Environment
         resolution={256}
         preset='lobby'
-        background
-        ground
+
       />
 
       <directionalLight

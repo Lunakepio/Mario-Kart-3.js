@@ -4,6 +4,8 @@ export const useStore = create((set, get) => ({
   return : {
     particles1: [],
     particles2: [],
+    bodyPosition: [0, 0, 0],
+    bodyRotation: [0, 0, 0],
     actions : {
       addParticle1: (particle) => {
         set((state) => ({
