@@ -4,10 +4,12 @@ Command: npx gltfjsx@6.2.16 .\mariokarttest.glb --shadows
 */
 
 import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { Cylinder, OrbitControls, Sphere, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import FakeGlowMaterial from '../FakeGlow/FakeGlowMaterial'
+import FakeFlame from '../FakeFlame/FakeFlame'
 
-export function Mario({currentSpeed, steeringAngleWheels, ...props}) {
+export function Mario({ currentSpeed, steeringAngleWheels, ...props }) {
   const { nodes, materials } = useGLTF('./models/mariokarttest.glb')
 
   const frontLeftWheel = useRef()
@@ -21,17 +23,75 @@ export function Mario({currentSpeed, steeringAngleWheels, ...props}) {
     frontRightWheel.current.rotation.x += rotation
     rearWheels.current.rotation.x += rotation
     frontWheels.current.rotation.y = steeringAngleWheels
-
   })
   return (
-    <group {...props} rotation={[0, Math.PI, 0]} dispose={null}>
-      <mesh castShadow receiveShadow geometry={nodes.mt_kart_Mario_S.geometry} material={materials.mt_kart_Mario_S} />
-      <mesh ref={rearWheels} castShadow receiveShadow geometry={nodes.mt_Kart_Mario_Tire_S001.geometry} material={materials.mt_Kart_Mario_Tire_S} position={[0, 0.22, -0.347]} />
-      <group ref={frontWheels} >
-      <mesh ref={frontLeftWheel} castShadow receiveShadow geometry={nodes.mt_Kart_Mario_Tire_S002.geometry} material={materials.mt_Kart_Mario_Tire_S} position={[0.370, 0.193, 0.441]} />
-      <mesh ref={frontRightWheel} castShadow receiveShadow geometry={nodes.mt_Kart_Mario_Tire_S003.geometry} material={materials.mt_Kart_Mario_Tire_S} position={[-0.370, 0.193, 0.441]} rotation={[-Math.PI, 0, 0]} scale={-1} />
+    <group
+      {...props}
+      rotation={[0, Math.PI, 0]}
+      dispose={null}
+    >
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_kart_Mario_S.geometry}
+        material={materials.mt_kart_Mario_S}
+      />
+      <mesh
+        ref={rearWheels}
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_Kart_Mario_Tire_S001.geometry}
+        material={materials.mt_Kart_Mario_Tire_S}
+        position={[0, 0.22, -0.347]}
+      />
+      <group ref={frontWheels}>
+        <mesh
+          ref={frontLeftWheel}
+          castShadow
+          receiveShadow
+          geometry={nodes.mt_Kart_Mario_Tire_S002.geometry}
+          material={materials.mt_Kart_Mario_Tire_S}
+          position={[0.37, 0.193, 0.441]}
+        />
+        <mesh
+          ref={frontRightWheel}
+          castShadow
+          receiveShadow
+          geometry={nodes.mt_Kart_Mario_Tire_S003.geometry}
+          material={materials.mt_Kart_Mario_Tire_S}
+          position={[-0.37, 0.193, 0.441]}
+          rotation={[-Math.PI, 0, 0]}
+          scale={-1}
+        />
       </group>
-      <mesh castShadow receiveShadow geometry={nodes.mt_mario.geometry} material={materials.mt_mario} />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_mario.geometry}
+        material={materials.mt_mario}
+      />
+      <Sphere
+        position={[0, 0.6, -1.2]}
+        scale={1.2}
+      >
+        <FakeGlowMaterial />
+      </Sphere>
+
+      <Cylinder
+        args={[0.1, 0.5, 1, 128, 64, true]}
+        position={[0.3, 0.6, -1.2]}
+        rotation={[Math.PI / 1.5, 0, 0]}
+      >
+        <FakeFlame />
+      </Cylinder>
+
+      <Cylinder
+        args={[0.1, 0.5, 1, 128, 64, true]}
+        position={[-0.3, 0.6, -1.2]}
+        rotation={[Math.PI / 1.5, 0, 0]}
+      >
+        <FakeFlame />
+      </Cylinder>
     </group>
   )
 }
