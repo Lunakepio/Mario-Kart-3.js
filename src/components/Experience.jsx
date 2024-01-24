@@ -34,7 +34,7 @@ export const Experience = () => {
 
       {/* <ambientLight intensity={0.2} /> */}
       {/* <spotLight position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow shadow-mapSize={1024} /> */}
-      {/* <Paris position={[0, 0, 0]} /> */}
+      <Paris position={[0, 0, 0]} />
       <EffectComposer
         multisampling={0}
         disableNormalPass
