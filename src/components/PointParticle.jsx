@@ -23,13 +23,13 @@ export const PointParticle = ({ position, png, turboColor }) => {
     setOpacity(1);
   }, [turboColor]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (turboColor === 0xffffff) return;
     if (size < 3) {
-      setSize((size) => size + 0.5);
+      setSize((size) => size + 0.5 * delta * 144);
     } else if (opacity > 0) {
-      setOpacity((opacity) => opacity - 0.05);
-      setSize((size) => size + 0.2);
+      setOpacity((opacity) => opacity - 0.05  * delta * 144);
+      setSize((size) => size + 0.2  * delta * 144);
     }
   });
 

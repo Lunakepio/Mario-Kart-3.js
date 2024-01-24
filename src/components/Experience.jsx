@@ -10,8 +10,8 @@ import { PlayerControllerAgain } from './PlayerControllerAgain'
 export const Experience = () => {
   return (
     <>
-      {/* <PlayerController /> */}
-      <PlayerControllerAgain />
+      <PlayerController />
+      {/* <PlayerControllerAgain /> */}
       <Ground position={[0, 0, 0]} />
       <Environment
         resolution={256}
