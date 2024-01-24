@@ -38,6 +38,7 @@ function App() {
       <Suspense fallback={null}>
         <Physics
           gravity={[0, -90, 0]}
+          timeStep={'vary'}
         >
           <KeyboardControls map={map}>
             <Experience />

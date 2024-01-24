@@ -239,7 +239,7 @@ export const PlayerController = () => {
 
     // SOUND WORK
 
-    // console.log(body.current.translation())
+    // console.lowg(body.current.translation())
   })
 
   return (
@@ -250,6 +250,7 @@ export const PlayerController = () => {
         position={[8, 20, -96]}
         centerOfMass={[0, -1, 0]}
         mass={3}
+        ccd
       >
         <BallCollider
           args={[0.5]}
@@ -258,10 +259,10 @@ export const PlayerController = () => {
             isOnFloor.current = true
           }}
         />
-        onCollisionEnter=
+        {/* onCollisionEnter=
         {(event) => {
           isOnFloor.current = false
-        }}
+        }} */}
       </RigidBody>
 
       <group
