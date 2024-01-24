@@ -25,18 +25,18 @@ export const FlameParticle = ({ position, png, turboColor, delay = 0 }) => {
     return geom;
   }, [position]);
 
-  useFrame(({clock}) => {
+  useFrame(({clock}, delta) => {
     if (!initialized) return;
 
-    pointsRef.current.position.y += 0.03;
-    pointsRef.current.position.z += 0.06;
+    pointsRef.current.position.y += 0.03 * delta * 144;
+    pointsRef.current.position.z += 0.06 * delta * 144;
     if(pointsRef.current.position.y > 0.4) {
       pointsRef.current.position.y = 0;
       pointsRef.current.position.z = 0;
       setOpacity(1);
     }
     if(opacity > 0) {
-      setOpacity((opacity) => opacity - 0.05);
+      setOpacity((opacity) => opacity - 0.05 * delta * 144);
     }
   });
 

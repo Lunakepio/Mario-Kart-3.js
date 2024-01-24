@@ -6,20 +6,48 @@
 *
 body {
   margin: 0;
-  cursor:none;
+  /* cursor:none; */
   overflow-y: none;
   overflow-x: none;
 
 }
-
+/* 
 body::-webkit-scrollbar {
   display: none;
 }
 
-img {
+.wheel{
 position:absolute;
-z-index: 100;
 top:0;
-width: 200px;
+
 opacity: 0.2;
+img{
+  width: 200px;
 }
+
+
+}
+
+
+.logo{
+  position:absolute;
+top:150px;
+left:500px;
+
+opacity: 1;
+img{
+  width: 600px;
+  animation: bounce 0.4s infinite cubic-bezier(.71,1.94,.5,.61)
+
+}
+}
+
+
+@keyframes bounce {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.2);
+  }
+} */

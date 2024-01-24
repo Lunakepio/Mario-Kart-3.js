@@ -25,10 +25,11 @@ export const PointParticle = ({ position, png, turboColor }) => {
 
   useFrame(() => {
     if (turboColor === 0xffffff) return;
-    if (size < 5) {
+    if (size < 3) {
       setSize((size) => size + 0.5);
     } else if (opacity > 0) {
       setOpacity((opacity) => opacity - 0.05);
+      setSize((size) => size + 0.2);
     }
   });
 

@@ -26,7 +26,7 @@ import { PointParticle } from "./PointParticle";
 import { FlameParticle } from "./FlameParticle";
 import { FlameParticles } from "./FlameParticles";
 
-export const PlayerController = () => {
+export const PlayerControllerAgain = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
   const downPressed = useKeyboardControls((state) => state[Controls.down]);
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
@@ -37,11 +37,11 @@ export const PlayerController = () => {
   const kart = useRef();
   const cam = useRef();
   const initialSpeed = 0;
-  const maxSpeed = 40;
-  const boostSpeed = 60;
+  const maxSpeed = 45;
+  const boostSpeed = 70;
   const acceleration = 30;
   const decceleration = 50;
-  const damping = -0.1;
+  const damping = 90;
   const MaxSteeringSpeed = 1.1;
   const [currentSteeringSpeed, setCurrentSteeringSpeed] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(initialSpeed);
@@ -66,27 +66,61 @@ export const PlayerController = () => {
   let targetZPosition = 8;
   const [steeringAngleWheels, setSteeringAngleWheels] = useState(0);
   const engineSound = useRef();
-  const cameraLerpFactor = 1;
+  const cameraLerpFactor = 2;
   const marioLerpFactor = 5;
 
   const [scale, setScale] = useState(0);
   let lastTime = performance.now();
 
-  useFrame(({ pointer, clock}) => {
+  useFrame(({ pointer, clock }) => {
     const time = clock.getElapsedTime();
     const currentTime = performance.now();
-    const deltaTime = (currentTime - lastTime) * 0.001; // Convert milliseconds to seconds
+    const deltaTime = (currentTime - lastTime) * 0.001;
     lastTime = currentTime;
     if (!body.current && !mario.current) return;
 
     // HANDLING AND STEERING
-    const kartRotation = kart.current.rotation.y - driftDirection.current * driftForce.current;
+    const kartRotation =
+      kart.current.rotation.y - driftDirection.current * driftForce.current;
     const forwardDirection = new THREE.Vector3(
       -Math.sin(kartRotation),
       0,
       -Math.cos(kartRotation)
     );
+    body.current.applyImpulse(
+      {
+        x: forwardDirection.x * currentSpeed * 50 * deltaTime,
+        y: 0 + jumpForce.current,
+        z: forwardDirection.z * currentSpeed * 50 * deltaTime,
+      },
+      true
+    );
 
+    // ACCELERATING
+    if (upPressed && currentSpeed < maxSpeed) {
+
+      setCurrentSpeed(
+        Math.min(currentSpeed + acceleration * deltaTime, maxSpeed)
+      );
+    } 
+    if (!upPressed) {
+      if (currentSpeed > 0) {
+        setCurrentSpeed(Math.max(currentSpeed - decceleration * deltaTime, 0));
+      }
+      if (currentSteeringSpeed > 0) {
+        setCurrentSteeringSpeed(
+          Math.max(currentSteeringSpeed - 1 * deltaTime, 0)
+        );
+      }
+    }
+
+    if (upPressed) {
+      if (currentSteeringSpeed < MaxSteeringSpeed) {
+        setCurrentSteeringSpeed(
+          Math.min(currentSteeringSpeed + 1 * deltaTime, MaxSteeringSpeed)
+        );
+      }
+    }
     if (leftPressed && currentSpeed > 0) {
       steeringAngle = currentSteeringSpeed;
       targetXPosition = -camMaxOffset;
@@ -99,68 +133,34 @@ export const PlayerController = () => {
       1;
     }
 
-    // mouse steering
-
-
-    if(!driftLeft.current && !driftRight.current){
+    if (!driftLeft.current && !driftRight.current) {
       steeringAngle = currentSteeringSpeed * -pointer.x;
       targetXPosition = -camMaxOffset * -pointer.x;
-    }
-
-    else if (driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x - 0.5);
+    } else if (driftLeft.current && !driftRight.current) {
+      steeringAngle = currentSteeringSpeed * -(pointer.x - 0.8);
+      targetXPosition = -camMaxOffset * -pointer.x;
+    } else if (driftRight.current && !driftLeft.current) {
+      steeringAngle = currentSteeringSpeed * -(pointer.x + 0.8);
       targetXPosition = -camMaxOffset * -pointer.x;
     }
-    else if (driftRight.current && !driftLeft.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x + 0.5);
-      targetXPosition = -camMaxOffset * -pointer.x;
-    }
-    // ACCELERATING
-
-    if (upPressed && currentSpeed < maxSpeed) {
-      // Accelerate the kart within the maximum speed limit
-      setCurrentSpeed(Math.min(currentSpeed + acceleration * deltaTime, maxSpeed));
-    } else if (
-      upPressed &&
-      currentSpeed > maxSpeed &&
-      boostDuration.current > 0
-    ) {
-      setCurrentSpeed(Math.max(currentSpeed - decceleration * deltaTime, maxSpeed));
-    }
-
-    if (upPressed) {
-      if (currentSteeringSpeed < MaxSteeringSpeed) {
-        setCurrentSteeringSpeed(
-          Math.min(currentSteeringSpeed + 1 * deltaTime, MaxSteeringSpeed)
-        );
-      }
-    }
-    // REVERSING
-    if (downPressed && currentSpeed < -maxSpeed) {
-      setCurrentSpeed(Math.max(currentSpeed - acceleration, -maxSpeed));
-    }
-    // DECELERATING
-    else if (!upPressed && !downPressed) {
-      if (currentSteeringSpeed > 0) {
-        setCurrentSteeringSpeed(Math.max(currentSteeringSpeed - 1 * deltaTime, 0));
-      } else if (currentSteeringSpeed < 0) {
-        setCurrentSteeringSpeed(Math.min(currentSteeringSpeed + 1 * deltaTime, 0));
-      }
-      setCurrentSpeed(Math.max(currentSpeed - decceleration * deltaTime, 0));
-    }
-
-    console.log(currentSteeringSpeed)
-    // Update the kart's rotation based on the steering angle
     kart.current.rotation.y += steeringAngle * deltaTime;
-
     body.current.applyImpulse(
       {
-        x: -body.current.linvel().x,
+        x: -body.current.linvel().x * damping * deltaTime,
         y: 0,
-        z: -body.current.linvel().z,
+        z: -body.current.linvel().z * damping * deltaTime,
       },
       true
     );
+    body.current.applyImpulse(
+      {
+        x: forwardDirection.x * currentSpeed * 50 * deltaTime,
+        y: 0 + jumpForce.current,
+        z: forwardDirection.z * currentSpeed * 50 * deltaTime,
+      },
+      true
+    );
+
     const bodyPosition = body.current.translation();
     kart.current.position.set(
       bodyPosition.x,
@@ -170,7 +170,7 @@ export const PlayerController = () => {
 
     // JUMPING
     if (jumpPressed && isOnFloor.current && !jumpIsHeld.current) {
-      jumpForce.current += 10;
+      jumpForce.current += 7;
       isOnFloor.current = false;
       jumpIsHeld.current = true;
     }
@@ -185,11 +185,12 @@ export const PlayerController = () => {
       driftLeft.current = false;
       driftRight.current = false;
     }
+
     // DRIFTING
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x < -0.24 &&
+      pointer.x < -0.1 &&
       !driftRight.current
     ) {
       driftLeft.current = true;
@@ -197,53 +198,47 @@ export const PlayerController = () => {
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x > 0.24 &&
+      pointer.x > 0.1 &&
       !driftLeft.current
     ) {
       driftRight.current = true;
     }
 
-    if (!jumpIsHeld.current && !driftLeft.current && !driftRight.current) {
-      mario.current.rotation.y = THREE.MathUtils.lerp(
-        mario.current.rotation.y,
-        0,
-        0.0001
-      );
-      setTurboColor(0xffffff);
-      accumulatedDriftPower.current = 0;
-    }
-
     if (driftLeft.current) {
       driftDirection.current = 1;
-      driftForce.current = 0.4;
+      driftForce.current = 0.15;
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
         steeringAngle * 0.5,
         marioLerpFactor * deltaTime
       );
-      accumulatedDriftPower.current += 0.1 * (steeringAngle + 1);
+      accumulatedDriftPower.current += 10 * (steeringAngle + 1) * deltaTime;
     }
     if (driftRight.current) {
       driftDirection.current = -1;
-      driftForce.current = 0.4;
+      driftForce.current = 0.15;
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
         -(-steeringAngle) * 0.5,
         marioLerpFactor * deltaTime
-
       );
-      accumulatedDriftPower.current += 0.1 * (steeringAngle + 1);
+      accumulatedDriftPower.current += 10 * (-steeringAngle + 1) * deltaTime;
     }
-    console.log(steeringAngle)
+
+    // console.log(steeringAngle)
     if (!driftLeft.current && !driftRight.current) {
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
-        steeringAngle * 0.5,
+        steeringAngle * 0.2,
         marioLerpFactor * deltaTime
-
       );
       setScale(0);
+      accumulatedDriftPower.current = 0;
+      setTurboColor(0xffffff);
+
     }
+      
+
     if (accumulatedDriftPower.current > blueTurboThreshold) {
       setTurboColor(0x00ffff);
       boostDuration.current = 50;
@@ -261,60 +256,64 @@ export const PlayerController = () => {
       const oscillation = Math.sin(time * 1000) * 0.1;
 
       const vibration = oscillation + 0.9;
-      
+
       if (turboColor === 0xffffff) {
         setScale(vibration * 0.8);
       } else {
         setScale(vibration);
       }
     }
+
     // RELEASING DRIFT
-
-    if (boostDuration.current > 1 && !jumpIsHeld.current) {
-      setIsBoosting(true);
-
-    } else if (boostDuration.current <= 1 && !jumpIsHeld.current) {
-      targetZPosition = 8;
-      setIsBoosting(false);
-    }
-
-    if(isBoosting){
+    if (isBoosting) {
       setCurrentSpeed(boostSpeed);
-      boostDuration.current -= Math.floor(deltaTime * 1000);
+      boostDuration.current -= deltaTime * 200; 
       targetZPosition = 10;
-      setIsBoosting(true);
+
+      if (boostDuration.current <= 0) {
+        setIsBoosting(false); 
+        targetZPosition = 8;
+      }
+    } else if (boostDuration.current > 0 && !jumpIsHeld.current) {
+      setIsBoosting(true); 
     }
-    // CAMERA WORK
 
-    cam.current.updateMatrixWorld();
+    if (!isBoosting && currentSpeed === boostSpeed) {
+      setCurrentSpeed(maxSpeed); 
+    }
 
-    cam.current.position.x = THREE.MathUtils.lerp(
-      cam.current.position.x,
-      targetXPosition,
-      cameraLerpFactor * deltaTime
-    );
 
-    cam.current.position.z = THREE.MathUtils.lerp(
-      cam.current.position.z,
-      targetZPosition,
-      cameraLerpFactor * deltaTime
-    );
+    if (!isBoosting) {
+      if (upPressed && currentSpeed < maxSpeed) {
+        setCurrentSpeed(Math.min(currentSpeed + acceleration * deltaTime, maxSpeed));
+      } else if (!upPressed && currentSpeed > 0) {
+        setCurrentSpeed(Math.max(currentSpeed - decceleration * deltaTime, 0));
+      }
+    }
 
-    body.current.applyImpulse(
-      {
-        x: forwardDirection.x * currentSpeed * 50  * deltaTime,
-        y: 0 + jumpForce.current,
-        z: forwardDirection.z * currentSpeed  * 50 * deltaTime,
-      },
-      true
-    );
+    // Debug logging
+    // console.log(`Speed: ${currentSpeed}, Boosting: ${isBoosting}, Boost Duration: ${boostDuration.current}`);
 
-    // Update the kart's rotation based on the steering angle
+        // CAMERA WORK
+
+        cam.current.position.x = THREE.MathUtils.lerp(
+          cam.current.position.x,
+          targetXPosition,
+          cameraLerpFactor * deltaTime
+        );
+    
+        cam.current.position.z = THREE.MathUtils.lerp(
+          cam.current.position.z,
+          targetZPosition,
+          cameraLerpFactor * deltaTime
+        );
+
+        cam.current.updateMatrixWorld();
+
     setSteeringAngleWheels(steeringAngle * 0.1);
+    //misc / debug
 
-    // SOUND WORK 
-
-
+    // SOUND WORK
   });
 
   return (
@@ -379,13 +378,29 @@ export const PlayerController = () => {
             />
           </mesh>
           {/* <Flame/> */}
-          <FlameParticles isBoosting={isBoosting}/>
+          <FlameParticles isBoosting={isBoosting} />
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
-          <PointParticle position={[-0.6, 0.05, 0.5]} png="./circle.png" turboColor={turboColor}/>
-          <PointParticle position={[0.6, 0.05, 0.5]} png="./circle.png" turboColor={turboColor}/>
-          <PointParticle position={[-0.6, 0.05, 0.5]} png="./star.png" turboColor={turboColor}/>
-          <PointParticle position={[0.6, 0.05, 0.5]} png="./star.png" turboColor={turboColor}/>
+          <PointParticle
+            position={[-0.6, 0.05, 0.5]}
+            png="./circle.png"
+            turboColor={turboColor}
+          />
+          <PointParticle
+            position={[0.6, 0.05, 0.5]}
+            png="./circle.png"
+            turboColor={turboColor}
+          />
+          <PointParticle
+            position={[-0.6, 0.05, 0.5]}
+            png="./star.png"
+            turboColor={turboColor}
+          />
+          <PointParticle
+            position={[0.6, 0.05, 0.5]}
+            png="./star.png"
+            turboColor={turboColor}
+          />
         </group>
 
         {/* <ContactShadows frames={1} /> */}
@@ -396,7 +411,6 @@ export const PlayerController = () => {
           ref={cam}
         />
         {/* <PositionalAudio ref={engineSound} url="./sounds/engine.wav" autoplay loop distance={10}/> */}
-
       </group>
     </group>
   );

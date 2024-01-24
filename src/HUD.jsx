@@ -24,12 +24,23 @@ export const HUD = () => {
   }, []);
 
   return (
-    <img
-      ref={wheel}
-      src="./steering_wheel.png"
-      alt="steering wheel"
-      className="steering-wheel"
-      style={{ position: 'absolute', pointerEvents: 'none', transformOrigin: 'center' }}
-    />
+    <div className="overlay"> dadasd
+      <div className="logo">
+        <img src="./logo.png" alt="logo" />
+      </div>
+      <div className="wheel">
+        <img
+ref={wheel}
+          src="./steering_wheel.png"
+          alt="steering wheel"
+          className="steering-wheel"
+          style={{
+            position: "absolute",
+            pointerEvents: "none",
+            transformOrigin: "center",
+          }}
+        />
+      </div>
+    </div>
   );
 };
