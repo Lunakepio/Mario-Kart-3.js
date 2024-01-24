@@ -9,20 +9,26 @@ import { useFrame } from '@react-three/fiber'
 import FakeGlowMaterial from '../FakeGlow/FakeGlowMaterial'
 import FakeFlame from '../FakeFlame/FakeFlame'
 
-export function Mario({ currentSpeed, steeringAngleWheels, ...props }) {
+export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props }) {
   const { nodes, materials } = useGLTF('./models/mariokarttest.glb')
 
   const frontLeftWheel = useRef()
   const frontRightWheel = useRef()
   const rearWheels = useRef()
   const frontWheels = useRef()
+  const [scale, setScale] = React.useState(0)
 
-  useFrame(() => {
+  useFrame((_,delta) => {
     const rotation = currentSpeed / 100
     frontLeftWheel.current.rotation.x += rotation
     frontRightWheel.current.rotation.x += rotation
     rearWheels.current.rotation.x += rotation
     frontWheels.current.rotation.y = steeringAngleWheels
+    if (isBoosting){
+      setScale(Math.min(scale + 0.1 * 144 * delta, 1))
+    } else {
+      setScale(Math.max(scale - 0.1 * 144 * delta, 0))
+    }
   })
   return (
     <group
@@ -72,26 +78,46 @@ export function Mario({ currentSpeed, steeringAngleWheels, ...props }) {
       />
       <Sphere
         position={[0, 0.6, -1.2]}
-        scale={1.2}
+        scale={scale * 1.2}
       >
         <FakeGlowMaterial />
       </Sphere>
 
       <Cylinder
-        args={[0.1, 0.5, 1, 128, 64, true]}
+        args={[0.1, 0, 1, 128, 64, true]}
         position={[0.3, 0.6, -1.2]}
         rotation={[Math.PI / 1.5, 0, 0]}
+        scale={scale}
+        
       >
-        <FakeFlame />
+        <FakeFlame isBoosting={isBoosting}/>
       </Cylinder>
 
       <Cylinder
-        args={[0.1, 0.5, 1, 128, 64, true]}
+        args={[0.1, 0, 1, 128, 64, true]}
         position={[-0.3, 0.6, -1.2]}
         rotation={[Math.PI / 1.5, 0, 0]}
+        scale={scale}
       >
-        <FakeFlame />
+        <FakeFlame isBoosting={isBoosting} />
       </Cylinder>
+      <Cylinder
+        args={[0.09, 0, 1, 128, 64, true]}
+        position={[0.18, 0.7, -0.8]}
+        rotation={[Math.PI / 1.5, 0, 0]}
+        scale={scale}
+      >
+        <FakeFlame isBoosting={isBoosting} />
+      </Cylinder>
+      <Cylinder
+        args={[0.09, 0, 1, 128, 64, true]}
+        position={[-0.18, 0.7, -0.8]}
+        rotation={[Math.PI / 1.5, 0, 0]}
+        scale={scale}
+      >
+        <FakeFlame isBoosting={isBoosting}/>
+      </Cylinder>
+
     </group>
   )
 }

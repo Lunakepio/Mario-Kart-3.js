@@ -11,12 +11,13 @@ body {
   overflow-x: none;
 
 }
-/* 
+
 body::-webkit-scrollbar {
   display: none;
 }
 
 .wheel{
+  display: none;
 position:absolute;
 top:0;
 
@@ -28,6 +29,14 @@ img{
 
 }
 
+.overlay{
+  position:absolute;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+pointer-events: none;
+}
 
 .logo{
   position:absolute;
@@ -50,4 +59,4 @@ img{
   50% {
       transform: scale(1.2);
   }
-} */
+}

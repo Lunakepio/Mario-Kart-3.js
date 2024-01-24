@@ -7,7 +7,7 @@ import { shaderMaterial } from '@react-three/drei'
 import { extend, useFrame } from '@react-three/fiber'
 import { Color, DoubleSide, AdditiveBlending } from 'three'
 
-export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowColor = 'orange', glowSharpness = 1.0 }) {
+export default function FakeFlame({ falloff = 10, glowInternalRadius = 1.0, glowColor = 'orange', glowSharpness = 1.0 , isBoosting,}) {
   const FakeFlame = useMemo(() => {
     return shaderMaterial(
       {
@@ -15,7 +15,8 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
         glowInternalRadius: glowInternalRadius,
         glowColor: new Color(glowColor),
         glowSharpness: glowSharpness,
-        time: 0
+        time: 0,
+        isBoosting: isBoosting,
       },
       /*GLSL */
       `
@@ -38,11 +39,11 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
           float glitchStrength = sin(glitchTime) + sin(glitchTime * .05) +  sin(glitchTime * .36);
           glitchStrength /= 2.0;
           glitchStrength = smoothstep(0.2, 0.8, glitchStrength);
-          glitchStrength *= 0.25;
+          glitchStrength *= 0.;
           modelPosition.x += (random2D(modelNormal.xx + time) - 0.5) * glitchStrength;
           modelPosition.x += (random2D(modelNormal.xx - time) - 0.2) * glitchStrength;
-          modelPosition.y += sin(smoothstep(0.3, vUv.y - 1.8, position.y) * 2.) * sin(time * 2.);
-          modelPosition.z += sin(smoothstep(0., vUv.x - 0.8, position.z) * 2.) * sin(time * 2.) * .6;
+          modelPosition.y += sin(smoothstep(0.3, vUv.y - 1.8, position.y) * 2.) * sin(time * 24.);
+          modelPosition.z += sin(smoothstep(0., vUv.x - 0.8, position.z) * 2.) * sin(time * 24.) * .6;
 
           gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
@@ -55,6 +56,7 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
       uniform float glowSharpness;
       uniform float glowInternalRadius;
       uniform float time;
+      uniform bool isBoosting;
 
       varying vec2 vUv;
 
@@ -123,13 +125,18 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
           col = 0.85*col.yxz;
         #endif
           
-        gl_FragColor = vec4( col, 1.0);
+
+        if (isBoosting) {
+          gl_FragColor = vec4(col, 1.0);
+        } else {
+          gl_FragColor = vec4(col, 0.0);
+        }
 
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }`
     )
-  }, [falloff, glowInternalRadius, glowColor, glowSharpness])
+  }, [falloff, glowInternalRadius, glowColor, glowSharpness, isBoosting])
 
   extend({ FakeFlame })
 

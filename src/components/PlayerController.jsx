@@ -259,9 +259,9 @@ export const PlayerController = () => {
           onCollisionEnter={(event) => {
             isOnFloor.current = true
           }}
-          onCollisionExit={(event) => {
-            isOnFloor.current = false
-          }}
+          // onCollisionExit={(event) => {
+          //   isOnFloor.current = false
+          // }}
 
         />
 
@@ -275,6 +275,7 @@ export const PlayerController = () => {
           <Mario
             currentSpeed={currentSpeed}
             steeringAngleWheels={steeringAngleWheels}
+            isBoosting={isBoosting}
           />
           <pointLight
             position={[0.6, 0.05, 0.5]}
