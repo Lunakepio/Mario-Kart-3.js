@@ -387,13 +387,13 @@ export const PlayerController = () => {
             />
           </mesh>
 
-          <Cylinder
+          {/* <Cylinder
             args={[0.1, 0, 1, 128, 64, true]}
             position={[-0.6, 0.05, 0.5]}
             rotation={[Math.PI / 3, 0 , 0]}
           >
             <meshStandardMaterial side={THREE.DoubleSide} />
-          </Cylinder>
+          </Cylinder> */}
           {/* <Flame/> */}
           <FlameParticles isBoosting={isBoosting} />
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />

@@ -10,16 +10,16 @@ export const DriftParticlesLeft = ({turboColor,scale, ...props}) => {
   return (
     <group {...props}>
       <Particles1 turboColor={turboColor} scale={scale} />
+      {/* <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
       <Particles1 turboColor={turboColor} scale={scale} />
-      <Particles1 turboColor={turboColor} scale={scale} />
-      <Particles1 turboColor={turboColor} scale={scale} />
+      <Particles1 turboColor={turboColor} scale={scale} /> */}
 
-      <Particles3 turboColor={turboColor} scale={scale} />
+      {/* <Particles3 turboColor={turboColor} scale={scale} /> */}
 
     </group>
   )

@@ -43,7 +43,7 @@ function App() {
           <KeyboardControls map={map}>
             <Experience />
           </KeyboardControls>
-          {/* <Stats /> */}
+          <Stats />
         </Physics>
       </Suspense>
     </Canvas>
