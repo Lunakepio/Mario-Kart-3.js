@@ -16,7 +16,8 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
   const frontRightWheel = useRef()
   const rearWheels = useRef()
   const frontWheels = useRef()
-  const [scale, setScale] = React.useState(0)
+  const [scale, setScale] = React.useState(1)
+  // isBoosting = true;
 
   useFrame((_,delta) => {
     const rotation = currentSpeed / 100

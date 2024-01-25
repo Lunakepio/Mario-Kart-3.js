@@ -209,14 +209,21 @@ export const PlayerController = () => {
     // RELEASING DRIFT
 
     if (boostDuration.current > 1 && !jumpIsHeld.current) {
-      setCurrentSpeed(boostSpeed)
-      boostDuration.current -= 1 * delta * 144
-      targetZPosition = 10
       setIsBoosting(true)
     } else if (boostDuration.current <= 1) {
       targetZPosition = 8
       setIsBoosting(false)
     }
+
+    if(isBoosting && boostDuration.current > 1){
+      setCurrentSpeed(boostSpeed)
+      boostDuration.current -= 1 * delta * 144
+      targetZPosition = 10
+    } else if (boostDuration.current <= 1) {
+      setIsBoosting(false)
+      targetZPosition = 8
+    }
+
 
     // CAMERA WORK
 
