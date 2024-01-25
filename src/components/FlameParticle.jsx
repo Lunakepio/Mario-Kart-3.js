@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { useLoader, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-export const FlameParticle = ({ position, png, turboColor, delay = 0 }) => {
+export const FlameParticle = ({ position, png, isBoosting, delay = 0 }) => {
   const texture = useLoader(THREE.TextureLoader, png);
   const pointsRef = useRef();
-  const [size, setSize] = useState(1);
-  const [opacity, setOpacity] = useState(1);
-  const [initialized, setInitialized] = useState(false);
+  const initialized = useRef(false);
 
-  useEffect(() => {
+  // Initialize after delay
+  useMemo(() => {
     const timer = setTimeout(() => {
-      setInitialized(true);
+      initialized.current = true;
     }, delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
-  const points = React.useMemo(() => {
+  const points = useMemo(() => {
     const geom = new THREE.BufferGeometry();
     geom.setAttribute(
       "position",
@@ -26,29 +25,41 @@ export const FlameParticle = ({ position, png, turboColor, delay = 0 }) => {
   }, [position]);
 
   useFrame(({clock}, delta) => {
-    if (!initialized) return;
+    if (!initialized.current) return;
 
-    pointsRef.current.position.y += 0.03 * delta * 144;
-    pointsRef.current.position.z += 0.06 * delta * 144;
-    if(pointsRef.current.position.y > 0.4) {
-      pointsRef.current.position.y = 0;
-      pointsRef.current.position.z = 0;
-      setOpacity(1);
-    }
-    if(opacity > 0) {
-      setOpacity((opacity) => opacity - 0.05 * delta * 144);
+    const pointsCurrent = pointsRef.current;
+
+    if (isBoosting) {
+      // Update logic when boosting
+      pointsCurrent.position.y += 0.03 * delta * 144;
+      pointsCurrent.position.z += 0.06 * delta * 144;
+
+      if(pointsCurrent.position.y > 0.4) {
+        pointsCurrent.position.y = 0;
+        pointsCurrent.position.z = 0;
+        pointsCurrent.material.opacity = 1;
+      }
+    
+      if(pointsCurrent.material.opacity > 0) {
+        pointsCurrent.material.opacity -= 0.05 * delta * 144;
+      }
+    } else {
+      // Reset position and opacity when not boosting
+      pointsCurrent.position.y = 0;
+      pointsCurrent.position.z = 0;
+      pointsCurrent.material.opacity = 0;
     }
   });
 
   return (
     <points ref={pointsRef} geometry={points}>
       <pointsMaterial
-        size={size}
+        size={1}
         alphaMap={texture}
         transparent={true}
         depthWrite={false}
         color={0x000000}
-        opacity={opacity}
+        opacity={1}
         toneMapped={false}
       />
     </points>
