@@ -6,11 +6,13 @@ import { Track } from './models/Spafrancorchamps-REALISTIC'
 import { Paris } from './models/Tour_paris_promenade'
 import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation, SMAA, ChromaticAberration, Vignette } from '@react-three/postprocessing'
 import { PlayerControllerAgain } from './PlayerControllerAgain'
+import { Skid } from './Skid'
 
 export const Experience = () => {
   return (
     <>
       <PlayerController />
+      <Skid />
       {/* <PlayerControllerAgain /> */}
       <Ground position={[0, 0, 0]} />
       <Environment

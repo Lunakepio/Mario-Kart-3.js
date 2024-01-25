@@ -26,9 +26,9 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
     rearWheels.current.rotation.x += rotation
     frontWheels.current.rotation.y = steeringAngleWheels
     if (isBoosting){
-      setScale(Math.min(scale + 0.1 * 144 * delta, 1))
+      setScale(Math.min(scale + 0.05 * 144 * delta, 1))
     } else {
-      setScale(Math.max(scale - 0.1 * 144 * delta, 0))
+      setScale(Math.max(scale - 0.03 * 144 * delta, 0))
     }
   })
   return (

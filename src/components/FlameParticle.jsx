@@ -47,7 +47,7 @@ export const FlameParticle = ({ position, png, turboColor, delay = 0 }) => {
         alphaMap={texture}
         transparent={true}
         depthWrite={false}
-        color={turboColor}
+        color={0x000000}
         opacity={opacity}
         toneMapped={false}
       />
