@@ -3,9 +3,9 @@ import { Particles3 } from "./Particles3";
 
 export const DriftParticlesLeft = ({turboColor,scale, ...props}) => {
 
-  if(scale < 0.8) {
-    return null;
-  }
+  // if(scale < 0.8) {
+  //   return null;
+  // }
 
   return (
     <group {...props}>

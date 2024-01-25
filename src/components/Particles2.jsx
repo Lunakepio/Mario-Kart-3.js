@@ -13,6 +13,17 @@ export const Particles2 = ({ turboColor, scale, numParticles = 50, ...props }) =
   }, [numParticles]);
 
   useFrame((state, delta) => {
+    if (!instancedMeshRef.current) {
+      return;
+    }
+
+    // Manage visibility directly in the animation loop
+    instancedMeshRef.current.visible = scale >= 0.8;
+
+    if (scale < 0.8) {
+      return;
+    }
+
     const deltaScaled = delta * 144; // Scale for 144 FPS
     particlesData.forEach((particle, i) => {
       particle.velocity.y += particle.gravity * deltaScaled;
@@ -25,7 +36,6 @@ export const Particles2 = ({ turboColor, scale, numParticles = 50, ...props }) =
         particle.position.set(0.6, 0.05, 0.5);
         particle.velocity.set(Math.random() * 0.05, Math.random() * 0.05, Math.random() * 0.02);
       }
-
       const matrix = new THREE.Matrix4();
       matrix.setPosition(particle.position);
       instancedMeshRef.current.setMatrixAt(i, matrix);
@@ -35,7 +45,7 @@ export const Particles2 = ({ turboColor, scale, numParticles = 50, ...props }) =
   });
 
   return (
-    <instancedMesh ref={instancedMeshRef} args={[null, null, numParticles]}>
+    <instancedMesh ref={instancedMeshRef} args={[null, null, numParticles]} visible={scale >= 0.8}>
       <sphereGeometry args={[0.01, 16, 16]} />
       <meshStandardMaterial
         emissive={turboColor}
