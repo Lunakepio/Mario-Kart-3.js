@@ -13,7 +13,7 @@ import { useGLTF } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 
 export function Paris(props) {
-  const { nodes, materials } = useGLTF('./models/tour_paris_promenade-transformed.glb')
+  const { nodes, materials } = useGLTF('./models/tracks/tour_paris_promenade-transformed.glb')
   materials.M_Cmn_ShadowCollision.opacity = 0
   materials.M_Cmn_ShadowCollision.transparent = true
   return (
@@ -35,4 +35,4 @@ export function Paris(props) {
   )
 }
 
-useGLTF.preload('./models/tour_paris_promenade-transformed.glb')
+useGLTF.preload('./models/tracks/tour_paris_promenade-transformed.glb')

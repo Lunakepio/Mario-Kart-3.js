@@ -6,11 +6,11 @@ Command: npx gltfjsx@6.2.16 .\mariokarttest.glb --shadows
 import React, { useRef } from 'react'
 import { Cylinder, OrbitControls, Sphere, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import FakeGlowMaterial from '../FakeGlow/FakeGlowMaterial'
-import FakeFlame from '../FakeFlame/FakeFlame'
+import FakeGlowMaterial from '../../ShaderMaterials/FakeGlow/FakeGlowMaterial'
+import FakeFlame from '../../ShaderMaterials/FakeFlame/FakeFlame'
 
 export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props }) {
-  const { nodes, materials } = useGLTF('./models/mariokarttest.glb')
+  const { nodes, materials } = useGLTF('./models/characters/mariokarttest.glb')
 
   const frontLeftWheel = useRef()
   const frontRightWheel = useRef()
@@ -123,4 +123,4 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
   )
 }
 
-useGLTF.preload('./models/mariokarttest.glb')
+useGLTF.preload('./models/characters/mariokarttest.glb')

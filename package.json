@@ -9,15 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^9.93.0",
-    "@react-three/fiber": "^8.15.13",
+    "@react-three/drei": "^9.96.4",
+    "@react-three/fiber": "^8.15.15",
     "@react-three/postprocessing": "^2.15.11",
     "@react-three/rapier": "^1.2.1",
     "gsap": "^3.12.5",
     "leva": "^0.9.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.160.0",
+    "react-gamepad": "^1.0.3",
+    "three": "^0.160.1",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
