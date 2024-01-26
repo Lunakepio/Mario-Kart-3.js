@@ -1,55 +1,57 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from 'three';
 
-export const Particles2 = ({ turboColor, scale, ...props }) => {
-  const ref = useRef();
-  const velocity = useRef({
-    x: Math.random() * 0.05,
-    y: Math.random() * 0.05,
-    z: Math.random() * 0.02,
-  });
-  const gravity = -0.003;
-  
+export const Particles2 = ({ turboColor, scale, numParticles = 50, ...props }) => {
+  const instancedMeshRef = useRef();
+  const particlesData = useMemo(() => {
+    return new Array(numParticles).fill().map(() => ({
+      position: new THREE.Vector3(0.6, 0.05, 0.5),
+      velocity: new THREE.Vector3(Math.random() * 0.05, Math.random() * 0.05, Math.random() * 0.02),
+      gravity: -0.003
+    }));
+  }, [numParticles]);
+
   useFrame((state, delta) => {
-    let position = ref.current.position;
-    let velocityVector = new THREE.Vector3(velocity.current.x, velocity.current.y, velocity.current.z);
-  
-    // Adjust gravity and velocity based on delta
-    velocity.current.y += gravity * delta * 144; // Multiply by 144 to scale for 144 FPS
-  
-    // Scale velocity changes by delta
-    position.x += velocity.current.x * delta * 144;
-    position.y += velocity.current.y * delta * 144;
-    position.z += velocity.current.z * delta * 144;
-  
-    if (!velocityVector.equals(new THREE.Vector3(0, 0, 0))) {
-      const alignmentQuaternion = new THREE.Quaternion();
-      alignmentQuaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), velocityVector.normalize());
-      ref.current.quaternion.slerp(alignmentQuaternion, 0.1);
+    if (!instancedMeshRef.current) {
+      return;
     }
-  
-    if (position.y < 0.05) {
-      position.set(0.6, 0.05, 0.5);
-      velocity.current = {
-        x: Math.random() * 0.05,
-        y: Math.random() * 0.05,
-        z: Math.random() * 0.02,
-      };
+
+    // Manage visibility directly in the animation loop
+    instancedMeshRef.current.visible = scale >= 0.8;
+
+    if (scale < 0.8) {
+      return;
     }
-  
-    ref.current.position.set(position.x, position.y, position.z);
+
+    const deltaScaled = delta * 144; // Scale for 144 FPS
+    particlesData.forEach((particle, i) => {
+      particle.velocity.y += particle.gravity * deltaScaled;
+
+      particle.position.x += particle.velocity.x * deltaScaled;
+      particle.position.y += particle.velocity.y * deltaScaled;
+      particle.position.z += particle.velocity.z * deltaScaled;
+
+      if (particle.position.y < 0.05) {
+        particle.position.set(0.6, 0.05, 0.5);
+        particle.velocity.set(Math.random() * 0.05, Math.random() * 0.05, Math.random() * 0.02);
+      }
+      const matrix = new THREE.Matrix4();
+      matrix.setPosition(particle.position);
+      instancedMeshRef.current.setMatrixAt(i, matrix);
+    });
+
+    instancedMeshRef.current.instanceMatrix.needsUpdate = true;
   });
-  
 
   return (
-    <mesh ref={ref} position={[0.6, 0.05, 0.5]} scale={[scale, scale * 5, scale]}>
+    <instancedMesh ref={instancedMeshRef} args={[null, null, numParticles]} visible={scale >= 0.8}>
       <sphereGeometry args={[0.01, 16, 16]} />
       <meshStandardMaterial
         emissive={turboColor}
         toneMapped={false}
         emissiveIntensity={5}
       />
-    </mesh>
+    </instancedMesh>
   );
 };

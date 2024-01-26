@@ -2,9 +2,7 @@ import { FlameParticle } from "./FlameParticle";
 
 export const FlameParticles = ({ isBoosting }) => {
 
-  if (!isBoosting) {
-    return null;
-  }
+
   return (
     <group>
       {/* bottom left */}
@@ -12,37 +10,37 @@ export const FlameParticles = ({ isBoosting }) => {
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={0}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={100}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={200}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={300}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={400}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={500}
         />
       </group>
@@ -52,37 +50,37 @@ export const FlameParticles = ({ isBoosting }) => {
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={0}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={100}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={200}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={300}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={400}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={500}
         />
       </group>
@@ -91,37 +89,37 @@ export const FlameParticles = ({ isBoosting }) => {
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={0}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={100}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={200}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={300}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={400}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={500}
         />
       </group>
@@ -129,37 +127,37 @@ export const FlameParticles = ({ isBoosting }) => {
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={0}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={100}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={200}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={300}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_02.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={400}
         />
         <FlameParticle
           position={[0, 0, 0]}
           png="./fire_01.png"
-          turboColor={0xfea347}
+          isBoosting={isBoosting}
           delay={500}
         />
       </group>

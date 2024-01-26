@@ -1,25 +1,22 @@
-import { Euler, Object3D, Vector3, Matrix4 } from 'three';
-import { useRef, useLayoutEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { Euler, Object3D, BackSide, Vector3 } from "three";
+import { useRef, useLayoutEffect } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useStore } from "./store";
 
-import { getState, mutation, useStore } from '../store';
-
-const e = new Euler();
-const m = new Matrix4();
 const o = new Object3D();
-const v = new Vector3();
 
-export function Skid({ count = 500, opacity = 0.5, size = 0.4 }) {
+export function Skid({ count = 500, opacity = 1, size = 0.4 }) {
   const ref = useRef(null);
-  const [chassisBody, wheels] = useStore((state) => [state.chassisBody, state.wheels]);
+  const [bodyPosition, bodyRotation] = useStore((state) => [
+    state.bodyPosition,
+    state.bodyRotation,
+  ]);
 
-  let brake;
   let index = 0;
   useFrame(() => {
-    brake = getState().controls.brake;
-    if (chassisBody.current && wheels[2].current && wheels[3].current && brake && mutation.speed > 10) {
-      e.setFromRotationMatrix(m.extractRotation(chassisBody.current.matrix));
-      setItemAt(ref.current, e, wheels[2].current, index++);
+    // console.log(bodyPosition, bodyRotation);
+    if (ref.current && bodyPosition && bodyRotation !== undefined) {
+      setItemAt(ref.current, bodyPosition, bodyRotation, index++);
       if (index === count) index = 0;
     }
   });
@@ -36,14 +33,34 @@ export function Skid({ count = 500, opacity = 0.5, size = 0.4 }) {
   return (
     <instancedMesh ref={ref} args={[undefined, undefined, count]}>
       <planeGeometry args={[size, size * 2]} />
-      <meshBasicMaterial color={0x4d4d4d} transparent opacity={opacity} depthWrite={false} />
+      <meshBasicMaterial
+        color={0x000000}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        side={BackSide}
+      />
     </instancedMesh>
   );
 }
 
-function setItemAt(instances, rotation, wheel, index) {
-  o.position.copy(wheel.getWorldPosition(v));
-  o.rotation.copy(rotation);
+function setItemAt(instances, bodyPosition, bodyRotation, index) {
+  // Calculate the backward offset
+  const backwardOffset = 0.5; // Adjust this value as needed
+  const forwardDirection = new Vector3(
+    -Math.sin(bodyRotation),
+    0,
+    -Math.cos(bodyRotation)
+  );
+  const backwardPosition = forwardDirection
+    .multiplyScalar(-backwardOffset)
+    .add(bodyPosition);
+
+  // Apply the offset to position the skid marks behind the body
+  console.log(bodyPosition);
+  o.position.copy(bodyPosition.x, bodyPosition.y + 2, bodyPosition.z);
+
+  o.rotation.set(0, bodyRotation, 0);
   o.scale.setScalar(1);
   o.updateMatrix();
   instances.setMatrixAt(index, o.matrix);
