@@ -22,6 +22,7 @@ import { PointParticle } from "./Particles/PointParticle";
 import { FlameParticles } from "./Particles/FlameParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
+import { useGamepad } from "./useGamepad";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -63,13 +64,15 @@ export const PlayerController = () => {
   let targetZPosition = 8;
   const [steeringAngleWheels, setSteeringAngleWheels] = useState(0);
   const engineSound = useRef();
+  const { buttonA, joystick, RB } = useGamepad();
 
   const [scale, setScale] = useState(0);
-  const { actions, addPastPosition } = useStore();
 
   useFrame(({ pointer, clock }, delta) => {
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
+
+    // console.log(buttonA, joystick);
 
     // HANDLING AND STEERING
     const kartRotation =
@@ -79,8 +82,6 @@ export const PlayerController = () => {
       0,
       -Math.cos(kartRotation)
     );
-    actions.setBodyPosition(body.current.translation());
-    actions.setBodyRotation(kart.current.rotation);
 
     if (leftPressed && currentSpeed > 0) {
       steeringAngle = currentSteeringSpeed;
@@ -95,6 +96,7 @@ export const PlayerController = () => {
     }
 
     // mouse steering
+    const steer = joystick[0] * 0.8;
 
     if (!driftLeft.current && !driftRight.current) {
       steeringAngle = currentSteeringSpeed * -pointer.x;
@@ -105,6 +107,19 @@ export const PlayerController = () => {
     } else if (driftRight.current && !driftLeft.current) {
       steeringAngle = currentSteeringSpeed * -(pointer.x + 0.5);
       targetXPosition = -camMaxOffset * -pointer.x;
+    }
+
+    if (steer) {
+      if (!driftLeft.current && !driftRight.current) {
+        steeringAngle = currentSteeringSpeed * -joystick[0];
+        targetXPosition = -camMaxOffset * -joystick[0];
+      } else if (driftLeft.current && !driftRight.current) {
+        steeringAngle = currentSteeringSpeed * -(joystick[0] - 1);
+        targetXPosition = -camMaxOffset * -joystick[0];
+      } else if (driftRight.current && !driftLeft.current) {
+        steeringAngle = currentSteeringSpeed * -(joystick[0] + 1);
+        targetXPosition = -camMaxOffset * -joystick[0];
+      }
     }
     // ACCELERATING
 
@@ -133,6 +148,33 @@ export const PlayerController = () => {
         );
       }
     }
+
+    if (buttonA && currentSpeed < maxSpeed) {
+      // Accelerate the kart within the maximum speed limit
+      setCurrentSpeed(
+        Math.min(currentSpeed + acceleration * delta * 144, maxSpeed)
+      );
+    } else if (
+      buttonA &&
+      currentSpeed > maxSpeed &&
+      boostDuration.current > 0
+    ) {
+      setCurrentSpeed(
+        Math.max(currentSpeed - decceleration * delta * 144, maxSpeed)
+      );
+    }
+
+    if (buttonA) {
+      if (currentSteeringSpeed < MaxSteeringSpeed) {
+        setCurrentSteeringSpeed(
+          Math.min(
+            currentSteeringSpeed + 0.0001 * delta * 144,
+            MaxSteeringSpeed
+          )
+        );
+      }
+    }
+
     // REVERSING
     if (downPressed && currentSpeed < -maxSpeed) {
       setCurrentSpeed(
@@ -140,7 +182,7 @@ export const PlayerController = () => {
       );
     }
     // DECELERATING
-    else if (!upPressed && !downPressed) {
+    else if (!buttonA && !downPressed) {
       if (currentSteeringSpeed > 0) {
         setCurrentSteeringSpeed(
           Math.max(currentSteeringSpeed - 0.00005 * delta * 144, 0)
@@ -177,34 +219,58 @@ export const PlayerController = () => {
       jumpForce.current += 10;
       isOnFloor.current = false;
       jumpIsHeld.current = true;
+    } else if (RB && isOnFloor.current && !jumpIsHeld.current) {
+      jumpForce.current += 10;
+      isOnFloor.current = false;
+      jumpIsHeld.current = true;
     }
 
     if (!isOnFloor.current && jumpForce.current > 0) {
       jumpForce.current -= 1 * delta * 144;
     }
-    if (!jumpPressed) {
+    if (!jumpPressed && !RB) {
       jumpIsHeld.current = false;
       driftDirection.current = 0;
       driftForce.current = 0;
       driftLeft.current = false;
       driftRight.current = false;
     }
+    console.log(jumpIsHeld.current);
     // DRIFTING
-    if (
-      jumpIsHeld.current &&
-      currentSteeringSpeed > 0 &&
-      pointer.x < -0.1 &&
-      !driftRight.current
-    ) {
-      driftLeft.current = true;
-    }
-    if (
-      jumpIsHeld.current &&
-      currentSteeringSpeed > 0 &&
-      pointer.x > 0.1 &&
-      !driftLeft.current
-    ) {
-      driftRight.current = true;
+    // if (
+    //   jumpIsHeld.current &&
+    //   currentSteeringSpeed > 0 &&
+    //   pointer.x < -0.1 &&
+    //   !driftRight.current
+    // ) {
+    //   driftLeft.current = true;
+    // }
+    // if (
+    //   jumpIsHeld.current &&
+    //   currentSteeringSpeed > 0 &&
+    //   pointer.x > 0.1 &&
+    //   !driftLeft.current
+    // ) {
+    //   driftRight.current = true;
+    // }
+
+    if (steer) {
+      if (
+        jumpIsHeld.current &&
+        currentSteeringSpeed > 0 &&
+        steer < -0.1 &&
+        !driftRight.current
+      ) {
+        driftLeft.current = true;
+      }
+      if (
+        jumpIsHeld.current &&
+        currentSteeringSpeed > 0 &&
+        steer > 0.1 &&
+        !driftLeft.current
+      ) {
+        driftRight.current = true;
+      }
     }
 
     if (!jumpIsHeld.current && !driftLeft.current && !driftRight.current) {
@@ -324,7 +390,7 @@ export const PlayerController = () => {
       <RigidBody
         ref={body}
         colliders={false}
-        position={[8, 20, -96]}
+        position={[8, 100, -96]}
         centerOfMass={[0, -1, 0]}
         mass={3}
         ccd
@@ -335,12 +401,8 @@ export const PlayerController = () => {
           onCollisionEnter={(event) => {
             isOnFloor.current = true;
           }}
-          // onCollisionExit={(event) => {
-          //   isOnFloor.current = false
-          // }}
         />
       </RigidBody>
-
       <group ref={kart} rotation={[0, Math.PI / 2, 0]}>
         <group ref={mario}>
           <Mario
@@ -348,13 +410,6 @@ export const PlayerController = () => {
             steeringAngleWheels={steeringAngleWheels}
             isBoosting={isBoosting}
           />
-          {/* <pointLight
-            position={[0.6, 0.05, 0.5]}
-            intensity={scale}
-            color={turboColor}
-            distance={1}
-          /> */}
-
           <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
@@ -365,12 +420,6 @@ export const PlayerController = () => {
               opacity={0.4}
             />
           </mesh>
-          {/* <pointLight
-            position={[-0.6, 0.05, 0.5]}
-            intensity={scale}
-            color={turboColor}
-            distance={1}
-          /> */}
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
@@ -381,15 +430,6 @@ export const PlayerController = () => {
               opacity={0.4}
             />
           </mesh>
-
-          {/* <Cylinder
-            args={[0.1, 0, 1, 128, 64, true]}
-            position={[-0.6, 0.05, 0.5]}
-            rotation={[Math.PI / 3, 0 , 0]}
-          >
-            <meshStandardMaterial side={THREE.DoubleSide} />
-          </Cylinder> */}
-          {/* <Flame/> */}
           <FlameParticles isBoosting={isBoosting} />
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
@@ -414,15 +454,12 @@ export const PlayerController = () => {
             turboColor={turboColor}
           />
         </group>
-
-        {/* <ContactShadows frames={1} /> */}
         <PerspectiveCamera
           makeDefault
           position={[0, 2, 8]}
           fov={50}
           ref={cam}
         />
-        {/* <PositionalAudio ref={engineSound} url="./sounds/engine.wav" autoplay loop distance={10}/> */}
       </group>
     </group>
   );

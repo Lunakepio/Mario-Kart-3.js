@@ -6,6 +6,39 @@ export const useStore = create((set, get) => ({
   bodyPosition: [0, 0, 0],
   bodyRotation: [0, 0, 0],
   pastPositions: [],
+  LeftAxis: [0, 0],
+  buttons : {
+    A: false,
+    B: false,
+    X: false,
+    Y: false,
+    LB: false,
+    RB: false,
+    LT: false,
+    RT: false,
+    Back: false,
+    Start: false,
+    LeftStick: false,
+    RightStick: false,
+    Up: false,
+    Down: false,
+    Left: false,
+    Right: false,
+  },
+  setLeftAxis: (axis) => {
+    set({ LeftAxis: axis });
+  },
+  setButtons: (button, value) => {
+    set((state) => ({
+      buttons: {
+        ...state.buttons,
+        [button]: value,
+      },
+    }));
+  },
+  getButtons: () => {
+    return get().buttons;
+  },
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
