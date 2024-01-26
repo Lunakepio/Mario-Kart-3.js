@@ -1,19 +1,15 @@
 import { Environment, OrbitControls, PerspectiveCamera, Lightformer } from '@react-three/drei'
 import { Ground } from './Ground'
-import { RigidBody } from '@react-three/rapier'
 import { PlayerController } from './PlayerController'
-import { Track } from './models/Spafrancorchamps-REALISTIC'
-import { Paris } from './models/Tour_paris_promenade'
-import { EffectComposer, N8AO, Bloom, DepthOfField, TiltShift2, HueSaturation, SMAA, ChromaticAberration, Vignette } from '@react-three/postprocessing'
-import { PlayerControllerAgain } from './PlayerControllerAgain'
+import { Paris } from './models/tracks/Tour_paris_promenade'
+import { EffectComposer, N8AO, Bloom, TiltShift2, HueSaturation, SMAA, ChromaticAberration, Vignette } from '@react-three/postprocessing'
 import { Skid } from './Skid'
 
 export const Experience = () => {
   return (
     <>
       <PlayerController />
-      <Skid />
-      {/* <PlayerControllerAgain /> */}
+      {/* <Skid /> */}
       <Ground position={[0, 0, 0]} />
       <Environment
         resolution={256}
@@ -33,8 +29,6 @@ export const Experience = () => {
         castShadow
       />
 
-      {/* <ambientLight intensity={0.2} /> */}
-      {/* <spotLight position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow shadow-mapSize={1024} /> */}
       <Paris position={[0, 0, 0]} />
       <EffectComposer
         multisampling={0}
@@ -51,12 +45,7 @@ export const Experience = () => {
           luminanceSmoothing={0.01}
           intensity={0.5}
         />
-        {/* <DepthOfField
-          target={[0, 0, 12]}
-          focalLength={15}
-          bokehScale={60}
-          resolutionScale={1}
-        /> */}
+
         <TiltShift2/>
         <ChromaticAberration offset={[0.0006, 0.0006]} />
         <HueSaturation saturation={0.1} />

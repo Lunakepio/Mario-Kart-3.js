@@ -12,19 +12,14 @@ import {
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
-import { Model } from "./models/Racing_kart";
-import { FrontRightWheel } from "./models/Front_Right_Wheel";
-import { FrontLeftWheel } from "./models/Front_Left_Wheel";
-import { RearWheels } from "./models/Rear_wheels";
-import gsap from "gsap";
-import { Mario } from "./models/Mario_kart";
-import { Particles1 } from "./Particles1";
-import { DriftParticlesLeft } from "./DriftParticlesLeft";
-import { DriftParticlesRight } from "./DriftParticlesRight";
-import FakeGlowMaterial from "./FakeGlow/FakeGlowMaterial";
-import { PointParticle } from "./PointParticle";
-import { FlameParticle } from "./FlameParticle";
-import { FlameParticles } from "./FlameParticles";
+
+import { Mario } from "./models/characters/Mario_kart";
+import { DriftParticlesLeft } from "./Particles/DriftParticlesLeft";
+import { DriftParticlesRight } from "./Particles/DriftParticlesRight";
+
+import { PointParticle } from "./Particles/PointParticle";
+
+import { FlameParticles } from "./Particles/FlameParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
 
