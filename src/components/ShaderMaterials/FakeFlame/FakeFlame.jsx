@@ -39,11 +39,11 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
           float glitchStrength = sin(glitchTime) + sin(glitchTime * .05) +  sin(glitchTime * .36);
           glitchStrength /= 2.0;
           glitchStrength = smoothstep(0.2, 0.8, glitchStrength);
-          glitchStrength *= 0.05;
+          glitchStrength *= 0.;
           modelPosition.x += (random2D(modelNormal.xx + time) - 0.5) * glitchStrength;
           modelPosition.x += (random2D(modelNormal.xx - time) - 0.2) * glitchStrength;
-          modelPosition.y += sin(smoothstep(0.3, vUv.y - 2.2, position.y) * 2.) * sin(time * 48.);
-          modelPosition.z += sin(smoothstep(0., vUv.x - 0.8, position.z) * 2.) * sin(time * 24.) * .6;
+          modelPosition.y += sin(smoothstep(0.4, vUv.y - 2.5, position.y) * 2.) * sin(time * 48.);
+          modelPosition.z += sin(smoothstep(0., vUv.x - 1.8, position.z) * 2.) * sin(time * 24.);
 
           gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
@@ -107,7 +107,7 @@ export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowC
         q.x *= 2.;
         q.y *= 2.;
         float strength = floor(q.x+1.5);
-        float T3 = max(2.,2.25*strength)*time * 3.;
+        float T3 = max(2.,2.25*strength)*time * 4.;
         q.x = mod(q.x,1.)-0.5;
         q.y -= 0.05;
         float n = fbm(strength*q + vec2(0,T3));

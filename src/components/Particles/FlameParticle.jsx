@@ -58,7 +58,7 @@ export const FlameParticle = ({ position, png, isBoosting, delay = 0 }) => {
         alphaMap={texture}
         transparent={true}
         depthWrite={false}
-        color={0x000000}
+        color={0xff9900}
         opacity={1}
         toneMapped={false}
       />

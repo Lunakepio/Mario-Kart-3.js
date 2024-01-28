@@ -86,7 +86,7 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
 
       <Cylinder
         args={[0.1, 0, 1, 128, 64, true]}
-        position={[0.3, 0.6, -1.2]}
+        position={[0.3, 0.65, -1.35]}
         rotation={[Math.PI / 1.5, 0, 0]}
         scale={scale}
         
@@ -96,7 +96,7 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
 
       <Cylinder
         args={[0.1, 0, 1, 128, 64, true]}
-        position={[-0.3, 0.6, -1.2]}
+        position={[-0.3, 0.65, -1.35]}
         rotation={[Math.PI / 1.5, 0, 0]}
         scale={scale}
       >
@@ -104,17 +104,17 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
       </Cylinder>
       <Cylinder
         args={[0.09, 0, 1, 128, 64, true]}
-        position={[0.18, 0.7, -0.8]}
+        position={[0.18, 0.75, -1.1]}
         rotation={[Math.PI / 1.5, 0, 0]}
-        scale={scale}
+        scale={scale * 0.8}
       >
         <FakeFlame isBoosting={isBoosting} />
       </Cylinder>
       <Cylinder
         args={[0.09, 0, 1, 128, 64, true]}
-        position={[-0.18, 0.7, -0.8]}
+        position={[-0.18, 0.75, -1.1]}
         rotation={[Math.PI / 1.5, 0, 0]}
-        scale={scale}
+        scale={scale * 0.8}
       >
         <FakeFlame isBoosting={isBoosting}/>
       </Cylinder>

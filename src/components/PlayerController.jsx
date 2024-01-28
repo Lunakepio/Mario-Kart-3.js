@@ -22,6 +22,7 @@ import { PointParticle } from "./Particles/PointParticle";
 import { FlameParticles } from "./Particles/FlameParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
+import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -63,13 +64,28 @@ export const PlayerController = () => {
   let targetZPosition = 8;
   const [steeringAngleWheels, setSteeringAngleWheels] = useState(0);
   const engineSound = useRef();
-
+  const driftSound = useRef();
+  const driftTwoSound = useRef();
+  const driftOrangeSound = useRef();
+  const driftPurpleSound = useRef();
+  const driftBlueSound = useRef();
+  const jumpSound = useRef();
+  const landingSound = useRef();
+  const turboSound = useRef();
   const [scale, setScale] = useState(0);
-  const { actions, addPastPosition } = useStore();
 
   useFrame(({ pointer, clock }, delta) => {
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
+    engineSound.current.setVolume(currentSpeed / 300 + 0.2);
+    engineSound.current.setPlaybackRate(currentSpeed / 10 + 0.1);
+    jumpSound.current.setPlaybackRate(1.5);
+    jumpSound.current.setVolume(0.5);
+    driftSound.current.setVolume(0.2);
+
+    driftBlueSound.current.setVolume(0.5);
+    driftOrangeSound.current.setVolume(0.6);
+    driftPurpleSound.current.setVolume(0.7);
 
     // HANDLING AND STEERING
     const kartRotation =
@@ -79,8 +95,6 @@ export const PlayerController = () => {
       0,
       -Math.cos(kartRotation)
     );
-    actions.setBodyPosition(body.current.translation());
-    actions.setBodyRotation(kart.current.rotation);
 
     if (leftPressed && currentSpeed > 0) {
       steeringAngle = currentSteeringSpeed;
@@ -177,8 +191,17 @@ export const PlayerController = () => {
       jumpForce.current += 10;
       isOnFloor.current = false;
       jumpIsHeld.current = true;
+      jumpSound.current.play();
+
+      if (jumpSound.current.isPlaying) {
+        jumpSound.current.stop();
+        jumpSound.current.play();
+      }
     }
 
+    if (isOnFloor.current && jumpForce.current > 0) {
+      landingSound.current.play();
+    }
     if (!isOnFloor.current && jumpForce.current > 0) {
       jumpForce.current -= 1 * delta * 144;
     }
@@ -215,6 +238,10 @@ export const PlayerController = () => {
       );
       setTurboColor(0xffffff);
       accumulatedDriftPower.current = 0;
+      driftSound.current.stop();
+      driftTwoSound.current.stop();
+      driftOrangeSound.current.stop();
+      driftPurpleSound.current.stop();
     }
 
     if (driftLeft.current) {
@@ -248,14 +275,19 @@ export const PlayerController = () => {
     if (accumulatedDriftPower.current > blueTurboThreshold) {
       setTurboColor(0x00ffff);
       boostDuration.current = 50;
+      driftBlueSound.current.play();
     }
     if (accumulatedDriftPower.current > orangeTurboThreshold) {
       setTurboColor(0xffcf00);
       boostDuration.current = 100;
+      driftBlueSound.current.stop();
+      driftOrangeSound.current.play();
     }
     if (accumulatedDriftPower.current > purpleTurboThreshold) {
       setTurboColor(0xff00ff);
       boostDuration.current = 250;
+      driftOrangeSound.current.stop();
+      driftPurpleSound.current.play();
     }
 
     if (driftLeft.current || driftRight.current) {
@@ -266,6 +298,11 @@ export const PlayerController = () => {
         setScale(vibration * 0.8);
       } else {
         setScale(vibration);
+      }
+      if (isOnFloor.current && !driftSound.current.isPlaying) {
+        driftSound.current.play();
+        driftTwoSound.current.play();
+        landingSound.current.play();
       }
     }
     // RELEASING DRIFT
@@ -281,9 +318,15 @@ export const PlayerController = () => {
       setCurrentSpeed(boostSpeed);
       boostDuration.current -= 1 * delta * 144;
       targetZPosition = 10;
+      turboSound.current.play();
+      driftTwoSound.current.play();
+      driftBlueSound.current.stop();
+      driftOrangeSound.current.stop();
+      driftPurpleSound.current.stop();
     } else if (boostDuration.current <= 1) {
       setIsBoosting(false);
       targetZPosition = 8;
+      turboSound.current.stop();
     }
 
     // CAMERA WORK
@@ -324,7 +367,7 @@ export const PlayerController = () => {
       <RigidBody
         ref={body}
         colliders={false}
-        position={[8, 20, -96]}
+        position={[8, 20, -119]}
         centerOfMass={[0, -1, 0]}
         mass={3}
         ccd
@@ -365,6 +408,15 @@ export const PlayerController = () => {
               opacity={0.4}
             />
           </mesh>
+          <mesh position={[0.6, 0.05, 0.5]} scale={scale * 10}>
+            <sphereGeometry args={[0.05, 16, 16]} />
+            <FakeGlowMaterial
+              falloff={3}
+              glowInternalRadius={1}
+              glowColor={turboColor}
+              glowSharpness={1}
+            />
+          </mesh>
           {/* <pointLight
             position={[-0.6, 0.05, 0.5]}
             intensity={scale}
@@ -381,16 +433,17 @@ export const PlayerController = () => {
               opacity={0.4}
             />
           </mesh>
+          <mesh position={[-0.6, 0.05, 0.5]} scale={scale * 10}>
+            <sphereGeometry args={[0.05, 16, 16]} />
+            <FakeGlowMaterial
+              falloff={3}
+              glowInternalRadius={1}
+              glowColor={turboColor}
+              glowSharpness={1}
+            />
+          </mesh>
 
-          {/* <Cylinder
-            args={[0.1, 0, 1, 128, 64, true]}
-            position={[-0.6, 0.05, 0.5]}
-            rotation={[Math.PI / 3, 0 , 0]}
-          >
-            <meshStandardMaterial side={THREE.DoubleSide} />
-          </Cylinder> */}
-          {/* <Flame/> */}
-          <FlameParticles isBoosting={isBoosting} />
+          {/* <FlameParticles isBoosting={isBoosting} /> */}
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
           <PointParticle
@@ -422,7 +475,62 @@ export const PlayerController = () => {
           fov={50}
           ref={cam}
         />
-        {/* <PositionalAudio ref={engineSound} url="./sounds/engine.wav" autoplay loop distance={10}/> */}
+        <PositionalAudio
+          ref={engineSound}
+          url="./sounds/engine.wav"
+          autoplay
+          loop
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={driftSound}
+          url="./sounds/drifting.mp3"
+          loop
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={driftTwoSound}
+          url="./sounds/driftingTwo.mp3"
+          loop
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={driftOrangeSound}
+          url="./sounds/driftOrange.wav"
+          loop={false}
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={driftBlueSound}
+          url="./sounds/driftBlue.wav"
+          loop={false}
+          distance={1000}
+        />
+
+        <PositionalAudio
+          ref={driftPurpleSound}
+          url="./sounds/driftPurple.wav"
+          loop={false}
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={jumpSound}
+          url="./sounds/jump.mp3"
+          loop={false}
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={landingSound}
+          url="./sounds/landing.wav"
+          loop={false}
+          distance={1000}
+        />
+        <PositionalAudio
+          ref={turboSound}
+          url="./sounds/turbo.wav"
+          loop={false}
+          distance={1000}
+        />
       </group>
     </group>
   );

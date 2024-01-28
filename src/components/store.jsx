@@ -1,5 +1,13 @@
 import { create } from "zustand";
 
+export const playAudio = (path, callback) => {
+  const audio = new Audio(`./sounds/${path}.mp3`);
+  if (callback) {
+    audio.addEventListener("ended", callback);
+  }
+  audio.play();
+};
+
 export const useStore = create((set, get) => ({
   particles1: [],
   particles2: [],
