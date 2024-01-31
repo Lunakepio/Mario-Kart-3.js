@@ -7,6 +7,10 @@ export const playAudio = (path, callback) => {
   }
   audio.play();
 };
+export const items = [
+  "banana",
+  "shell",
+]
 
 export const useStore = create((set, get) => ({
   particles1: [],
@@ -14,6 +18,11 @@ export const useStore = create((set, get) => ({
   bodyPosition: [0, 0, 0],
   bodyRotation: [0, 0, 0],
   pastPositions: [],
+  shouldSlowdown: false,
+  bananas: [],
+  items: ["banana", "shell"],
+  item: "",
+  shells: [],
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -52,5 +61,45 @@ export const useStore = create((set, get) => ({
     getBodyRotation: () => {
       return get().bodyRotation;
     },
+    setShouldSlowDown: (shouldSlowdown) => {
+      set({ shouldSlowdown });
+    },
+    getShouldSlowDown: () => {
+      return get().shouldSlowdown;
+    },
+    addBanana: (banana) => {
+      set((state) => ({
+        bananas: [...state.bananas, banana],
+      }));
+    },
+    removeBanana: (banana) => {
+      set((state) => ({
+        bananas: state.bananas.filter((b) => b.id !== banana.id),
+      }));
+    },
+    getBananas: () => {
+      return get().bananas;
+    },
+    setItem:() => {
+      set((state) => ({
+        item: state.items[Math.floor(Math.random() * state.items.length)],
+      }));
+    },
+    useItem:() => {
+      set((state) => ({
+        item: "",
+      }));
+    },
+    addShell: (shell) => {
+      set((state) => ({
+        shells: [...state.shells, shell],
+      }));
+    },
+    removeShell: (shell) => {
+      set((state) => ({
+        shells: state.shells.filter((s) => s.id !== shell.id),
+      }));
+    }
   },
+ 
 }));

@@ -5,6 +5,7 @@ import * as THREE from "three";
 export const PointParticle = ({ position, png, turboColor }) => {
   const texture = useLoader(THREE.TextureLoader, png);
   const pointsRef = useRef();
+  const materialRef = useRef();
   const [size, setSize] = useState(0);
   const [opacity, setOpacity] = useState(1);
 
@@ -18,7 +19,9 @@ export const PointParticle = ({ position, png, turboColor }) => {
   }, [position]);
 
   useEffect(() => {
-
+    if (materialRef.current) {
+      materialRef.current.color.multiplyScalar(10);
+    }
     setSize(0);
     setOpacity(1);
   }, [turboColor]);
@@ -36,6 +39,7 @@ export const PointParticle = ({ position, png, turboColor }) => {
   return (
     <points ref={pointsRef} geometry={points}>
       <pointsMaterial
+      ref={materialRef}
         size={size}
         alphaMap={texture}
         transparent={true}

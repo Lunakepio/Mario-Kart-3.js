@@ -57,7 +57,6 @@ function setItemAt(instances, bodyPosition, bodyRotation, index) {
     .add(bodyPosition);
 
   // Apply the offset to position the skid marks behind the body
-  console.log(bodyPosition);
   o.position.copy(bodyPosition.x, bodyPosition.y + 2, bodyPosition.z);
 
   o.rotation.set(0, bodyRotation, 0);

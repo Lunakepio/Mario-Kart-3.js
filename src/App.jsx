@@ -39,6 +39,7 @@ function App() {
         <Physics
           gravity={[0, -90, 0]}
           timeStep={'vary'}
+          // debug
         >
           <KeyboardControls map={map}>
             <Experience />

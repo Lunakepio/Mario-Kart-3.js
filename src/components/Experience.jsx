@@ -1,21 +1,62 @@
-import { Environment, OrbitControls, PerspectiveCamera, Lightformer } from '@react-three/drei'
-import { Ground } from './Ground'
-import { PlayerController } from './PlayerController'
-import { Paris } from './models/tracks/Tour_paris_promenade'
-import { EffectComposer, N8AO, Bloom, TiltShift2, HueSaturation, SMAA, ChromaticAberration, Vignette } from '@react-three/postprocessing'
-import { Skid } from './Skid'
+import {
+  Environment,
+  OrbitControls,
+  PerspectiveCamera,
+  Lightformer,
+  Bvh,
+} from "@react-three/drei";
+import { Ground } from "./Ground";
+import { PlayerController } from "./PlayerController";
+import { Paris } from "./models/tracks/Tour_paris_promenade";
+import {
+  EffectComposer,
+  N8AO,
+  Bloom,
+  TiltShift2,
+  HueSaturation,
+  SMAA,
+  ChromaticAberration,
+  Vignette,
+} from "@react-three/postprocessing";
+import { Skid } from "./Skid";
+import { Banana } from "./models/items/Banana_peel_mario_kart";
+import { ItemBox } from "./models/misc/Mario_kart_item_box";
+import { useStore } from "./store";
+import { Shell } from "./models/items/Mario_shell_red";
 
 export const Experience = () => {
+  const onCollide = (event) => {
+    console.log(event);
+  };
+  const { bananas, shells } = useStore();
+
   return (
     <>
       <PlayerController />
+      <Paris position={[0, 0, 0]} />
+      <Banana onCollide={onCollide} position={[-10, 1.8, -119]} />
+      {/* <Shell position={[-20, 2, -119]} /> */}
+      <ItemBox position={[-20, 2, -119]} />
       {/* <Skid /> */}
       <Ground position={[0, 0, 0]} />
-      <Environment
-        resolution={256}
-        preset='lobby'
+      <Environment resolution={256} preset="lobby" />
 
-      />
+      {bananas.map((banana) => (
+        <Banana
+          key={banana.id}
+          position={banana.position}
+
+          // rotation={banana.rotation}
+        />
+      ))}
+
+      {shells.map((shell) => (
+        <Shell
+          key={shell.id}
+          position={shell.position}
+          rotation={shell.rotation}
+        />
+      ))}
 
       <directionalLight
         position={[10, 50, -30]}
@@ -25,17 +66,15 @@ export const Experience = () => {
         shadow-camera-left={-300}
         shadow-camera-right={300}
         shadow-camera-top={300}
-        shadow-camera-bottom={-3000}
+        shadow-camera-bottom={-300}
         castShadow
       />
 
-      <Paris position={[0, 0, 0]} />
       <EffectComposer
         multisampling={0}
         disableNormalPass
         disableSSAO
         disableDepthPass
-        
       >
         <SMAA />
         <N8AO distanceFalloff={1} aoRadius={1} intensity={3} />
@@ -46,11 +85,11 @@ export const Experience = () => {
           intensity={0.5}
         />
 
-        <TiltShift2/>
+        <TiltShift2 />
         <ChromaticAberration offset={[0.0006, 0.0006]} />
         <HueSaturation saturation={0.1} />
         <Vignette eskil={false} offset={0.1} darkness={0.4} />
       </EffectComposer>
     </>
-  )
-}
+  );
+};

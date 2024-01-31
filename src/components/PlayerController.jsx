@@ -23,6 +23,7 @@ import { FlameParticles } from "./Particles/FlameParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
 import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
+import { HitParticles } from "./Particles/HitParticles";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -30,6 +31,8 @@ export const PlayerController = () => {
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
+  const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
+  
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
   const kart = useRef();
@@ -73,6 +76,14 @@ export const PlayerController = () => {
   const landingSound = useRef();
   const turboSound = useRef();
   const [scale, setScale] = useState(0);
+  const raycaster = new THREE.Raycaster();
+  const downDirection = new THREE.Vector3(0, -1, 0);
+  const [shouldLaunch, setShouldLaunch] = useState(false);
+
+
+  const { actions, shouldSlowDown, item, bananas} = useStore();
+  const slowDownDuration = useRef(1500);
+  
 
   useFrame(({ pointer, clock }, delta) => {
     const time = clock.getElapsedTime();
@@ -86,7 +97,6 @@ export const PlayerController = () => {
     driftBlueSound.current.setVolume(0.5);
     driftOrangeSound.current.setVolume(0.6);
     driftPurpleSound.current.setVolume(0.7);
-
     // HANDLING AND STEERING
     const kartRotation =
       kart.current.rotation.y - driftDirection.current * driftForce.current;
@@ -121,6 +131,8 @@ export const PlayerController = () => {
       targetXPosition = -camMaxOffset * -pointer.x;
     }
     // ACCELERATING
+    const shouldSlow = actions.getShouldSlowDown();
+    
 
     if (upPressed && currentSpeed < maxSpeed) {
       // Accelerate the kart within the maximum speed limit
@@ -147,6 +159,22 @@ export const PlayerController = () => {
         );
       }
     }
+    if (shouldSlow) {
+      setCurrentSpeed(Math.max(currentSpeed - decceleration * 2 * delta * 144, 0));
+      setCurrentSteeringSpeed(0);
+      slowDownDuration.current -= 1500 * delta;
+      setShouldLaunch(true);
+      if (slowDownDuration.current <= 1) {
+        actions.setShouldSlowDown(false);
+        slowDownDuration.current = 1500;
+        setShouldLaunch(false);
+      }
+
+
+    }
+
+
+    
     // REVERSING
     if (downPressed && currentSpeed < -maxSpeed) {
       setCurrentSpeed(
@@ -359,6 +387,55 @@ export const PlayerController = () => {
 
     // SOUND WORK
 
+    // MISC
+
+
+    // ITEMS 
+    if(shootPressed && item === "banana") {
+      const distanceBehind = 2; // Adjust this value as needed
+      const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
+    
+      // Get the current position of the kart
+      const kartPosition = new THREE.Vector3(...vec3(body.current.translation()));
+    
+      // Calculate the position for the new banana
+      const bananaPosition = kartPosition.sub(scaledBackwardDirection);
+      const newBanana = {
+        id: Math.random() + "-" + new Date(),
+        position: bananaPosition,
+        player: true,
+      };
+      actions.addBanana(newBanana);
+      actions.useItem();
+
+    }
+
+    if(shootPressed && item === "shell") {
+      const distanceBehind = -1; // Adjust this value as needed
+      const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
+    
+      // Get the current position of the kart
+      const kartPosition = new THREE.Vector3(
+        body.current.translation().x,
+        body.current.translation().y,
+        body.current.translation().z
+      );
+    
+      // Calculate the position for the new banana
+      const shellPosition = kartPosition.sub(scaledBackwardDirection);
+      const newShell = {
+        id: Math.random() + "-" + new Date(),
+        position: shellPosition,
+        player: true,
+        rotation: kartRotation
+      };
+      actions.addShell(newShell);
+      actions.useItem();
+
+    }
+
+    if(item) console.log(item)
+
     // console.lowg(body.current.translation())
   });
 
@@ -367,20 +444,19 @@ export const PlayerController = () => {
       <RigidBody
         ref={body}
         colliders={false}
-        position={[8, 20, -119]}
+        position={[8, 60, -119]}
         centerOfMass={[0, -1, 0]}
         mass={3}
         ccd
+        name="player"
       >
         <BallCollider
           args={[0.5]}
           mass={3}
-          onCollisionEnter={(event) => {
+          onCollisionEnter={({other}) => {
             isOnFloor.current = true;
           }}
-          // onCollisionExit={(event) => {
-          //   isOnFloor.current = false
-          // }}
+
         />
       </RigidBody>
 
@@ -391,12 +467,11 @@ export const PlayerController = () => {
             steeringAngleWheels={steeringAngleWheels}
             isBoosting={isBoosting}
           />
-          {/* <pointLight
+          <pointLight
             position={[0.6, 0.05, 0.5]}
             intensity={scale}
             color={turboColor}
-            distance={1}
-          /> */}
+          />
 
           <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
@@ -417,12 +492,11 @@ export const PlayerController = () => {
               glowSharpness={1}
             />
           </mesh>
-          {/* <pointLight
+          <pointLight
             position={[-0.6, 0.05, 0.5]}
             intensity={scale}
             color={turboColor}
-            distance={1}
-          /> */}
+          />
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
@@ -448,24 +522,25 @@ export const PlayerController = () => {
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
           <PointParticle
             position={[-0.6, 0.05, 0.5]}
-            png="./circle.png"
+            png="./particles/circle.png"
             turboColor={turboColor}
           />
           <PointParticle
             position={[0.6, 0.05, 0.5]}
-            png="./circle.png"
+            png="./particles/circle.png"
             turboColor={turboColor}
           />
           <PointParticle
             position={[-0.6, 0.05, 0.5]}
-            png="./star.png"
+            png="./particles/star.png"
             turboColor={turboColor}
           />
           <PointParticle
             position={[0.6, 0.05, 0.5]}
-            png="./star.png"
+            png="./particles/star.png"
             turboColor={turboColor}
           />
+          <HitParticles shouldLaunch={shouldLaunch}/>
         </group>
 
         {/* <ContactShadows frames={1} /> */}
