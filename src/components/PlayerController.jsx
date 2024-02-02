@@ -422,7 +422,7 @@ export const PlayerController = () => {
       // Calculate the position for the new banana
       const bananaPosition = kartPosition.sub(scaledBackwardDirection);
       const newBanana = {
-        id: Math.random() + "-" + new Date(),
+        id: Math.random() + "-" + +new Date(),
         position: bananaPosition,
         player: true,
       };
@@ -445,7 +445,7 @@ export const PlayerController = () => {
       // Calculate the position for the new banana
       const shellPosition = kartPosition.sub(scaledBackwardDirection);
       const newShell = {
-        id: Math.random() + "-" + new Date(),
+        id: Math.random() + "-" + +new Date(),
         position: shellPosition,
         player: true,
         rotation: kartRotation

@@ -75,11 +75,16 @@ export const useStore = create((set, get) => ({
     },
     removeBanana: (banana) => {
       set((state) => ({
-        bananas: state.bananas.filter((b) => b.id !== banana.id),
+        bananas: state.bananas.filter((id) => id !== banana.id),
       }));
     },
     getBananas: () => {
       return get().bananas;
+    },
+    removeBananaById: (id) => {
+      set((state) => ({
+        bananas: state.bananas.filter((b) => b.id !== id),
+      }));
     },
     setItem:() => {
       set((state) => ({

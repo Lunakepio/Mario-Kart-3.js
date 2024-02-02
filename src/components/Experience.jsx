@@ -48,7 +48,8 @@ export const Experience = () => {
         <Banana
           key={banana.id}
           position={banana.position}
-
+          banana={banana}
+          id={banana.id}
           // rotation={banana.rotation}
         />
       ))}

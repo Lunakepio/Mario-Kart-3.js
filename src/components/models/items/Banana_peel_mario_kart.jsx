@@ -14,13 +14,16 @@ import { BallCollider, RigidBody } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber';
 import { useStore } from '../../store';
 
-export function Banana({onCollide, ...props}) {
+export function Banana({onCollide, id, ...props}) {
   const { nodes, materials } = useGLTF('./models/items/banana_peel_mario_kart-transformed.glb');
   const rigidBody = useRef();
   const ref = useRef();
   const [scale, setScale] = React.useState(0.002);
 
+
   const {actions} = useStore();
+
+  console.log('banana', id);
    return (
     <>
             <RigidBody
@@ -28,16 +31,9 @@ export function Banana({onCollide, ...props}) {
       type='fixed'
       position={props.position}
       sensor
-      onIntersectionEnter={(event) => {
-
-       if(scale === 0.002) {
+      onIntersectionEnter={() => {
         actions.setShouldSlowDown(true);
-       console.log(ref.current, rigidBody.current);
-        ref.current.visible = false;
-        setScale(0);
-        rigidBody.setEnable(false);
-       }
-
+        actions.removeBananaById(id);
       }}
       colliders={false}
       name='banana'
