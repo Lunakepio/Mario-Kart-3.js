@@ -18,7 +18,6 @@ import {
   ChromaticAberration,
   Vignette,
 } from "@react-three/postprocessing";
-import { Skid } from "./Skid";
 import { Banana } from "./models/items/Banana_peel_mario_kart";
 import { ItemBox } from "./models/misc/Mario_kart_item_box";
 import { useStore } from "./store";
@@ -28,7 +27,7 @@ export const Experience = () => {
   const onCollide = (event) => {
     console.log(event);
   };
-  const { bananas, shells } = useStore();
+  const { bananas, shells} = useStore();
 
   return (
     <>
@@ -37,9 +36,10 @@ export const Experience = () => {
       <Banana onCollide={onCollide} position={[-10, 1.8, -119]} />
       {/* <Shell position={[-20, 2, -119]} /> */}
       <ItemBox position={[-20, 2, -119]} />
-      {/* <Skid /> */}
+      
       <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
+
 
       {bananas.map((banana) => (
         <Banana

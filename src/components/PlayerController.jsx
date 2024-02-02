@@ -79,6 +79,7 @@ export const PlayerController = () => {
   const raycaster = new THREE.Raycaster();
   const downDirection = new THREE.Vector3(0, -1, 0);
   const [shouldLaunch, setShouldLaunch] = useState(false);
+  const effectiveBoost = useRef(0);
 
 
   const { actions, shouldSlowDown, item, bananas} = useStore();
@@ -88,6 +89,8 @@ export const PlayerController = () => {
   useFrame(({ pointer, clock }, delta) => {
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
+    actions.setBodyPosition(vec3(body.current.translation()));
+    actions.setBodyRotation(body.current.rotation());1
     engineSound.current.setVolume(currentSpeed / 300 + 0.2);
     engineSound.current.setPlaybackRate(currentSpeed / 10 + 0.1);
     jumpSound.current.setPlaybackRate(1.5);
@@ -142,7 +145,7 @@ export const PlayerController = () => {
     } else if (
       upPressed &&
       currentSpeed > maxSpeed &&
-      boostDuration.current > 0
+      effectiveBoost.current > 0
     ) {
       setCurrentSpeed(
         Math.max(currentSpeed - decceleration * delta * 144, maxSpeed)
@@ -337,21 +340,23 @@ export const PlayerController = () => {
 
     if (boostDuration.current > 1 && !jumpIsHeld.current) {
       setIsBoosting(true);
-    } else if (boostDuration.current <= 1) {
+      effectiveBoost.current = boostDuration.current;
+      boostDuration.current = 0;
+    } else if (effectiveBoost.current <= 1) {
       targetZPosition = 8;
       setIsBoosting(false);
     }
 
-    if (isBoosting && boostDuration.current > 1) {
+    if (isBoosting && effectiveBoost.current > 1) {
       setCurrentSpeed(boostSpeed);
-      boostDuration.current -= 1 * delta * 144;
+      effectiveBoost.current -= 1 * delta * 144;
       targetZPosition = 10;
       turboSound.current.play();
       driftTwoSound.current.play();
       driftBlueSound.current.stop();
       driftOrangeSound.current.stop();
       driftPurpleSound.current.stop();
-    } else if (boostDuration.current <= 1) {
+    } else if (effectiveBoost.current <= 1) {
       setIsBoosting(false);
       targetZPosition = 8;
       turboSound.current.stop();
@@ -391,6 +396,7 @@ export const PlayerController = () => {
 
 
     // ITEMS 
+    
     if(shootPressed && item === "banana") {
       const distanceBehind = 2; // Adjust this value as needed
       const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
@@ -434,9 +440,17 @@ export const PlayerController = () => {
 
     }
 
+    if(shootPressed && item === "mushroom") {
+      setIsBoosting(true);
+      boostDuration.current = 300;
+      actions.useItem();
+    }
+
     if(item) console.log(item)
 
     // console.lowg(body.current.translation())
+
+
   });
 
   return (

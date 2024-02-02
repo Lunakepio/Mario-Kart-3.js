@@ -20,9 +20,10 @@ export const useStore = create((set, get) => ({
   pastPositions: [],
   shouldSlowdown: false,
   bananas: [],
-  items: ["banana", "shell"],
+  items: ["banana", "shell", "mushroom"],
   item: "",
   shells: [],
+  skids: [],
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -99,7 +100,12 @@ export const useStore = create((set, get) => ({
       set((state) => ({
         shells: state.shells.filter((s) => s.id !== shell.id),
       }));
-    }
+    },
+    addSkid: (skid) => {
+      set((state) => ({
+        skids: [...state.skids, skid],
+      }));
+    },
   },
  
 }));
