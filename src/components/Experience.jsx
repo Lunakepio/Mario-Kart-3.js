@@ -22,6 +22,7 @@ import { Banana } from "./models/items/Banana_peel_mario_kart";
 import { ItemBox } from "./models/misc/Mario_kart_item_box";
 import { useStore } from "./store";
 import { Shell } from "./models/items/Mario_shell_red";
+import { Coin } from "./models/misc/Super_mario_bros_coin";
 
 export const Experience = () => {
   const onCollide = (event) => {
@@ -36,9 +37,11 @@ export const Experience = () => {
       <Banana onCollide={onCollide} position={[-10, 1.8, -119]} />
       {/* <Shell position={[-20, 2, -119]} /> */}
       <ItemBox position={[-20, 2, -119]} />
-      
+      <Coin position={[-30, 2, -119]} />
+
       <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
+
 
 
       {bananas.map((banana) => (

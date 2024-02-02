@@ -90,8 +90,6 @@ export const PlayerController = () => {
   useFrame(({ pointer, clock }, delta) => {
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
-    actions.setBodyPosition(vec3(body.current.translation()));
-    actions.setBodyRotation(body.current.rotation());1
     engineSound.current.setVolume(currentSpeed / 300 + 0.2);
     engineSound.current.setPlaybackRate(currentSpeed / 10 + 0.1);
     jumpSound.current.setPlaybackRate(1.5);
@@ -219,11 +217,12 @@ export const PlayerController = () => {
     );
 
     // JUMPING
-    if (jumpPressed && isOnFloor.current && !jumpIsHeld.current) {
+    if (jumpPressed && isOnGround && !jumpIsHeld.current) {
       jumpForce.current += 10;
       isOnFloor.current = false;
       jumpIsHeld.current = true;
       jumpSound.current.play();
+      setIsOnGround(false);
 
       if (jumpSound.current.isPlaying) {
         jumpSound.current.stop();
@@ -234,7 +233,7 @@ export const PlayerController = () => {
     if (isOnFloor.current && jumpForce.current > 0) {
       landingSound.current.play();
     }
-    if (!isOnFloor.current && jumpForce.current > 0) {
+    if (!isOnGround && jumpForce.current > 0 ) {
       jumpForce.current -= 1 * delta * 144;
     }
     if (!jumpPressed) {
@@ -462,10 +461,6 @@ export const PlayerController = () => {
       actions.useItem();
     }
 
-    if(item) console.log(item)
-
-    // console.lowg(body.current.translation())
-
 
   });
 
@@ -485,6 +480,11 @@ export const PlayerController = () => {
           mass={3}
           onCollisionEnter={({other}) => {
             isOnFloor.current = true;
+            setIsOnGround(true);
+          }}
+          onCollisionExit={({other}) => {
+            isOnFloor.current = false;
+            setIsOnGround(false);
           }}
 
         />
