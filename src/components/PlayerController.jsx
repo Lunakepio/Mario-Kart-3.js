@@ -32,6 +32,7 @@ export const PlayerController = () => {
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
+  const resetPressed = useKeyboardControls((state) => state[Controls.reset]);
   
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
@@ -393,6 +394,11 @@ export const PlayerController = () => {
     // SOUND WORK
 
     // MISC
+
+    if(resetPressed) {
+      body.current.setTranslation({x: 8, y: 2, z: -119});
+    }
+
 
 
     // ITEMS 
