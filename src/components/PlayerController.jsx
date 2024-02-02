@@ -351,7 +351,7 @@ export const PlayerController = () => {
       setCurrentSpeed(boostSpeed);
       effectiveBoost.current -= 1 * delta * 144;
       targetZPosition = 10;
-      turboSound.current.play();
+      if(!turboSound.current.isPlaying) turboSound.current.play();
       driftTwoSound.current.play();
       driftBlueSound.current.stop();
       driftOrangeSound.current.stop();
@@ -442,7 +442,7 @@ export const PlayerController = () => {
 
     if(shootPressed && item === "mushroom") {
       setIsBoosting(true);
-      boostDuration.current = 300;
+      effectiveBoost.current = 300;
       actions.useItem();
     }
 
