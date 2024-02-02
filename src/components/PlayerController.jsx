@@ -397,6 +397,16 @@ export const PlayerController = () => {
 
     if(resetPressed) {
       body.current.setTranslation({x: 8, y: 2, z: -119});
+      body.current.setLinvel({x: 0, y: 0, z: 0});
+      body.current.setAngvel({x: 0, y: 0, z: 0});
+      setCurrentSpeed(0);
+      setCurrentSteeringSpeed(0);
+      setIsBoosting(false);
+      effectiveBoost.current = 0;
+      setIsOnGround(false);
+      jumpForce.current = 0;
+      driftDirection.current = 0;
+      kart.current.rotation.y = Math.PI / 2;
     }
 
 
