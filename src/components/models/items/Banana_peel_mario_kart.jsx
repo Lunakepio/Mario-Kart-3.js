@@ -30,8 +30,10 @@ export function Banana({onCollide, id, ...props}) {
       type='fixed'
       position={props.position}
       sensor
-      onIntersectionEnter={() => {
-        actions.setShouldSlowDown(true);
+      onIntersectionEnter={({other}) => {
+        if(other.rigidBodyObject.name === "player"){
+          actions.setShouldSlowDown(true);
+        }
         actions.removeBananaById(id);
       }}
       colliders={false}
