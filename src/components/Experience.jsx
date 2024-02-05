@@ -19,7 +19,7 @@ import {
   Vignette,
 } from "@react-three/postprocessing";
 import { Banana } from "./models/items/Banana_peel_mario_kart";
-import { ItemBox } from "./models/misc/Mario_kart_item_box";
+import { ItemBox } from "./models/misc/Gift";
 import { useStore } from "./store";
 import { Shell } from "./models/items/Mario_shell_red";
 import { Coin } from "./models/misc/Super_mario_bros_coin";
@@ -36,7 +36,7 @@ export const Experience = () => {
       <Paris position={[0, 0, 0]} />
       <Banana onCollide={onCollide} position={[-10, 1.8, -119]} />
       {/* <Shell position={[-20, 2, -119]} /> */}
-      <ItemBox position={[-20, 2, -119]} />
+      <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
 
       <Ground position={[0, 0, 0]} />

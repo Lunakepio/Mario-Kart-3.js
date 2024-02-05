@@ -30,7 +30,7 @@ export const HUD = () => {
       </div>
       <div className="wheel">
         <img
-ref={wheel}
+          ref={wheel}
           src="./steering_wheel.png"
           alt="steering wheel"
           className="steering-wheel"

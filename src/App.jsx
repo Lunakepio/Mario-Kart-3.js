@@ -30,24 +30,26 @@ function App() {
   )
 
   return (
+    <>
+    <Loader />
     <Canvas
       shadows
       dpr={1}
       gl={{ antialias: false, stencil: false, powerPreference: 'high-performance' }}
     >
       <Suspense fallback={null}>
+      <Preload all />
         <Physics
           gravity={[0, -90, 0]}
           timeStep={'vary'}
-          // debug
         >
           <KeyboardControls map={map}>
             <Experience />
           </KeyboardControls>
-          <Stats />
         </Physics>
       </Suspense>
     </Canvas>
+    </>
   )
 }
 

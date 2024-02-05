@@ -7,6 +7,6 @@ import { HUD } from './HUD'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
-    {/* <HUD /> */}
+    <HUD />
   </React.StrictMode>,
 )

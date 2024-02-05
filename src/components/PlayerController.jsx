@@ -14,16 +14,18 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
 
 import { Mario } from "./models/characters/Mario_kart";
-import { DriftParticlesLeft } from "./Particles/DriftParticlesLeft";
-import { DriftParticlesRight } from "./Particles/DriftParticlesRight";
+import { DriftParticlesLeft } from "./Particles/drifts/DriftParticlesLeft";
+import { DriftParticlesRight } from "./Particles/drifts/DriftParticlesRight";
 
-import { PointParticle } from "./Particles/PointParticle";
+import { PointParticle } from "./Particles/drifts/PointParticle";
 
-import { FlameParticles } from "./Particles/FlameParticles";
+import { FlameParticles } from "./Particles/flames/FlameParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
 import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
-import { HitParticles } from "./Particles/HitParticles";
+import { HitParticles } from "./Particles/hits/HitParticles";
+import { CoinParticles } from "./Particles/coins/CoinParticles";
+import { ItemParticles } from "./Particles/items/ItemParticles";
 
 export const PlayerController = () => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
@@ -83,7 +85,7 @@ export const PlayerController = () => {
   const effectiveBoost = useRef(0);
 
 
-  const { actions, shouldSlowDown, item, bananas} = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins} = useStore();
   const slowDownDuration = useRef(1500);
   
 
@@ -461,7 +463,7 @@ export const PlayerController = () => {
       actions.useItem();
     }
 
-
+    console.log("coins", coins);
   });
 
   return (
@@ -497,12 +499,8 @@ export const PlayerController = () => {
             steeringAngleWheels={steeringAngleWheels}
             isBoosting={isBoosting}
           />
-          <pointLight
-            position={[0.6, 0.05, 0.5]}
-            intensity={scale}
-            color={turboColor}
-          />
-
+          <CoinParticles coins={coins}/>
+          <ItemParticles item={item}/>
           <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
@@ -522,11 +520,6 @@ export const PlayerController = () => {
               glowSharpness={1}
             />
           </mesh>
-          <pointLight
-            position={[-0.6, 0.05, 0.5]}
-            intensity={scale}
-            color={turboColor}
-          />
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial

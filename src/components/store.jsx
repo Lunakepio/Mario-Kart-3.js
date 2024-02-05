@@ -24,6 +24,7 @@ export const useStore = create((set, get) => ({
   item: "",
   shells: [],
   skids: [],
+  coins : 0,
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -109,6 +110,16 @@ export const useStore = create((set, get) => ({
     addSkid: (skid) => {
       set((state) => ({
         skids: [...state.skids, skid],
+      }));
+    },
+    addCoins : () => {
+      set((state) => ({
+        coins: state.coins + 1,
+      }));
+    },
+    looseCoins : () => {
+      set((state) => ({
+        coins: state.coins - 1,
       }));
     },
   },

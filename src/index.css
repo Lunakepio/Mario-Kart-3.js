@@ -39,6 +39,7 @@ pointer-events: none;
 }
 
 .logo{
+  display: none;
   position:absolute;
 top:150px;
 left:500px;
