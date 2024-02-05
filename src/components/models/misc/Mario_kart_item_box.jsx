@@ -20,7 +20,6 @@ export function ItemBox(props) {
         <RigidBody type="fixed" name="itemBox"
       sensor
       onIntersectionEnter={() => {
-        console.log("item box hit");
         actions.setItem();
         
       }}

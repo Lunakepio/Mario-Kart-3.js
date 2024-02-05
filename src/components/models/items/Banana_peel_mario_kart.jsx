@@ -23,7 +23,6 @@ export function Banana({onCollide, id, ...props}) {
 
   const {actions} = useStore();
 
-  console.log('banana', id);
    return (
     <>
             <RigidBody

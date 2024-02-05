@@ -1,7 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useStore } from "./components/store";
 
 export const HUD = () => {
   const wheel = useRef();
+  const [image, setImage] = useState("");
+  const {item} = useStore();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -23,10 +26,36 @@ export const HUD = () => {
     };
   }, []);
 
+  useEffect(() => {
+    switch (item) {
+      case "banana":
+        setImage("./images/banana.webp");
+        break;
+      case "mushroom":
+        setImage("./images/mushroom.png");
+        break;
+      case "shell":
+        setImage("./images/shell.webp");
+        break;
+      default:
+        setImage("");
+    }
+    console.log(item);
+  }, [item]);
+
   return (
-    <div className="overlay"> dadasd
+    <div className="overlay">
       <div className="logo">
         <img src="./logo.png" alt="logo" />
+      </div>
+      <div className="item">
+        <div className="borderOut">
+          <div className="borderIn">
+            <div className="background">
+              {image && <img src={image} alt="item" width={90} />}
+            </div>
+          </div>
+        </div>
       </div>
       <div className="wheel">
         <img

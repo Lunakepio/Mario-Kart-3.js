@@ -47,7 +47,6 @@ export function ItemBox(props) {
       onIntersectionEnter={({other}) => {
         if(other.rigidBodyObject.name === "player"){
 
-        console.log("item box hit");
         actions.setItem();
         setScale(0);
         frames.current = 400;

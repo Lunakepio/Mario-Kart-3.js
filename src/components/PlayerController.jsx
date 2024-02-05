@@ -463,7 +463,7 @@ export const PlayerController = () => {
       actions.useItem();
     }
 
-    console.log("coins", coins);
+
   });
 
   return (
