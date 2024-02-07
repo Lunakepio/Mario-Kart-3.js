@@ -1,8 +1,10 @@
 import { Canvas } from '@react-three/fiber'
 import { Experience } from './components/Experience'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { Physics } from '@react-three/rapier'
 import { KeyboardControls, Loader, OrbitControls, Preload, Stats } from '@react-three/drei'
+import { insertCoin, onPlayerJoin } from 'playroomkit'
+import { useStore } from "./components/store";
 
 export const Controls = {
   up: 'up',
@@ -28,6 +30,26 @@ function App() {
     ],
     []
   )
+
+  const { actions } = useStore();
+  const start = async () => {
+    await insertCoin();
+
+    onPlayerJoin((state) => {
+      actions.addPlayer(state);
+      console.log('player joined', state);
+      actions.setId(state.id);
+
+      state.onQuit(() => {
+        actions.removePlayer(state);
+        console.log('player quit', state);
+      });
+    });
+  }
+
+  useEffect(() => {
+    start();
+  }, [])
 
   return (
     <>

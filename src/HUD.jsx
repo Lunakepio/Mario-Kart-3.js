@@ -40,7 +40,6 @@ export const HUD = () => {
       default:
         setImage("");
     }
-    console.log(item);
   }, [item]);
 
   return (

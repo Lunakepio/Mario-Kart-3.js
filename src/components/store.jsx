@@ -20,11 +20,13 @@ export const useStore = create((set, get) => ({
   pastPositions: [],
   shouldSlowdown: false,
   bananas: [],
-  items: ["banana", "shell", "mushroom"],
+  items: ["banana"],
   item: "",
   shells: [],
   skids: [],
   coins : 0,
+  players : [],
+  id : "",
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -87,6 +89,9 @@ export const useStore = create((set, get) => ({
         bananas: state.bananas.filter((b) => b.id !== id),
       }));
     },
+    setBananas: (bananas) => {
+      set({ bananas });
+    },
     setItem:() => {
       set((state) => ({
         item: state.items[Math.floor(Math.random() * state.items.length)],
@@ -122,6 +127,19 @@ export const useStore = create((set, get) => ({
         coins: state.coins - 1,
       }));
     },
+    addPlayer : (player) => {
+      set((state) => ({
+        players: [...state.players, player],
+      }));
+    },
+    removePlayer : (player) => {
+      set((state) => ({
+        players: state.players.filter((p) => p.id !== player.id),
+      }));
+    },
+    setId : (id) => {
+      set({id});
+    }
   },
  
 }));

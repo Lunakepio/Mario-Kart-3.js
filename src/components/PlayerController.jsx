@@ -26,8 +26,10 @@ import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
 import { HitParticles } from "./Particles/hits/HitParticles";
 import { CoinParticles } from "./Particles/coins/CoinParticles";
 import { ItemParticles } from "./Particles/items/ItemParticles";
+import { isHost } from "playroomkit";
 
-export const PlayerController = () => {
+export const PlayerController = ( { player, userPlayer }) => {
+
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
   const downPressed = useKeyboardControls((state) => state[Controls.down]);
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
@@ -85,11 +87,11 @@ export const PlayerController = () => {
   const effectiveBoost = useRef(0);
 
 
-  const { actions, shouldSlowDown, item, bananas, coins} = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins, id} = useStore();
   const slowDownDuration = useRef(1500);
   
-
   useFrame(({ pointer, clock }, delta) => {
+    if(player.id !== id) return;
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
     engineSound.current.setVolume(currentSpeed / 300 + 0.2);
@@ -121,6 +123,8 @@ export const PlayerController = () => {
       targetXPosition = 0;
       1;
     }
+    
+
 
     // mouse steering
 
@@ -464,9 +468,19 @@ export const PlayerController = () => {
     }
 
 
+
+      player.setState("position", body.current.translation());
+      player.setState("rotation", kartRotation + mario.current.rotation.y);
+      player.setState("isBoosting", isBoosting);
+      player.setState("shouldLaunch", shouldLaunch);
+      player.setState("turboColor", turboColor);
+      player.setState("scale", scale);
+      player.setState("bananas", bananas);
+      
+
   });
 
-  return (
+  return player.id === id ?(
     <group>
       <RigidBody
         ref={body}
@@ -476,6 +490,7 @@ export const PlayerController = () => {
         mass={3}
         ccd
         name="player"
+        type={player.id === id ? "dynamic" : "kinematic"}
       >
         <BallCollider
           args={[0.5]}
@@ -631,5 +646,5 @@ export const PlayerController = () => {
         />
       </group>
     </group>
-  );
+  ) : null;
 };
