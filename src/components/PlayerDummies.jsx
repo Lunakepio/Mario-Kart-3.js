@@ -8,6 +8,8 @@ import {
   OrbitControls,
   Trail,
   PositionalAudio,
+  Text,
+  Billboard,
 } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -113,6 +115,9 @@ export const PlayerDummies = ( { player, userPlayer }) => {
 
   return player.id != id? (
     <>
+              <Billboard>
+            <Text font={"./fonts/HK.ttf"} ref={text} fontSize={0.4} outlineWidth={0.03} position={[0, 2, 0]}>{player.state.profile.name}</Text>
+          </Billboard>
     <group>
       <RigidBody 
         type="kinematic"

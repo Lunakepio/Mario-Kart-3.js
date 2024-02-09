@@ -3,13 +3,9 @@ import { BallCollider, RigidBody, useRapier, vec3 } from "@react-three/rapier";
 import {
   useKeyboardControls,
   PerspectiveCamera,
-  ContactShadows,
-  Sphere,
-  OrbitControls,
-  Trail,
   PositionalAudio,
 } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree, extend } from "@react-three/fiber";
 import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
 
@@ -26,10 +22,17 @@ import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
 import { HitParticles } from "./Particles/hits/HitParticles";
 import { CoinParticles } from "./Particles/coins/CoinParticles";
 import { ItemParticles } from "./Particles/items/ItemParticles";
-import { isHost } from "playroomkit";
+import { geometry } from "maath";
+extend(geometry);
 
-export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNetworkShells, networkBananas, networkShells  }) => {
-
+export const PlayerController = ({
+  player,
+  userPlayer,
+  setNetworkBananas,
+  setNetworkShells,
+  networkBananas,
+  networkShells,
+}) => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
   const downPressed = useKeyboardControls((state) => state[Controls.down]);
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
@@ -37,7 +40,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
   const resetPressed = useKeyboardControls((state) => state[Controls.reset]);
-  
+
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
   const kart = useRef();
@@ -85,13 +88,13 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
   const downDirection = new THREE.Vector3(0, -1, 0);
   const [shouldLaunch, setShouldLaunch] = useState(false);
   const effectiveBoost = useRef(0);
+  const text = useRef();
 
-
-  const { actions, shouldSlowDown, item, bananas, coins, id} = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins, id } = useStore();
   const slowDownDuration = useRef(1500);
-  
+
   useFrame(({ pointer, clock }, delta) => {
-    if(player.id !== id) return;
+    if (player.id !== id) return;
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
     engineSound.current.setVolume(currentSpeed / 300 + 0.2);
@@ -123,8 +126,6 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       targetXPosition = 0;
       1;
     }
-    
-
 
     // mouse steering
 
@@ -132,15 +133,14 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       steeringAngle = currentSteeringSpeed * -pointer.x;
       targetXPosition = -camMaxOffset * -pointer.x;
     } else if (driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x - 0.5);
+      steeringAngle = currentSteeringSpeed * -(pointer.x - 1);
       targetXPosition = -camMaxOffset * -pointer.x;
     } else if (driftRight.current && !driftLeft.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x + 0.5);
+      steeringAngle = currentSteeringSpeed * -(pointer.x + 1);
       targetXPosition = -camMaxOffset * -pointer.x;
     }
     // ACCELERATING
     const shouldSlow = actions.getShouldSlowDown();
-    
 
     if (upPressed && currentSpeed < maxSpeed) {
       // Accelerate the kart within the maximum speed limit
@@ -168,7 +168,9 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       }
     }
     if (shouldSlow) {
-      setCurrentSpeed(Math.max(currentSpeed - decceleration * 2 * delta * 144, 0));
+      setCurrentSpeed(
+        Math.max(currentSpeed - decceleration * 2 * delta * 144, 0)
+      );
       setCurrentSteeringSpeed(0);
       slowDownDuration.current -= 1500 * delta;
       setShouldLaunch(true);
@@ -177,12 +179,8 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
         slowDownDuration.current = 1500;
         setShouldLaunch(false);
       }
-
-
     }
 
-
-    
     // REVERSING
     if (downPressed && currentSpeed < -maxSpeed) {
       setCurrentSpeed(
@@ -239,7 +237,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
     if (isOnFloor.current && jumpForce.current > 0) {
       landingSound.current.play();
     }
-    if (!isOnGround && jumpForce.current > 0 ) {
+    if (!isOnGround && jumpForce.current > 0) {
       jumpForce.current -= 1 * delta * 144;
     }
     if (!jumpPressed) {
@@ -286,7 +284,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       driftForce.current = 0.4;
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
-        steeringAngle * 50 + 0.5,
+        steeringAngle * 25 + 0.4,
         0.05 * delta * 144
       );
       accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
@@ -296,7 +294,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       driftForce.current = 0.4;
       mario.current.rotation.y = THREE.MathUtils.lerp(
         mario.current.rotation.y,
-        -(-steeringAngle * 50 + 0.5),
+        -(-steeringAngle * 25 + 0.4),
         0.05 * delta * 144
       );
       accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
@@ -330,7 +328,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
     if (driftLeft.current || driftRight.current) {
       const oscillation = Math.sin(time * 1000) * 0.1;
       const vibration = oscillation + 0.9;
-    if (turboColor === 0xffffff) {
+      if (turboColor === 0xffffff) {
         setScale(vibration * 0.8);
       } else {
         setScale(vibration);
@@ -356,7 +354,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       setCurrentSpeed(boostSpeed);
       effectiveBoost.current -= 1 * delta * 144;
       targetZPosition = 10;
-      if(!turboSound.current.isPlaying) turboSound.current.play();
+      if (!turboSound.current.isPlaying) turboSound.current.play();
       driftTwoSound.current.play();
       driftBlueSound.current.stop();
       driftOrangeSound.current.stop();
@@ -399,10 +397,10 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
 
     // MISC
 
-    if(resetPressed) {
-      body.current.setTranslation({x: 8, y: 2, z: -119});
-      body.current.setLinvel({x: 0, y: 0, z: 0});
-      body.current.setAngvel({x: 0, y: 0, z: 0});
+    if (resetPressed) {
+      body.current.setTranslation({ x: 8, y: 2, z: -119 });
+      body.current.setLinvel({ x: 0, y: 0, z: 0 });
+      body.current.setAngvel({ x: 0, y: 0, z: 0 });
       setCurrentSpeed(0);
       setCurrentSteeringSpeed(0);
       setIsBoosting(false);
@@ -413,17 +411,16 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       kart.current.rotation.y = Math.PI / 2;
     }
 
+    // ITEMS
 
+    if (shootPressed && item === "banana") {
+      const distanceBehind = 2;
+      const scaledBackwardDirection =
+        forwardDirection.multiplyScalar(distanceBehind);
 
-    // ITEMS 
-    
-    if(shootPressed && item === "banana") {
-      const distanceBehind = 2; 
-      const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
-    
-      
-      const kartPosition = new THREE.Vector3(...vec3(body.current.translation()));
-    
+      const kartPosition = new THREE.Vector3(
+        ...vec3(body.current.translation())
+      );
 
       const bananaPosition = kartPosition.sub(scaledBackwardDirection);
       const newBanana = {
@@ -436,48 +433,44 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
       actions.useItem();
     }
 
-    if(shootPressed && item === "shell") {
+    if (shootPressed && item === "shell") {
       const distanceBehind = -2;
-      const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
-    
+      const scaledBackwardDirection =
+        forwardDirection.multiplyScalar(distanceBehind);
+
       const kartPosition = new THREE.Vector3(
         body.current.translation().x,
         body.current.translation().y,
         body.current.translation().z
       );
-    
+
       const shellPosition = kartPosition.sub(scaledBackwardDirection);
       const newShell = {
         id: Math.random() + "-" + +new Date(),
         position: shellPosition,
         player: true,
-        rotation: kartRotation
+        rotation: kartRotation,
       };
       setNetworkShells([...networkShells, newShell]);
       actions.useItem();
-
     }
 
-    if(shootPressed && item === "mushroom") {
+    if (shootPressed && item === "mushroom") {
       setIsBoosting(true);
       effectiveBoost.current = 300;
       actions.useItem();
     }
 
-
-
-      player.setState("position", body.current.translation());
-      player.setState("rotation", kartRotation + mario.current.rotation.y);
-      player.setState("isBoosting", isBoosting);
-      player.setState("shouldLaunch", shouldLaunch);
-      player.setState("turboColor", turboColor);
-      player.setState("scale", scale);
-      player.setState("bananas", bananas);
-      
-
+    player.setState("position", body.current.translation());
+    player.setState("rotation", kartRotation + mario.current.rotation.y);
+    player.setState("isBoosting", isBoosting);
+    player.setState("shouldLaunch", shouldLaunch);
+    player.setState("turboColor", turboColor);
+    player.setState("scale", scale);
+    player.setState("bananas", bananas);
   });
 
-  return player.id === id ?(
+  return player.id === id ? (
     <group>
       <RigidBody
         ref={body}
@@ -492,15 +485,14 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
         <BallCollider
           args={[0.5]}
           mass={3}
-          onCollisionEnter={({other}) => {
+          onCollisionEnter={({ other }) => {
             isOnFloor.current = true;
             setIsOnGround(true);
           }}
-          onCollisionExit={({other}) => {
+          onCollisionExit={({ other }) => {
             isOnFloor.current = false;
             setIsOnGround(false);
           }}
-
         />
       </RigidBody>
 
@@ -512,8 +504,8 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
             isBoosting={isBoosting}
             shouldLaunch={shouldLaunch}
           />
-          <CoinParticles coins={coins}/>
-          <ItemParticles item={item}/>
+          <CoinParticles coins={coins} />
+          <ItemParticles item={item} />
           <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
@@ -552,7 +544,6 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
               glowSharpness={1}
             />
           </mesh>
-
           {/* <FlameParticles isBoosting={isBoosting} /> */}
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
@@ -576,7 +567,7 @@ export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNe
             png="./particles/star.png"
             turboColor={turboColor}
           />
-          <HitParticles shouldLaunch={shouldLaunch}/>
+          <HitParticles shouldLaunch={shouldLaunch} />
         </group>
 
         {/* <ContactShadows frames={1} /> */}

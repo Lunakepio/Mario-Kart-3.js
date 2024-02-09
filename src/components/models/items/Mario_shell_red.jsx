@@ -19,7 +19,7 @@ export function Shell({ id, position, rotation, setNetworkShells, networkShells,
   const ref = useRef();
 
   const shell_speed = 100;
-  const {actions} = useStore();
+  const {actions} = useStore(); 
 
   useEffect(() => {
     const velocity = {

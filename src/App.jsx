@@ -39,6 +39,7 @@ function App() {
       actions.addPlayer(state);
       console.log('player joined', state);
       actions.setId(state.id);
+      console.log(state)
 
       state.onQuit(() => {
         actions.removePlayer(state);
