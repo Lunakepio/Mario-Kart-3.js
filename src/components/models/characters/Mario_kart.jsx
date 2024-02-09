@@ -11,7 +11,7 @@ import FakeFlame from '../../ShaderMaterials/FakeFlame/FakeFlame'
 import { useStore } from '../../store'
 import gsap from 'gsap'
 
-export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props }) {
+export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLaunch, ...props }) {
   const { nodes, materials } = useGLTF('./models/characters/mariokarttest.glb')
 
   const frontLeftWheel = useRef()
@@ -39,11 +39,11 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, ...props 
   })
 
   useEffect(() => {
-    if (shouldSlow) {
+    if (shouldLaunch) {
       gsap.to(mario.current.rotation, {duration: 1.5, y: Math.PI * 3})
       mario.current.rotation.set(0, 0, 0);
     }
-  }, [shouldSlow])
+  }, [shouldLaunch])
   return (
     <group
       {...props}

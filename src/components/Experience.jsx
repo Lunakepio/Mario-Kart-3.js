@@ -23,34 +23,65 @@ import { ItemBox } from "./models/misc/Gift";
 import { useStore } from "./store";
 import { Shell } from "./models/items/Mario_shell_red";
 import { Coin } from "./models/misc/Super_mario_bros_coin";
-import { RPC, insertCoin, myPlayer, onPlayerJoin, useMultiplayerState } from "playroomkit";
+import {
+  RPC,
+  getState,
+  insertCoin,
+  isHost,
+  myPlayer,
+  onPlayerJoin,
+  useMultiplayerState,
+} from "playroomkit";
 import { PlayerDummies } from "./PlayerDummies";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 
 export const Experience = () => {
   const onCollide = (event) => {
     console.log(event);
   };
-  const { bananas, shells, players, id, actions} = useStore();
-  const [networkBananas, setNetworkBananas] = useMultiplayerState("bananas", []);
+  const { bananas, shells, players, id, actions } = useStore();
+  const [networkBananas, setNetworkBananas] = useMultiplayerState(
+    "bananas",
+    []
+  );
 
   const [networkShells, setNetworkShells] = useMultiplayerState("shells", []);
 
+  const testing = getState("bananas");
+
+  // useEffect(() => {
+  //   setNetworkBananas(bananas);
+  // }, [bananas]);
+
+  // useEffect(() => {
+  //   setNetworkShells(shells);
+  // }, [shells]);
 
   return (
     <>
-    {players.map((player) => (
-      <PlayerController key={player.id} player={player} userPlayer={player.id === myPlayer()?.id} />
-    ))}
-
       {players.map((player) => (
-        <PlayerDummies key={player.id} player={player} userPlayer={player.id === myPlayer()?.id} />
+        <PlayerController
+          key={player.id}
+          player={player}
+          userPlayer={player.id === myPlayer()?.id}
+          setNetworkBananas={setNetworkBananas}
+          setNetworkShells={setNetworkShells}
+          networkBananas={networkBananas}
+          networkShells={networkShells}
+        />
       ))}
 
-    
+      {players.map((player) => (
+        <PlayerDummies
+          key={player.id}
+          player={player}
+          userPlayer={player.id === myPlayer()?.id}
+        />
+      ))}
+
       <Paris position={[0, 0, 0]} />
-      <Banana onCollide={onCollide} position={[-10, 1.8, -119]} />
+      {/* <Banana onCollide={onCollide} position={[-10, 1.8, -119]} /> */}
       {/* <Shell position={[-20, 2, -119]} /> */}
       <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
@@ -58,23 +89,25 @@ export const Experience = () => {
       <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
 
-
-
-      {/* {bananas.map((banana) => (
+      {networkBananas.map((banana) => (
         <Banana
           key={banana.id}
           position={banana.position}
-          banana={banana}
+          setNetworkBananas={setNetworkBananas}
+          networkBananas={networkBananas}
           id={banana.id}
           // rotation={banana.rotation}
         />
-      ))} */}
-
-      {shells.map((shell) => (
+      ))}
+      {networkShells.map((shell) => (
         <Shell
           key={shell.id}
+          id={shell.id}
           position={shell.position}
           rotation={shell.rotation}
+          setNetworkShells={setNetworkShells}
+          networkShells={networkShells}
+          
         />
       ))}
 

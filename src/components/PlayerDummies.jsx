@@ -106,6 +106,7 @@ export const PlayerDummies = ( { player, userPlayer }) => {
   if(bodyPosition && bodyRotation && kart.current && mario.current){
     kart.current.position.set(bodyPosition.x, bodyPosition.y -.5, bodyPosition.z);
     kart.current.rotation.set(0, bodyRotation, 0);
+    body.current.setTranslation([bodyPosition.x, bodyPosition.y, bodyPosition.z]);
   }
 
  });
@@ -113,6 +114,16 @@ export const PlayerDummies = ( { player, userPlayer }) => {
   return player.id != id? (
     <>
     <group>
+      <RigidBody 
+        type="kinematic"
+        ref={body}
+        position={[0, 0, 0]}
+        rotation={[0, 0, 0]}
+        colliders={false}
+        name="player"
+        >
+        <BallCollider args={[0.5]} />
+      </RigidBody>
 
       <group ref={kart} rotation={[0, Math.PI / 2, 0]}>
         <group ref={mario}>
@@ -120,6 +131,7 @@ export const PlayerDummies = ( { player, userPlayer }) => {
             currentSpeed={currentSpeed}
             steeringAngleWheels={steeringAngleWheels}
             isBoosting={isBoosting}
+            shouldLaunch={shouldLaunch}
           />
           <CoinParticles coins={coins}/>
           <ItemParticles item={item}/>

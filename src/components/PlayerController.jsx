@@ -28,7 +28,7 @@ import { CoinParticles } from "./Particles/coins/CoinParticles";
 import { ItemParticles } from "./Particles/items/ItemParticles";
 import { isHost } from "playroomkit";
 
-export const PlayerController = ( { player, userPlayer }) => {
+export const PlayerController = ( { player, userPlayer, setNetworkBananas, setNetworkShells, networkBananas, networkShells  }) => {
 
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
   const downPressed = useKeyboardControls((state) => state[Controls.down]);
@@ -330,8 +330,7 @@ export const PlayerController = ( { player, userPlayer }) => {
     if (driftLeft.current || driftRight.current) {
       const oscillation = Math.sin(time * 1000) * 0.1;
       const vibration = oscillation + 0.9;
-
-      if (turboColor === 0xffffff) {
+    if (turboColor === 0xffffff) {
         setScale(vibration * 0.8);
       } else {
         setScale(vibration);
@@ -419,36 +418,34 @@ export const PlayerController = ( { player, userPlayer }) => {
     // ITEMS 
     
     if(shootPressed && item === "banana") {
-      const distanceBehind = 2; // Adjust this value as needed
+      const distanceBehind = 2; 
       const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
     
-      // Get the current position of the kart
+      
       const kartPosition = new THREE.Vector3(...vec3(body.current.translation()));
     
-      // Calculate the position for the new banana
+
       const bananaPosition = kartPosition.sub(scaledBackwardDirection);
       const newBanana = {
         id: Math.random() + "-" + +new Date(),
         position: bananaPosition,
         player: true,
       };
-      actions.addBanana(newBanana);
-      actions.useItem();
+      setNetworkBananas([...networkBananas, newBanana]);
 
+      actions.useItem();
     }
 
     if(shootPressed && item === "shell") {
-      const distanceBehind = -1; // Adjust this value as needed
+      const distanceBehind = -2;
       const scaledBackwardDirection = forwardDirection.multiplyScalar(distanceBehind);
     
-      // Get the current position of the kart
       const kartPosition = new THREE.Vector3(
         body.current.translation().x,
         body.current.translation().y,
         body.current.translation().z
       );
     
-      // Calculate the position for the new banana
       const shellPosition = kartPosition.sub(scaledBackwardDirection);
       const newShell = {
         id: Math.random() + "-" + +new Date(),
@@ -456,7 +453,7 @@ export const PlayerController = ( { player, userPlayer }) => {
         player: true,
         rotation: kartRotation
       };
-      actions.addShell(newShell);
+      setNetworkShells([...networkShells, newShell]);
       actions.useItem();
 
     }
@@ -513,6 +510,7 @@ export const PlayerController = ( { player, userPlayer }) => {
             currentSpeed={currentSpeed}
             steeringAngleWheels={steeringAngleWheels}
             isBoosting={isBoosting}
+            shouldLaunch={shouldLaunch}
           />
           <CoinParticles coins={coins}/>
           <ItemParticles item={item}/>

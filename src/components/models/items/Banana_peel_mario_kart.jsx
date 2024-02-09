@@ -8,13 +8,13 @@ Source: https://sketchfab.com/3d-models/banana-peel-mario-kart-c7fd163741614859b
 Title: Banana Peel (Mario Kart)
 */
 
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { BallCollider, RigidBody } from '@react-three/rapier'
 import { useFrame } from '@react-three/fiber';
 import { useStore } from '../../store';
 
-export function Banana({onCollide, id, ...props}) {
+export function Banana({onCollide, id, position, setNetworkBananas, networkBananas}) {
   const { nodes, materials } = useGLTF('./models/items/banana_peel_mario_kart-transformed.glb');
   const rigidBody = useRef();
   const ref = useRef();
@@ -28,13 +28,13 @@ export function Banana({onCollide, id, ...props}) {
             <RigidBody
       ref={rigidBody}
       type='fixed'
-      position={props.position}
+      position={[position.x, position.y, position.z]}
       sensor
       onIntersectionEnter={({other}) => {
         if(other.rigidBodyObject.name === "player"){
           actions.setShouldSlowDown(true);
+          setNetworkBananas(networkBananas.filter((banana) => banana.id !== id));
         }
-        actions.removeBananaById(id);
       }}
       colliders={false}
       name='banana'
@@ -43,7 +43,7 @@ export function Banana({onCollide, id, ...props}) {
 
       </RigidBody>
 
-    <group {...props} ref={ref} scale={scale} dispose={null}>
+    <group position={[position.x, position.y, position.z]} ref={ref} scale={scale} dispose={null}>
       <mesh castShadow receiveShadow geometry={nodes['Banana_Peel_02_-_Default_0'].geometry} material={materials['02_-_Default']} position={[39.973, -25.006, -0.017]} rotation={[-Math.PI / 2, 0, 0]} />
       <mesh castShadow receiveShadow geometry={nodes['Banana_Peel_07_-_Default_0'].geometry} material={materials['07_-_Default']} position={[39.973, -25.006, -0.017]} rotation={[-Math.PI / 2, 0, 0]} />
       <mesh castShadow receiveShadow geometry={nodes['Banana_Peel_03_-_Default_0'].geometry} material={materials['03_-_Default']} position={[39.973, -25.006, -0.017]} rotation={[-Math.PI / 2, 0, 0]} />

@@ -20,7 +20,7 @@ export const useStore = create((set, get) => ({
   pastPositions: [],
   shouldSlowdown: false,
   bananas: [],
-  items: ["banana"],
+  items: ["mushroom"],
   item: "",
   shells: [],
   skids: [],
