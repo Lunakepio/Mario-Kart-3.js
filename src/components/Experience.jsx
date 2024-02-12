@@ -17,6 +17,7 @@ import {
   SMAA,
   ChromaticAberration,
   Vignette,
+  LUT,
 } from "@react-three/postprocessing";
 import { Banana } from "./models/items/Banana_peel_mario_kart";
 import { ItemBox } from "./models/misc/Gift";
@@ -34,7 +35,8 @@ import {
 } from "playroomkit";
 import { PlayerDummies } from "./PlayerDummies";
 import { useEffect, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { LUTPass, LUTCubeLoader } from 'three-stdlib'
 
 export const Experience = () => {
   const onCollide = (event) => {
@@ -57,6 +59,8 @@ export const Experience = () => {
   // useEffect(() => {
   //   setNetworkShells(shells);
   // }, [shells]);
+
+  const {texture}= useLoader(LUTCubeLoader, "./cubicle-99.CUBE");
 
   return (
     <>
@@ -111,7 +115,7 @@ export const Experience = () => {
         />
       ))}
 
-      <directionalLight
+      {/* <directionalLight
         position={[10, 50, -30]}
         intensity={1}
         shadow-bias={-0.0001}
@@ -121,7 +125,7 @@ export const Experience = () => {
         shadow-camera-top={300}
         shadow-camera-bottom={-300}
         castShadow
-      />
+      /> */}
 
       <EffectComposer
         multisampling={0}
@@ -137,11 +141,10 @@ export const Experience = () => {
           luminanceSmoothing={0.01}
           intensity={0.5}
         />
-
         <TiltShift2 />
-        <ChromaticAberration offset={[0.0006, 0.0006]} />
-        <HueSaturation saturation={0.1} />
-        <Vignette eskil={false} offset={0.1} darkness={0.4} />
+        {/* <ChromaticAberration offset={[0.0006, 0.0006]} /> */}
+        <HueSaturation saturation={0.05} />
+        {/* <Vignette eskil={false} offset={0.1} darkness={0.4} /> */}
       </EffectComposer>
     </>
   );
