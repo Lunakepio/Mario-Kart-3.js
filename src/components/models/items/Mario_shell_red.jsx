@@ -7,45 +7,70 @@ Source: https://sketchfab.com/3d-models/mario-shell-red-76a81ff57398423d80800259
 Title: Mario Shell Red
 */
 
-import React, { useEffect, useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
-import { BallCollider, RigidBody, vec3 } from '@react-three/rapier'
-import { useFrame } from '@react-three/fiber';
+import React, { useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import { BallCollider, RigidBody, vec3 } from "@react-three/rapier";
+import { useFrame } from "@react-three/fiber";
+import { useStore } from "../../store";
 
-export function Shell(props) {
-  const { nodes, materials } = useGLTF('./models/items/mario_shell_red.glb')
+export function Shell({ id, position, rotation, setNetworkShells, networkShells, ...props}) {
+  const { nodes, materials } = useGLTF("./models/items/mario_shell_red.glb");
   const rigidBody = useRef();
   const ref = useRef();
 
   const shell_speed = 100;
+  const {actions} = useStore(); 
 
   useEffect(() => {
     const velocity = {
-      x : -Math.sin(props.rotation) * shell_speed,
-      y : 0,
-      z : -Math.cos(props.rotation) * shell_speed,
+      x: -Math.sin(rotation) * shell_speed,
+      y: 0,
+      z: -Math.cos(rotation) * shell_speed,
     };
 
     rigidBody.current.setLinvel(velocity, true);
-  },[]);
+  }, []);
 
   useFrame((state, delta) => {
-    const rigidBodyPosition = rigidBody.current.translation();
-    ref.current.position.set(rigidBodyPosition.x, rigidBodyPosition.y, rigidBodyPosition.z);
-    ref.current.rotation.z += 0.2 * delta * 144;
+    if(rigidBody.current && ref.current){
+      const rigidBodyPosition = rigidBody.current.translation();
+      ref.current.position.set(
+        rigidBodyPosition.x,
+        rigidBodyPosition.y,
+        rigidBodyPosition.z
+      );
+      ref.current.rotation.z += 0.2 * delta * 144;
+    }
   });
-
 
   return (
     <group dispose={null}>
-
-          <RigidBody ref={rigidBody} type="dynamic" position={props.position} name="shell" colliders={false}>
-            <BallCollider args={[0.5]} />
-            
-          </RigidBody>
-          <mesh ref={ref} geometry={nodes.defaultMaterial.geometry} material={materials.Shell} rotation={[-Math.PI / 2, 0, 0]} scale={0.6} />
+      <RigidBody
+        ref={rigidBody}
+        type="dynamic"
+        position={[position.x, position.y, position.z]}
+        name="shell"
+        colliders={false}
+        onCollisionEnter={(other) => {
+          if (other.rigidBodyObject.name === "player") {
+            actions.setShouldSlowDown(true);
+            setNetworkShells(
+              networkShells.filter((shell) => shell.id !== id)
+            );
+          }
+        }}
+      >
+        <BallCollider args={[0.5]} />
+      </RigidBody>
+      <mesh
+        ref={ref}
+        geometry={nodes.defaultMaterial.geometry}
+        material={materials.Shell}
+        rotation={[-Math.PI / 2, 0, 0]}
+        scale={0.6}
+      />
     </group>
-  )
+  );
 }
 
-useGLTF.preload('./models/items/mario_shell_red.glb')
+useGLTF.preload("./models/items/mario_shell_red.glb");

@@ -110,3 +110,14 @@ body::-webkit-scrollbar {
     transform: scale(1.2);
   }
 }
+
+.annotation{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+
+  background:none;
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  
+}
