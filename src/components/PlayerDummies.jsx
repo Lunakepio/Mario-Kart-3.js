@@ -44,6 +44,7 @@ export const PlayerDummies = ( { player, userPlayer }) => {
   const body = useRef();
   const kart = useRef();
   const cam = useRef();
+  const text = useRef();
   const initialSpeed = 0;
   const maxSpeed = 30;
   const boostSpeed = 50;
@@ -101,6 +102,7 @@ export const PlayerDummies = ( { player, userPlayer }) => {
   setShouldLaunch(player.getState("shouldLaunch"));
   setTurboColor(player.getState("turboColor"));
   setScale(player.getState("scale"));
+  console.log(player.state.profile.name)
 
 
 
@@ -115,9 +117,6 @@ export const PlayerDummies = ( { player, userPlayer }) => {
 
   return player.id != id? (
     <>
-              <Billboard>
-            <Text font={"./fonts/HK.ttf"} ref={text} fontSize={0.4} outlineWidth={0.03} position={[0, 2, 0]}>{player.state.profile.name}</Text>
-          </Billboard>
     <group>
       <RigidBody 
         type="kinematic"
@@ -132,6 +131,9 @@ export const PlayerDummies = ( { player, userPlayer }) => {
 
       <group ref={kart} rotation={[0, Math.PI / 2, 0]}>
         <group ref={mario}>
+        <Billboard>
+            <Text font={"./fonts/HK.ttf"} ref={text} fontSize={0.4} outlineWidth={0.03} position={[0, 2, 0]}>{player.state.profile.name}</Text>
+        </Billboard>
           <Mario
             currentSpeed={currentSpeed}
             steeringAngleWheels={steeringAngleWheels}
