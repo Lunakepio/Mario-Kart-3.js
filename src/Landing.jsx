@@ -9,7 +9,7 @@ export const Landing = () => {
   const startButton = useRef();
   const homeRef = useRef();
   const [setupStatus, setSetupStatus] = useState(0);
-  const [controlStyle, setControlStyle] = useState("");
+  const [controlStyle, setControlStyle] = useState("touch");
 
   useEffect(() => {
     const tl = gsap.timeline();

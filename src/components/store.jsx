@@ -14,7 +14,7 @@ export const items = [
 
 export const useStore = create((set, get) => ({
   gameStarted: false,
-  controls: "",
+  controls: "touch",
   particles1: [],
   particles2: [],
   bodyPosition: [0, 0, 0],
@@ -29,6 +29,9 @@ export const useStore = create((set, get) => ({
   coins : 0,
   players : [],
   id : "",
+  joystickX: 0,
+  driftButton: false,
+  itemButton: false,
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -147,8 +150,16 @@ export const useStore = create((set, get) => ({
     },
     setControls: (controls) => {
       set({ controls });
-    }
-    
+    },
+    setJoystickX: (joystickX) => {
+      set({ joystickX });
+    },
+    setDriftButton: (driftButton) => {
+      set({ driftButton });
+    },
+    setItemButton: (itemButton) => {
+      set({ itemButton });
+    },
   },
  
 }));

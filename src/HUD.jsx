@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useStore } from "./components/store";
+import { Joystick } from "react-joystick-component";
 
 export const HUD = () => {
   const wheel = useRef();
   const [image, setImage] = useState("");
-  const { item, gameStarted } = useStore();
+  const { item, gameStarted, actions } = useStore();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -25,6 +26,14 @@ export const HUD = () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  const handleMove = (e) => {
+    actions.setJoystickX(e.x);
+  };
+
+  const handleStop = () => {
+    actions.setJoystickX(0);
+  };
 
   useEffect(() => {
     switch (item) {
@@ -54,6 +63,38 @@ export const HUD = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="controls joystick">
+            <Joystick
+              size={100}
+              sticky={false}
+              baseColor="rgba(255, 255, 255, 0.5)"
+              stickColor="rgba(255, 255, 255, 0.5)"
+              move={handleMove}
+              stop={handleStop}
+            ></Joystick>
+          </div>
+          <div
+            className="controls drift"
+            onMouseDown={(e) => {
+              actions.setDriftButton(true);
+            }}
+            onMouseUp={(e) => {
+              actions.setDriftButton(false);
+            }}
+          >
+            drift
+          </div>
+          <div
+            className="controls itemButton"
+            onMouseDown={(e) => {
+              actions.setItemButton(true);
+            }}
+            onMouseUp={(e) => {
+              actions.setItemButton(false);
+            }}
+          >
+            item
           </div>
         </>
       )}
