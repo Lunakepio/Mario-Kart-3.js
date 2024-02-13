@@ -5,6 +5,7 @@ import { Physics } from '@react-three/rapier'
 import { KeyboardControls, Loader, OrbitControls, Preload, Stats } from '@react-three/drei'
 import { insertCoin, onPlayerJoin } from 'playroomkit'
 import { useStore } from "./components/store";
+import * as THREE from "three";
 
 export const Controls = {
   up: 'up',
@@ -37,13 +38,13 @@ function App() {
 
     onPlayerJoin((state) => {
       actions.addPlayer(state);
-      console.log('player joined', state);
+
       actions.setId(state.id);
-      console.log(state)
+
 
       state.onQuit(() => {
         actions.removePlayer(state);
-        console.log('player quit', state);
+
       });
     });
   }
@@ -59,7 +60,11 @@ function App() {
       shadows
       dpr={1}
       gl={{ antialias: false, stencil: false, powerPreference: 'high-performance' }}
-    >
+      mode="concurrent"
+      onCreated={({ gl, camera }) => {
+          gl.toneMapping = THREE.AgXToneMapping
+          // gl.setClearColor(new THREE.Color('#020209'))
+        }}>
       <Suspense fallback={null}>
       <Preload all />
         <Physics

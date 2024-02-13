@@ -7,6 +7,8 @@ import {
 } from "@react-three/drei";
 import { Ground } from "./Ground";
 import { PlayerController } from "./PlayerController";
+import { PlayerControllerGamepad } from "./PlayerControllerGamepad";
+import { PlayerControllerKeyboard } from "./PlayerControllerKeyboard";
 import { Paris } from "./models/tracks/Tour_paris_promenade";
 import {
   EffectComposer,
@@ -34,24 +36,40 @@ import {
   useMultiplayerState,
 } from "playroomkit";
 import { PlayerDummies } from "./PlayerDummies";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { LUTPass, LUTCubeLoader } from 'three-stdlib'
+import { LUTPass, LUTCubeLoader } from "three-stdlib";
+import { useCurvedPathPoints } from "./useCurvedPath";
 
 export const Experience = () => {
-  const onCollide = (event) => {
-    console.log(event);
-  };
-  const { bananas, shells, players, id, actions } = useStore();
+  const onCollide = (event) => {};
+  const { gameStarted, bananas, shells, players, id, actions, controls } =
+    useStore();
   const [networkBananas, setNetworkBananas] = useMultiplayerState(
     "bananas",
     []
   );
 
+  const { points, loading, error } = useCurvedPathPoints("./CurvedPath.json");
+
   const [networkShells, setNetworkShells] = useMultiplayerState("shells", []);
+  const [pointest, setPointest] = useState([]);
+  const [currentPoint, setCurrentPoint] = useState(0);
+  useEffect(() => {
+    if (points) {
+      //This is adjusted to Paris scale
+      const scaledPoints = points.map((point) => ({
+        x: point.x * 50,
+        y: point.y * 50,
+        z: point.z * 50,
+      }));
+      setPointest(scaledPoints.reverse());
+    }
+  }, [points]);
 
   const testing = getState("bananas");
-
+  const cam = useRef();
+  const lookAtTarget = useRef();
   // useEffect(() => {
   //   setNetworkBananas(bananas);
   // }, [bananas]);
@@ -59,34 +77,73 @@ export const Experience = () => {
   // useEffect(() => {
   //   setNetworkShells(shells);
   // }, [shells]);
+  const speedFactor = 5;
+  const { texture } = useLoader(LUTCubeLoader, "./cubicle-99.CUBE");
+  useFrame((state, delta) => {
+    if (!gameStarted) {
+      const camera = cam.current;
 
-  const {texture}= useLoader(LUTCubeLoader, "./cubicle-99.CUBE");
+      if (currentPoint < pointest.length - 1) {
+        camera.position.lerp(pointest[currentPoint], delta * speedFactor);
+        lookAtTarget.current.position.lerp(
+          pointest[currentPoint + 1],
+          delta * speedFactor
+        );
+        camera.lookAt(lookAtTarget.current.position);
+
+        if (camera.position.distanceTo(pointest[currentPoint]) < 5) {
+          setCurrentPoint(currentPoint + 1);
+        }
+      } else {
+        setCurrentPoint(0);
+      }
+    }
+  });
 
   return (
     <>
-      {players.map((player) => (
-        <PlayerController
-          key={player.id}
-          player={player}
-          userPlayer={player.id === myPlayer()?.id}
-          setNetworkBananas={setNetworkBananas}
-          setNetworkShells={setNetworkShells}
-          networkBananas={networkBananas}
-          networkShells={networkShells}
-        />
-      ))}
+      {gameStarted &&
+        players.map((player) => {
+          const ControllerComponent =
+            controls === "keyboard"
+              ? PlayerControllerKeyboard
+              : controls === "gamepad"
+              ? PlayerControllerGamepad
+              : PlayerController;
 
-      {players.map((player) => (
-        <PlayerDummies
-          key={player.id}
-          player={player}
-          userPlayer={player.id === myPlayer()?.id}
-        />
-      ))}
-
+          return (
+            <ControllerComponent
+              key={player.id}
+              player={player}
+              userPlayer={player.id === myPlayer()?.id}
+              setNetworkBananas={setNetworkBananas}
+              setNetworkShells={setNetworkShells}
+              networkBananas={networkBananas}
+              networkShells={networkShells}
+            />
+          );
+        })}
+      {gameStarted &&
+        players.map((player) => (
+          <PlayerDummies
+            key={player.id}
+            player={player}
+            userPlayer={player.id === myPlayer()?.id}
+          />
+        ))}
+      {!gameStarted && (
+        <>
+          <mesh ref={lookAtTarget}></mesh>
+          <PerspectiveCamera
+            ref={cam}
+            makeDefault
+            position={[0, 2, 0]}
+            far={5000}
+          />
+        </>
+      )}
       <Paris position={[0, 0, 0]} />
-      {/* <Banana onCollide={onCollide} position={[-10, 1.8, -119]} /> */}
-      {/* <Shell position={[-20, 2, -119]} /> */}
+
       <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
 
@@ -100,7 +157,6 @@ export const Experience = () => {
           setNetworkBananas={setNetworkBananas}
           networkBananas={networkBananas}
           id={banana.id}
-          // rotation={banana.rotation}
         />
       ))}
       {networkShells.map((shell) => (
@@ -111,11 +167,10 @@ export const Experience = () => {
           rotation={shell.rotation}
           setNetworkShells={setNetworkShells}
           networkShells={networkShells}
-          
         />
       ))}
 
-      {/* <directionalLight
+      <directionalLight
         position={[10, 50, -30]}
         intensity={1}
         shadow-bias={-0.0001}
@@ -125,7 +180,7 @@ export const Experience = () => {
         shadow-camera-top={300}
         shadow-camera-bottom={-300}
         castShadow
-      /> */}
+      />
 
       <EffectComposer
         multisampling={0}

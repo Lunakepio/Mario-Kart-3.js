@@ -25,7 +25,7 @@ import { ItemParticles } from "./Particles/items/ItemParticles";
 import { geometry } from "maath";
 extend(geometry);
 
-export const PlayerController = ({
+export const PlayerControllerKeyboard = ({
   player,
   userPlayer,
   setNetworkBananas,
@@ -127,18 +127,6 @@ export const PlayerController = ({
       1;
     }
 
-    // mouse steering
-
-    if (!driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -pointer.x;
-      targetXPosition = -camMaxOffset * -pointer.x;
-    } else if (driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x - 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
-    } else if (driftRight.current && !driftLeft.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x + 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
-    }
     // ACCELERATING
     const shouldSlow = actions.getShouldSlowDown();
 
@@ -251,7 +239,7 @@ export const PlayerController = ({
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x < -0.1 &&
+      leftPressed &&
       !driftRight.current
     ) {
       driftLeft.current = true;
@@ -259,7 +247,7 @@ export const PlayerController = ({
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x > 0.1 &&
+      rightPressed > 0.1 &&
       !driftLeft.current
     ) {
       driftRight.current = true;

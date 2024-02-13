@@ -102,7 +102,7 @@ export const PlayerDummies = ( { player, userPlayer }) => {
   setShouldLaunch(player.getState("shouldLaunch"));
   setTurboColor(player.getState("turboColor"));
   setScale(player.getState("scale"));
-  console.log(player.state.profile.name)
+
 
 
 

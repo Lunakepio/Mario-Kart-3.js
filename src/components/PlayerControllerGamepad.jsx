@@ -23,9 +23,10 @@ import { HitParticles } from "./Particles/hits/HitParticles";
 import { CoinParticles } from "./Particles/coins/CoinParticles";
 import { ItemParticles } from "./Particles/items/ItemParticles";
 import { geometry } from "maath";
+import { useGamepad } from "./useGamepad";
 extend(geometry);
 
-export const PlayerController = ({
+export const PlayerControllerGamepad = ({
   player,
   userPlayer,
   setNetworkBananas,
@@ -33,13 +34,6 @@ export const PlayerController = ({
   networkBananas,
   networkShells,
 }) => {
-  const upPressed = useKeyboardControls((state) => state[Controls.up]);
-  const downPressed = useKeyboardControls((state) => state[Controls.down]);
-  const leftPressed = useKeyboardControls((state) => state[Controls.left]);
-  const rightPressed = useKeyboardControls((state) => state[Controls.right]);
-  const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
-  const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
-  const resetPressed = useKeyboardControls((state) => state[Controls.reset]);
 
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
@@ -92,6 +86,7 @@ export const PlayerController = ({
 
   const { actions, shouldSlowDown, item, bananas, coins, id, controls } = useStore();
   const slowDownDuration = useRef(1500);
+  const { buttonA, buttonB, RB, LB, joystick, select} = useGamepad();
 
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
@@ -115,40 +110,28 @@ export const PlayerController = ({
       -Math.cos(kartRotation)
     );
 
-    if (leftPressed && currentSpeed > 0) {
-      steeringAngle = currentSteeringSpeed;
-      targetXPosition = -camMaxOffset;
-    } else if (rightPressed && currentSpeed > 0) {
-      steeringAngle = -currentSteeringSpeed;
-      targetXPosition = camMaxOffset;
-    } else {
-      steeringAngle = 0;
-      targetXPosition = 0;
-      1;
-    }
-
     // mouse steering
 
     if (!driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -pointer.x;
-      targetXPosition = -camMaxOffset * -pointer.x;
+      steeringAngle = currentSteeringSpeed * -joystick[0];
+      targetXPosition = -camMaxOffset * -joystick[0];
     } else if (driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x - 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
+      steeringAngle = currentSteeringSpeed * -(joystick[0] - 1);
+      targetXPosition = -camMaxOffset * -joystick[0];
     } else if (driftRight.current && !driftLeft.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x + 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
+      steeringAngle = currentSteeringSpeed * -(joystick[0] + 1);
+      targetXPosition = -camMaxOffset * -joystick[0];
     }
     // ACCELERATING
     const shouldSlow = actions.getShouldSlowDown();
 
-    if (upPressed && currentSpeed < maxSpeed) {
+    if (buttonA && currentSpeed < maxSpeed) {
       // Accelerate the kart within the maximum speed limit
       setCurrentSpeed(
         Math.min(currentSpeed + acceleration * delta * 144, maxSpeed)
       );
     } else if (
-      upPressed &&
+      buttonA &&
       currentSpeed > maxSpeed &&
       effectiveBoost.current > 0
     ) {
@@ -157,7 +140,7 @@ export const PlayerController = ({
       );
     }
 
-    if (upPressed) {
+    if (buttonA) {
       if (currentSteeringSpeed < MaxSteeringSpeed) {
         setCurrentSteeringSpeed(
           Math.min(
@@ -182,13 +165,13 @@ export const PlayerController = ({
     }
 
     // REVERSING
-    if (downPressed && currentSpeed < -maxSpeed) {
+    if (buttonB && currentSpeed < -maxSpeed) {
       setCurrentSpeed(
         Math.max(currentSpeed - acceleration * delta * 144, -maxSpeed)
       );
     }
     // DECELERATING
-    else if (!upPressed && !downPressed) {
+    else if (!buttonA && !buttonB) {
       if (currentSteeringSpeed > 0) {
         setCurrentSteeringSpeed(
           Math.max(currentSteeringSpeed - 0.00005 * delta * 144, 0)
@@ -221,7 +204,7 @@ export const PlayerController = ({
     );
 
     // JUMPING
-    if (jumpPressed && isOnGround && !jumpIsHeld.current) {
+    if (RB && isOnGround && !jumpIsHeld.current) {
       jumpForce.current += 10;
       isOnFloor.current = false;
       jumpIsHeld.current = true;
@@ -240,7 +223,7 @@ export const PlayerController = ({
     if (!isOnGround && jumpForce.current > 0) {
       jumpForce.current -= 1 * delta * 144;
     }
-    if (!jumpPressed) {
+    if (!RB) {
       jumpIsHeld.current = false;
       driftDirection.current = 0;
       driftForce.current = 0;
@@ -251,7 +234,7 @@ export const PlayerController = ({
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x < -0.1 &&
+      joystick[0] < -0.1 &&
       !driftRight.current
     ) {
       driftLeft.current = true;
@@ -259,7 +242,7 @@ export const PlayerController = ({
     if (
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
-      pointer.x > 0.1 &&
+      joystick[0] > 0.1 &&
       !driftLeft.current
     ) {
       driftRight.current = true;
@@ -397,7 +380,7 @@ export const PlayerController = ({
 
     // MISC
 
-    if (resetPressed) {
+    if (select) {
       body.current.setTranslation({ x: 8, y: 2, z: -119 });
       body.current.setLinvel({ x: 0, y: 0, z: 0 });
       body.current.setAngvel({ x: 0, y: 0, z: 0 });
@@ -413,7 +396,7 @@ export const PlayerController = ({
 
     // ITEMS
 
-    if (shootPressed && item === "banana") {
+    if (LB && item === "banana") {
       const distanceBehind = 2;
       const scaledBackwardDirection =
         forwardDirection.multiplyScalar(distanceBehind);
@@ -433,7 +416,7 @@ export const PlayerController = ({
       actions.useItem();
     }
 
-    if (shootPressed && item === "shell") {
+    if (LB && item === "shell") {
       const distanceBehind = -2;
       const scaledBackwardDirection =
         forwardDirection.multiplyScalar(distanceBehind);
@@ -455,7 +438,7 @@ export const PlayerController = ({
       actions.useItem();
     }
 
-    if (shootPressed && item === "mushroom") {
+    if (LB && item === "mushroom") {
       setIsBoosting(true);
       effectiveBoost.current = 300;
       actions.useItem();

@@ -4,7 +4,7 @@ import { useStore } from "./components/store";
 export const HUD = () => {
   const wheel = useRef();
   const [image, setImage] = useState("");
-  const {item} = useStore();
+  const { item, gameStarted } = useStore();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -44,31 +44,19 @@ export const HUD = () => {
 
   return (
     <div className="overlay">
-      <div className="logo">
-        <img src="./logo.png" alt="logo" />
-      </div>
-      <div className="item">
-        <div className="borderOut">
-          <div className="borderIn">
-            <div className="background">
-              {image && <img src={image} alt="item" width={90} />}
+      {gameStarted && (
+        <>
+          <div className="item">
+            <div className="borderOut">
+              <div className="borderIn">
+                <div className="background">
+                  {image && <img src={image} alt="item" width={90} />}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="wheel">
-        <img
-          ref={wheel}
-          src="./steering_wheel.png"
-          alt="steering wheel"
-          className="steering-wheel"
-          style={{
-            position: "absolute",
-            pointerEvents: "none",
-            transformOrigin: "center",
-          }}
-        />
-      </div>
+        </>
+      )}
     </div>
   );
 };

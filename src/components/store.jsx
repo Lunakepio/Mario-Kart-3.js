@@ -13,6 +13,8 @@ export const items = [
 ]
 
 export const useStore = create((set, get) => ({
+  gameStarted: false,
+  controls: "",
   particles1: [],
   particles2: [],
   bodyPosition: [0, 0, 0],
@@ -139,7 +141,14 @@ export const useStore = create((set, get) => ({
     },
     setId : (id) => {
       set({id});
+    },
+    setGameStarted: (gameStarted) => {
+      set({ gameStarted });
+    },
+    setControls: (controls) => {
+      set({ controls });
     }
+    
   },
  
 }));
