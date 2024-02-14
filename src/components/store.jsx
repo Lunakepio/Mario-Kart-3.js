@@ -14,7 +14,7 @@ export const items = [
 
 export const useStore = create((set, get) => ({
   gameStarted: false,
-  controls: "touch",
+  controls: "",
   particles1: [],
   particles2: [],
   bodyPosition: [0, 0, 0],

@@ -5,7 +5,7 @@ import { Joystick } from "react-joystick-component";
 export const HUD = () => {
   const wheel = useRef();
   const [image, setImage] = useState("");
-  const { item, gameStarted, actions } = useStore();
+  const { item, gameStarted, actions, controls } = useStore();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -64,7 +64,9 @@ export const HUD = () => {
               </div>
             </div>
           </div>
-          <div className="controls joystick">
+          {controls === "touch" && (
+            <>
+            <div className="controls joystick">
             <Joystick
               size={100}
               sticky={false}
@@ -82,6 +84,14 @@ export const HUD = () => {
             onMouseUp={(e) => {
               actions.setDriftButton(false);
             }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              actions.setDriftButton(true);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              actions.setDriftButton(false);
+            }}
           >
             drift
           </div>
@@ -93,9 +103,20 @@ export const HUD = () => {
             onMouseUp={(e) => {
               actions.setItemButton(false);
             }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              actions.setItemButton(true);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              actions.setItemButton(false);
+            }}
+
           >
             item
           </div>
+          </>
+          )}
         </>
       )}
     </div>

@@ -9,7 +9,7 @@ export const Landing = () => {
   const startButton = useRef();
   const homeRef = useRef();
   const [setupStatus, setSetupStatus] = useState(0);
-  const [controlStyle, setControlStyle] = useState("touch");
+  const [controlStyle, setControlStyle] = useState("");
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -76,6 +76,12 @@ export const Landing = () => {
                 <h2>Mouse & Keybaord</h2>
                 <img src="./images/mousekeyboard.png" alt="mouse & keyboard" />
               </div>
+              <div className={controlStyle === "touch" ? "article mobile selected" : "article mobile"} onClick={() => 
+              setControlStyle("touch")}>
+                <h2>Mobile</h2>
+                <img src="./images/mobile.png" alt="mobile" />
+              </div>
+              
             </div>
 
             <div className={controlStyle != "" ? "submit" : "submit disabled"}>
