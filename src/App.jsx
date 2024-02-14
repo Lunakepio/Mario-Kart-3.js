@@ -63,7 +63,6 @@ function App() {
       mode="concurrent"
       onCreated={({ gl, camera }) => {
           gl.toneMapping = THREE.AgXToneMapping
-          // gl.setClearColor(new THREE.Color('#020209'))
         }}>
       <Suspense fallback={null}>
       <Preload all />

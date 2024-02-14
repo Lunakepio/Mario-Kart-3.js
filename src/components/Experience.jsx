@@ -9,6 +9,7 @@ import { Ground } from "./Ground";
 import { PlayerController } from "./PlayerController";
 import { PlayerControllerGamepad } from "./PlayerControllerGamepad";
 import { PlayerControllerKeyboard } from "./PlayerControllerKeyboard";
+import { PlayerControllerTouch } from "./PlayerControllerTouch";
 import { Paris } from "./models/tracks/Tour_paris_promenade";
 import {
   EffectComposer,
@@ -109,6 +110,8 @@ export const Experience = () => {
               ? PlayerControllerKeyboard
               : controls === "gamepad"
               ? PlayerControllerGamepad
+              : controls === "touch"
+              ? PlayerControllerTouch
               : PlayerController;
 
           return (

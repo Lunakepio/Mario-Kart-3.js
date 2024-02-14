@@ -76,6 +76,12 @@ export const Landing = () => {
                 <h2>Mouse & Keybaord</h2>
                 <img src="./images/mousekeyboard.png" alt="mouse & keyboard" />
               </div>
+              <div className={controlStyle === "touch" ? "article mobile selected" : "article mobile"} onClick={() => 
+              setControlStyle("touch")}>
+                <h2>Mobile</h2>
+                <img src="./images/mobile.png" alt="mobile" />
+              </div>
+              
             </div>
 
             <div className={controlStyle != "" ? "submit" : "submit disabled"}>
