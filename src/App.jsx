@@ -2,10 +2,11 @@ import { Canvas } from '@react-three/fiber'
 import { Experience } from './components/Experience'
 import { Suspense, useEffect, useMemo } from 'react'
 import { Physics } from '@react-three/rapier'
-import { KeyboardControls, Loader, OrbitControls, Preload, Stats } from '@react-three/drei'
+import { Environment, KeyboardControls, Loader, OrbitControls, Preload, Stats } from '@react-three/drei'
 import { insertCoin, onPlayerJoin } from 'playroomkit'
 import { useStore } from "./components/store";
 import * as THREE from "three";
+import { ParisBis } from './components/models/tracks/Paris-bis'
 
 export const Controls = {
   up: 'up',
@@ -57,12 +58,13 @@ function App() {
     <>
     <Loader />
     <Canvas
-      shadows
+      // shadows
       dpr={1}
       gl={{ antialias: false, stencil: false, powerPreference: 'high-performance' }}
       mode="concurrent"
       onCreated={({ gl, camera }) => {
           gl.toneMapping = THREE.AgXToneMapping
+          gl.setClearColor(0x000000, 0)
         }}>
       <Suspense fallback={null}>
       <Preload all />

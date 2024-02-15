@@ -41,6 +41,7 @@ import { useEffect, useState, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { LUTPass, LUTCubeLoader } from "three-stdlib";
 import { useCurvedPathPoints } from "./useCurvedPath";
+import { ParisBis } from "./models/tracks/Paris-bis";
 
 export const Experience = () => {
   const onCollide = (event) => {};
@@ -145,12 +146,13 @@ export const Experience = () => {
           />
         </>
       )}
-      <Paris position={[0, 0, 0]} />
+      {/* <Paris position={[0, 0, 0]} /> */}
 
+      <ParisBis position={[0, 0, 0]} />
       <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
 
-      <Ground position={[0, 0, 0]} />
+      {/* <Ground position={[0, 0, 0]} /> */}
       <Environment resolution={256} preset="lobby" />
 
       {networkBananas.map((banana) => (
@@ -192,7 +194,7 @@ export const Experience = () => {
         disableDepthPass
       >
         <SMAA />
-        <N8AO distanceFalloff={1} aoRadius={1} intensity={3} />
+        {/* <N8AO distanceFalloff={1} aoRadius={1} intensity={3} /> */}
         <Bloom
           luminanceThreshold={0}
           mipmapBlur

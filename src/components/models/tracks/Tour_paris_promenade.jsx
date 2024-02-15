@@ -17,7 +17,7 @@ export function Paris(props) {
   materials.M_Cmn_ShadowCollision.opacity = 0
   materials.M_Cmn_ShadowCollision.transparent = true
   return (
-    <group {...props} scale={50} position={[0,-3.6,0]}dispose={null}>
+    <group {...props} scale={50} position={[0,-3.6,0]} dispose={null}>
       <mesh castShadow receiveShadow geometry={nodes.N_Road_Ground_M_Cmn_MainColor_Detail_0.geometry} material={materials.M_Cmn_MainColor_Detail} scale={0.01} />
       <mesh castShadow receiveShadow geometry={nodes.N_Road_Ground_M_Mobp1_Road_A_0.geometry} material={materials.M_Mobp1_Road_A} scale={0.01} />
       <mesh castShadow receiveShadow geometry={nodes.N_Road_Ground_M_Mobp1_Road_B_0.geometry} material={materials.M_Mobp1_Road_B} scale={0.01} />
