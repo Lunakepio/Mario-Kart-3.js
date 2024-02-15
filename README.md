@@ -3,6 +3,14 @@
 
 DISCLAIMER : This is not a completed project, I would say around 50% of the work has been done up to now. It takes a lot of time so please enjoy.
 
+## Table of contents
+
+- [How to install](#how-to-install)
+- [How to use (Gameplay)](#how-to-use-(gameplay))
+- [How to use (Code)](#how-to-use-(code))
+- [Community TODO](https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/TODO.md)
+- [License](#license)
+
 ## How to install
 
 Clone the repository or download it
@@ -21,56 +29,23 @@ Start the dev server
 
 ## How to use (Gameplay)
 
-- Use the W key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
+- Press and hold `W` to accelerate.
 
-- Steer with the mouse.
+- Steer with the mouse (more control options will be added later).
 
-- Press and hold the space bar to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
+- Press and hold `SPACE` to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini-turbo.
 
-- Press E key to use the current item.
+- Press `E` to use the current item.
 
-- Press R to reset your position, usable anytime.
+- Press `R` to reset your position (usable anytime).
 
 ## How to use (Code)
 
-- Anything needs update.
+- Anything needs to be updated.
 
-- You can also edit the README to add elements to the To-do List.
+- You can also edit the [TODO](https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/TODO.md) to add ideas, feature requests, bug requests, and more to the To-do List.
 
-- Feel free to bring your ideas to the project even if you can't code them.
-
-## TO - DO
-
-- Design Landing page
-
-- Add items
-
-- Add texture to the flame shaders
-
-- Add curve/length modifiers to drift particles 3/4
-
-- Add Skid marks 
-
-- Add smokes
-
-- Add wind screen effect when boosting
-
-- Improve sound design quality
-
-- Design UI for HUD
-
-- Make Time Trial mode
-
-- Design tracks and checkpoints
-
-- Improve code quality
-
-- Items
-  - Tennis ball
-  - Bomb
-  - Real red shell
-  - Treats
-  - ?
+- Ideas are welcome to be added to the To-do list. You do not need to know how to code to add suggestions.
 
 ## License
 
