@@ -6,9 +6,9 @@ DISCLAIMER : This is not a completed project, I would say around 50% of the work
 ## Table of contents
 
 - [How to install](#how-to-install)
-- [How to use (Gameplay)](#how-to-use-(gameplay))
-- [How to use (Code)](#how-to-use-(code))
-- [Community TODO](https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/TODO.md)
+- [How to use (Gameplay)](#how-to-use-gameplay)
+- [How to use (Code)](#how-to-use-code)
+- [Community TODO](https://github.com/MrSamples/Mario-Kart-3.js/blob/patch-1/TODO.md)
 - [License](#license)
 
 ## How to install
@@ -43,7 +43,7 @@ Start the dev server
 
 - Anything needs to be updated.
 
-- You can also edit the [TODO](https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/TODO.md) to add ideas, feature requests, bug requests, and more to the To-do List.
+- You can also edit the [TODO](https://github.com/MrSamples/Mario-Kart-3.js/blob/patch-1/TODO.md) to add ideas, feature requests, bug requests, and more to the To-do List.
 
 - Ideas are welcome to be added to the To-do list. You do not need to know how to code to add suggestions.
 
