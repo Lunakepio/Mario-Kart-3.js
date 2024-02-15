@@ -17,8 +17,7 @@ Mario Kart 3.js is open-source and we welcome contributions. If you are unfamili
 - Commit your change with the green `Commit changes` button in the top right.
 
 - Back in the default view (click `Mario-Kart-3.js` in the far top left), compare & pull your request into the main repository.
-
-⋅⋅- Make sure the base repository is `Lunakepio/Mario-Kart-3.js` in the `main` branch and the head repository is `*your-github*/Mario-Kart-3.js` in whatever branch you made changes in (usually `patch-1` or `main`).
+ - Make sure the base repository is `Lunakepio/Mario-Kart-3.js` in the `main` branch and the head repository is `*your-github*/Mario-Kart-3.js` in whatever branch you made changes in (usually `patch-1` or `main`).
 
 ## List
 
