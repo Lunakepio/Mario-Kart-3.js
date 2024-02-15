@@ -13,7 +13,7 @@ export const items = [
 ]
 
 export const useStore = create((set, get) => ({
-  gameStarted: true,
+  gameStarted: false,
   controls: "",
   particles1: [],
   particles2: [],

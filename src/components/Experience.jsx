@@ -152,7 +152,7 @@ export const Experience = () => {
       <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
 
-      {/* <Ground position={[0, 0, 0]} /> */}
+      <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
 
       {networkBananas.map((banana) => (

@@ -60,7 +60,7 @@ function App() {
     <Canvas
       // shadows
       dpr={1}
-      gl={{ antialias: false, stencil: false, powerPreference: 'high-performance' }}
+      gl={{ antialias: false, stencil: false, depth:false, powerPreference: 'high-performance' }}
       mode="concurrent"
       onCreated={({ gl, camera }) => {
           gl.toneMapping = THREE.AgXToneMapping
