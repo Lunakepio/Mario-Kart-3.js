@@ -7,6 +7,8 @@ DISCLAIMER : This is not a completed project, I would say around 50% of the work
 
 ## How to install
 
+Fork the repository
+
 Clone the repository or download it
 
 Open your terminal and inside the project folder, run :
