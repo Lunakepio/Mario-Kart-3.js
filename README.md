@@ -23,15 +23,15 @@ Start the dev server
 
 ## How to use (Gameplay)
 
-- Use the W key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
+- Use the <kbd>W</kbd> key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
 
 - Steer with the mouse.
 
 - Press and hold the space bar to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
 
-- Press E key to use the current item.
+- Press <kbd>E</kbd> key to use the current item.
 
-- Press R to reset your position, usable anytime.
+- Press <kbd>R</kbd> to reset your position, usable anytime.
 
 ## How to use (Code)
 
