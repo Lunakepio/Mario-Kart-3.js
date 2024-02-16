@@ -1,6 +1,8 @@
 # Mario Kart 3.js - JavaScript/WebGL Mario Kart
 [Link](https://mario-kart-3-js.vercel.app/)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Lunakepio/Mario-Kart-3.js)
+
 DISCLAIMER : This is not a completed project, I would say around 50% of the work has been done up to now. It takes a lot of time so please enjoy.
 
 ## How to install
@@ -23,15 +25,15 @@ Start the dev server
 
 ## How to use (Gameplay)
 
-- Use the W key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
+- Use the <kbd>W</kbd> key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
 
 - Steer with the mouse.
 
 - Press and hold the space bar to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
 
-- Press E key to use the current item.
+- Press <kbd>E</kbd> key to use the current item.
 
-- Press R to reset your position, usable anytime.
+- Press <kbd>R</kbd> to reset your position, usable anytime.
 
 ## How to use (Code)
 
