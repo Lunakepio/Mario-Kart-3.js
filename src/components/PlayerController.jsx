@@ -121,6 +121,12 @@ export const PlayerController = ({
     } else if (rightPressed && currentSpeed > 0) {
       steeringAngle = -currentSteeringSpeed;
       targetXPosition = camMaxOffset;
+    } else if (rightPressed && currentSpeed < 0) {
+      steeringAngle = currentSteeringSpeed;
+      targetXPosition = -camMaxOffset;
+    } else if (leftPressed && currentSpeed < 0) {
+      steeringAngle = -currentSteeringSpeed;
+      targetXPosition = camMaxOffset;
     } else {
       steeringAngle = 0;
       targetXPosition = 0;
@@ -182,13 +188,24 @@ export const PlayerController = ({
     }
 
     // REVERSING
-    if (downPressed && currentSpeed < -maxSpeed) {
+    if (downPressed) {
+      if (currentSteeringSpeed < MaxSteeringSpeed) {
+        setCurrentSteeringSpeed(
+          Math.min(
+            currentSteeringSpeed + 0.0001 * delta * 144,
+            MaxSteeringSpeed
+          )
+        );
+      }
+    }
+
+    if (downPressed && currentSpeed <= 0) {
       setCurrentSpeed(
         Math.max(currentSpeed - acceleration * delta * 144, -maxSpeed)
       );
     }
     // DECELERATING
-    else if (!upPressed && !downPressed) {
+    else if (!upPressed) {
       if (currentSteeringSpeed > 0) {
         setCurrentSteeringSpeed(
           Math.max(currentSteeringSpeed - 0.00005 * delta * 144, 0)

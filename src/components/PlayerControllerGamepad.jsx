@@ -165,13 +165,24 @@ export const PlayerControllerGamepad = ({
     }
 
     // REVERSING
-    if (buttonB && currentSpeed < -maxSpeed) {
+    if (buttonB) {
+      if (currentSteeringSpeed < MaxSteeringSpeed) {
+        setCurrentSteeringSpeed(
+          Math.min(
+            currentSteeringSpeed + 0.0001 * delta * 144,
+            MaxSteeringSpeed
+          )
+        );
+      }
+    }
+
+    if (buttonB && currentSpeed <= 0) {
       setCurrentSpeed(
         Math.max(currentSpeed - acceleration * delta * 144, -maxSpeed)
       );
     }
     // DECELERATING
-    else if (!buttonA && !buttonB) {
+    else if (!buttonA) {
       if (currentSteeringSpeed > 0) {
         setCurrentSteeringSpeed(
           Math.max(currentSteeringSpeed - 0.00005 * delta * 144, 0)
