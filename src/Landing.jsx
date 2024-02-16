@@ -36,6 +36,17 @@ export const Landing = () => {
           });
       }
     }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        setSetupStatus(1);
+      }
+    };
+
+    document.body.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keydown', handleKeyDown);
+    };
   }, [setupStatus]);
 
   if (gameStarted) {
@@ -49,7 +60,12 @@ export const Landing = () => {
             <img ref={logo} src="./logo.png" alt="logo" />
           </div>
           <div className="start" ref={startButton}>
-            <button className="start-button" onClick={() => setSetupStatus(1)}>
+            <button className="start-button"
+                    onClick={() => setSetupStatus(1)} 
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        setSetupStatus(1);
+                    }}} autoFocus>
               PRESS ENTER TO START
             </button>
           </div>
@@ -63,23 +79,31 @@ export const Landing = () => {
             <div className="articles">
             <div className={controlStyle === "keyboard" ? "article selected" : "article"} onClick={() => 
               setControlStyle("keyboard")}>
-                <h2>Keyboard</h2>
                 <img src="./images/keyboard.png" alt="keyboard" />
+                <div className="article_label">
+                  <p>Keyboard</p>
+                </div> 
               </div>
               <div className={controlStyle === "gamepad" ? "article selected" : "article"} onClick={() => 
               setControlStyle("gamepad")}>
-                <h2>Gamepad</h2>
                 <img src="./images/gamepad.png" alt="gamepad" />
+                <div className="article_label">
+                  <p>Gamepad</p>
+                </div>
               </div>
               <div className={controlStyle === "mouseKeyboard" ? "article selected" : "article"} onClick={() => 
               setControlStyle("mouseKeyboard")}>
-                <h2>Mouse & Keybaord</h2>
                 <img src="./images/mousekeyboard.png" alt="mouse & keyboard" />
+                <div className="article_label">
+                  <p>Mouse & Keyboard</p>
+                </div>
               </div>
-              <div className={controlStyle === "touch" ? "article mobile selected" : "article mobile"} onClick={() => 
+              <div className={controlStyle === "touch" ? "article selected" : "article"} onClick={() => 
               setControlStyle("touch")}>
-                <h2>Mobile</h2>
                 <img src="./images/mobile.png" alt="mobile" />
+                <div className="article_label">
+                  <p>Mobile</p>
+                </div>
               </div>
               
             </div>

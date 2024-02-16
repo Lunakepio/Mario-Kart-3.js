@@ -42,7 +42,6 @@ function App() {
 
       actions.setId(state.id);
 
-
       state.onQuit(() => {
         actions.removePlayer(state);
 
