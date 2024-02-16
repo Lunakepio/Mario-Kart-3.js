@@ -1,6 +1,8 @@
 # Mario Kart 3.js - JavaScript/WebGL Mario Kart
 [Link](https://mario-kart-3-js.vercel.app/)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Lunakepio/Mario-Kart-3.js)
+
 DISCLAIMER : This is not a completed project, I would say around 50% of the work has been done up to now. It takes a lot of time so please enjoy.
 
 ## How to install
