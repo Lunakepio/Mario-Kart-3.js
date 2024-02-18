@@ -40,6 +40,7 @@ export const PlayerController = ({
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
   const resetPressed = useKeyboardControls((state) => state[Controls.reset]);
+  const escPressed = useKeyboardControls((state) => state[Controls.escape]);
 
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
@@ -114,6 +115,10 @@ export const PlayerController = ({
       0,
       -Math.cos(kartRotation)
     );
+    
+    if (escPressed) {
+      actions.setGameStarted(false);
+    }
 
     if (leftPressed && currentSpeed > 0) {
       steeringAngle = currentSteeringSpeed;

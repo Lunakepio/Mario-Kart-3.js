@@ -86,7 +86,7 @@ export const PlayerControllerGamepad = ({
 
   const { actions, shouldSlowDown, item, bananas, coins, id, controls } = useStore();
   const slowDownDuration = useRef(1500);
-  const { buttonA, buttonB, RB, LB, joystick, select} = useGamepad();
+  const { buttonA, buttonB, RB, LB, joystick, select, start } = useGamepad();
 
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
@@ -109,6 +109,10 @@ export const PlayerControllerGamepad = ({
       0,
       -Math.cos(kartRotation)
     );
+
+    if (start) {
+      actions.setGameStarted(false);
+    }
 
     // mouse steering
 
