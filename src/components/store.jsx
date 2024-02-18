@@ -32,6 +32,7 @@ export const useStore = create((set, get) => ({
   joystickX: 0,
   driftButton: false,
   itemButton: false,
+  menuButton: false,
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -159,6 +160,9 @@ export const useStore = create((set, get) => ({
     },
     setItemButton: (itemButton) => {
       set({ itemButton });
+    },
+    setMenuButton: (menuButton) => {
+      set({ menuButton });
     },
   },
  

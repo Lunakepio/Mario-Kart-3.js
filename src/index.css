@@ -353,6 +353,23 @@ body::-webkit-scrollbar {
   cursor: pointer;
 }
 
+.controls.menuButton {
+  right: 50px;
+  top: 60px;
+  font-family: "Hanken Grotesk";
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.5);
+  height: 66.6667px;
+  width: 66.6667px;
+  border: none;
+  flex-shrink: 0;
+  touch-action: none;
+  color: white;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 1000px) {
   .home {
     gap: 50px;
