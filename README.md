@@ -45,36 +45,36 @@ Start the dev server
 
 ## TO - DO
 
-- Design Landing page
+- [ ] Design Landing page
 
-- Add items
+- [ ] Add items
 
-- Add texture to the flame shaders
+- [ ] Add texture to the flame shaders
 
-- Add curve/length modifiers to drift particles 3/4
+- [ ] Add curve/length modifiers to drift particles 3/4
 
-- Add Skid marks 
+- [ ] Add Skid marks 
 
-- Add smokes
+- [x] Add smokes
 
-- Add wind screen effect when boosting
+- [ ] Add wind screen effect when boosting
 
-- Improve sound design quality
+- [ ] Improve sound design quality
 
-- Design UI for HUD
+- [ ] Design UI for HUD
 
-- Make Time Trial mode
+- [ ] Make Time Trial mode
 
-- Design tracks and checkpoints
+- [ ] Design tracks and checkpoints
 
-- Improve code quality
+- [ ] Improve code quality
 
-- Items
-  - Tennis ball
-  - Bomb
-  - Real red shell
-  - Treats
-  - ?
+- [ ] Items
+  - [ ] Tennis ball
+  - [ ] Bomb
+  - [ ] Real red shell
+  - [ ] Treats
+  - [ ] ?
 
 ## License
 
