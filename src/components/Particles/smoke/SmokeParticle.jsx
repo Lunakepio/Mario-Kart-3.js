@@ -29,13 +29,19 @@ export const SmokeParticle = ({ position, png, leftDrift, rightDrift, delay = 0 
 
     const pointsCurrent = pointsRef.current;
 
-    if (leftDrift) {
-      //Set inclination
-      pointsCurrent.position.x -= 0.09 * delta * 144;
+    if(leftDrift || rightDrift){
       pointsCurrent.position.z += 0.1 * delta * 144;
-      
-      if(pointsCurrent.position.x < -1.8) {
-        pointsCurrent.position.y = 0;
+
+      //Set inclination
+      if(leftDrift){
+        pointsCurrent.position.x -= 0.09 * delta * 144;
+      }
+
+      if(rightDrift){
+        pointsCurrent.position.x += 0.09 * delta * 144;
+      }
+
+      if(pointsCurrent.position.x < -1.8 || pointsCurrent.position.x > 1.8) {
         pointsCurrent.position.z = 0;
         pointsCurrent.position.x = 0;
         pointsCurrent.material.opacity = 1.5;
@@ -50,34 +56,14 @@ export const SmokeParticle = ({ position, png, leftDrift, rightDrift, delay = 0 
         //Shrinking effect
         pointsCurrent.material.size -= 0.1* delta * 144;
       }
-    } else if (rightDrift) {
-      //Set inclination
-      pointsCurrent.position.x += 0.09 * delta * 144;
-      pointsCurrent.position.z += 0.1 * delta * 144;
 
-      if(pointsCurrent.position.x > 1.8) {
-        pointsCurrent.position.y = 0;
-        pointsCurrent.position.z = 0;
-        pointsCurrent.position.x = 0;
-        pointsCurrent.material.opacity = 1.5;
-        pointsCurrent.material.size = 4;
-      }
-    
-      if(pointsCurrent.material.opacity > 0) {
-        pointsCurrent.material.opacity -= 0.01 * delta * 144;
-      }
-
-      if(pointsCurrent.material.size > 0) {
-        //Shrinking effect
-        pointsCurrent.material.size -= 0.1* delta * 144;
-      }
     } else {
-      pointsCurrent.position.y = 0;
       pointsCurrent.position.z = 0;
       pointsCurrent.position.x = 0;
       pointsCurrent.material.opacity = 0;
       pointsCurrent.material.size = 0;
     }
+
   });
 
   return (
