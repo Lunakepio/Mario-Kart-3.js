@@ -84,7 +84,7 @@ export const PlayerControllerTouch = ({
   const effectiveBoost = useRef(0);
   const text = useRef();
 
-  const { actions, shouldSlowDown, item, bananas, coins, id, controls, joystickX, driftButton, itemButton } = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins, id, controls, joystickX, driftButton, itemButton, menuButton } = useStore();
   const slowDownDuration = useRef(1500);
 
   useFrame(({ pointer, clock }, delta) => {
@@ -108,6 +108,10 @@ export const PlayerControllerTouch = ({
       0,
       -Math.cos(kartRotation)
     );
+
+    if (menuButton) {
+      actions.setGameStarted(false);
+    }
 
     // mouse steering
 

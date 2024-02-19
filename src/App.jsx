@@ -16,8 +16,10 @@ export const Controls = {
   boost: 'boost',
   shoot: 'shoot',
   slow: 'slow',
-  reset: 'reset'
+  reset: 'reset',
+  escape: 'escape'
 }
+
 function App() {
   const map = useMemo(
     () => [
@@ -28,7 +30,8 @@ function App() {
       { name: Controls.jump, keys: ['Space'] },
       { name: Controls.slow, keys: ['Shift'] },
       { name: Controls.shoot, keys: ['KeyE', 'Click'] },
-      { name: Controls.reset, keys: ['KeyR'] }
+      { name: Controls.reset, keys: ['KeyR'] },
+      { name: Controls.escape, keys: ['Escape']}
     ],
     []
   )

@@ -115,6 +115,26 @@ export const HUD = () => {
           >
             item
           </div>
+          <div
+            className="controls menuButton"
+            onMouseDown={(e) => {
+              actions.setMenuButton(true);
+            }}
+            onMouseUp={(e) => {
+              actions.setMenuButton(false);
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              actions.setMenuButton(true);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              actions.setMenuButton(false);
+            }}
+
+          >
+            menu
+          </div>
           </>
           )}
         </>
