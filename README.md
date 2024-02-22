@@ -69,6 +69,8 @@ Start the dev server
 
 - [ ] Improve code quality
 
+- [ ] Add Minimap
+
 - [ ] Items
   - [ ] Tennis ball
   - [ ] Bomb
