@@ -88,6 +88,14 @@ export const PlayerControllerGamepad = ({
   const slowDownDuration = useRef(1500);
   const { buttonA, buttonB, RB, LB, joystick, select, start } = useGamepad();
 
+  useEffect(() => {
+    if(kart.current) {
+      actions.setBody(body.current);
+    }
+  }, [body.current]);
+  
+      
+
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
     const time = clock.getElapsedTime();
@@ -458,6 +466,7 @@ export const PlayerControllerGamepad = ({
       effectiveBoost.current = 300;
       actions.useItem();
     }
+
 
     player.setState("position", body.current.translation());
     player.setState("rotation", kartRotation + mario.current.rotation.y);

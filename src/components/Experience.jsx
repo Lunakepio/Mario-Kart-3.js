@@ -42,6 +42,7 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { LUTPass, LUTCubeLoader } from "three-stdlib";
 import { useCurvedPathPoints } from "./useCurvedPath";
 import { ParisBis } from "./models/tracks/Paris-bis";
+import { Skid } from "./Skid";
 
 export const Experience = () => {
   const onCollide = (event) => {};
@@ -154,7 +155,7 @@ export const Experience = () => {
 
       <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
-
+      <Skid />
       {networkBananas.map((banana) => (
         <Banana
           key={banana.id}

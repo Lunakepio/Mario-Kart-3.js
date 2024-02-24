@@ -13,8 +13,8 @@ export const items = [
 ]
 
 export const useStore = create((set, get) => ({
-  gameStarted: false,
-  controls: "",
+  gameStarted: true,
+  controls: "gamepad",
   particles1: [],
   particles2: [],
   bodyPosition: [0, 0, 0],
@@ -28,6 +28,7 @@ export const useStore = create((set, get) => ({
   skids: [],
   coins : 0,
   players : [],
+  body: null,
   id : "",
   joystickX: 0,
   driftButton: false,
@@ -163,6 +164,9 @@ export const useStore = create((set, get) => ({
     },
     setMenuButton: (menuButton) => {
       set({ menuButton });
+    },
+    setBody: (body) => {
+      set({ body });
     },
   },
  
