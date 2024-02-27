@@ -88,9 +88,16 @@ export const PlayerControllerGamepad = ({
   const slowDownDuration = useRef(1500);
   const { buttonA, buttonB, RB, LB, joystick, select, start } = useGamepad();
 
+  const skidRotation = useRef(0);
+
+  const rightWheel = useRef();
+  const leftWheel = useRef();
+  const isDrifting = useRef(false);
   useEffect(() => {
-    if(kart.current) {
-      actions.setBody(body.current);
+    if(leftWheel.current && rightWheel.current && body.current) {
+      actions.setLeftWheel(leftWheel.current);
+      actions.setRightWheel(rightWheel.current);
+      actions.setIsDrifting(isDrifting.current);
     }
   }, [body.current]);
   
@@ -100,6 +107,7 @@ export const PlayerControllerGamepad = ({
     if (player.id !== id) return;
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
+    isDrifting.current = driftLeft.current || driftRight.current;
     engineSound.current.setVolume(currentSpeed / 300 + 0.2);
     engineSound.current.setPlaybackRate(currentSpeed / 10 + 0.1);
     jumpSound.current.setPlaybackRate(1.5);
@@ -121,8 +129,6 @@ export const PlayerControllerGamepad = ({
     if (start) {
       actions.setGameStarted(false);
     }
-
-    // mouse steering
 
     if (!driftLeft.current && !driftRight.current) {
       steeringAngle = currentSteeringSpeed * -joystick[0];
@@ -475,6 +481,8 @@ export const PlayerControllerGamepad = ({
     player.setState("turboColor", turboColor);
     player.setState("scale", scale);
     player.setState("bananas", bananas);
+
+    skidRotation.current = kartRotation + mario.current.rotation.y;
   });
 
   return player.id === id ? (
@@ -513,7 +521,7 @@ export const PlayerControllerGamepad = ({
           />
           <CoinParticles coins={coins} />
           <ItemParticles item={item} />
-          <mesh position={[0.6, 0.05, 0.5]} scale={scale}>
+          <mesh position={[0.6, 0.05, 0.5]} scale={scale} ref={rightWheel}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <meshStandardMaterial
               emissive={turboColor}
@@ -542,6 +550,8 @@ export const PlayerControllerGamepad = ({
               opacity={0.4}
             />
           </mesh>
+          <mesh position={[-0.46, 0.05, 0.3]} ref={leftWheel}>
+          </mesh>
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale * 10}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <FakeGlowMaterial
@@ -550,6 +560,8 @@ export const PlayerControllerGamepad = ({
               glowColor={turboColor}
               glowSharpness={1}
             />
+          </mesh>
+          <mesh position={[0.46, 0.05, 0.3]} ref={rightWheel}>
           </mesh>
           {/* <FlameParticles isBoosting={isBoosting} /> */}
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />

@@ -17,8 +17,9 @@ export const useStore = create((set, get) => ({
   controls: "gamepad",
   particles1: [],
   particles2: [],
-  bodyPosition: [0, 0, 0],
-  bodyRotation: [0, 0, 0],
+  leftWheel: null,
+  rightWheel: null,
+  bodyRotation: null,
   pastPositions: [],
   shouldSlowdown: false,
   bananas: [],
@@ -34,6 +35,7 @@ export const useStore = create((set, get) => ({
   driftButton: false,
   itemButton: false,
   menuButton: false,
+  isDrifting: false,
   addPastPosition: (position) => {
     set((state) => ({
       pastPositions: [position, ...state.pastPositions.slice(0, 499)],
@@ -64,7 +66,7 @@ export const useStore = create((set, get) => ({
       set({ bodyPosition: position });
     },
     setBodyRotation: (rotation) => {
-      set({ bodyRotation: rotation });
+      set({ rotation });
     },
     getBodyPosition: () => {
       return get().bodyPosition;
@@ -167,6 +169,18 @@ export const useStore = create((set, get) => ({
     },
     setBody: (body) => {
       set({ body });
+    },
+    setLeftWheel: (leftWheel) => {
+      set({ leftWheel });
+    },
+    setRightWheel: (rightWheel) => {
+      set({ rightWheel });
+    },
+    setIsDrifting: (isDrifting) => {
+      set({ isDrifting });
+    },
+    getIsDrifting: () => {
+      return get().isDrifting;
     },
   },
  

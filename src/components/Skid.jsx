@@ -14,13 +14,17 @@ const v = new Vector3()
 
 
 
-export function Skid({ count = 500, opacity = 1, size = 2 }) {
+export function Skid({ count = 500, opacity = 0.5, size = 0.3 }) {
   const ref = useRef(null);
-  const { body } = useStore();
+  const { leftWheel, rightWheel } = useStore();
   let index = 0
   useFrame(() => {
-    if (body && ref.current) {
-      setItemAt(ref.current, e, body, index++)
+    const isDrifting = useStore.getState()
+    console.log(isDrifting)
+    if (leftWheel && rightWheel && ref.current && isDrifting) {
+      setItemAt(ref.current, leftWheel.rotation, leftWheel, index++);
+      setItemAt(ref.current, rightWheel.rotation, rightWheel, index++);
+      
       if (index === count) index = 0
     }
   })
@@ -35,15 +39,15 @@ export function Skid({ count = 500, opacity = 1, size = 2 }) {
   })
 
   return (
-    <instancedMesh ref={ref} args={[undefined, undefined, count]}>
-      <planeGeometry args={[size, size * 2]} />
-      <meshBasicMaterial color="black" side={DoubleSide} />
+    <instancedMesh frustumCulled={false} ref={ref} args={[undefined, undefined, count]}>
+      <planeGeometry args={[size, size]} />
+      <meshBasicMaterial color="black" side={DoubleSide} transparent opacity={opacity} />
     </instancedMesh>
   )
 }
 
 function setItemAt(instances, rotation, body, index) {
-  o.position.copy(vec3(body.translation()))
+  o.position.copy(body.getWorldPosition(v));
   o.rotation.copy(rotation)
   o.scale.setScalar(1)
   o.updateMatrix()
