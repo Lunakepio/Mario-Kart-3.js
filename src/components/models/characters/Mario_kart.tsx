@@ -11,7 +11,13 @@ import FakeFlame from '../../ShaderMaterials/FakeFlame/FakeFlame'
 import { useStore } from '../../store'
 import gsap from 'gsap'
 
-export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLaunch, ...props }) {
+export function Mario({
+  currentSpeed,
+  steeringAngleWheels,
+  isBoosting,
+  shouldLaunch,
+  ...props
+}) {
   const { nodes, materials } = useGLTF('./models/characters/mariokarttest.glb')
 
   const frontLeftWheel = useRef()
@@ -21,36 +27,31 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLau
   const [scale, setScale] = React.useState(1)
   const { actions } = useStore()
   const [shouldSlow, setShouldSlow] = React.useState(false)
-  const mario = useRef();
+  const mario = useRef()
   // isBoosting = true;
 
-  useFrame((_,delta) => {
+  useFrame((_, delta) => {
     const rotation = currentSpeed / 100
     frontLeftWheel.current.rotation.x += rotation
     frontRightWheel.current.rotation.x += rotation
     rearWheels.current.rotation.x += rotation
     frontWheels.current.rotation.y = steeringAngleWheels
-    if (isBoosting){
+    if (isBoosting) {
       setScale(Math.min(scale + 0.05 * 144 * delta, 1))
     } else {
       setScale(Math.max(scale - 0.03 * 144 * delta, 0))
     }
-    setShouldSlow(actions.getShouldSlowDown());
+    setShouldSlow(actions.getShouldSlowDown())
   })
 
   useEffect(() => {
     if (shouldLaunch) {
-      gsap.to(mario.current.rotation, {duration: 1.5, y: Math.PI * 3})
-      mario.current.rotation.set(0, 0, 0);
+      gsap.to(mario.current.rotation, { duration: 1.5, y: Math.PI * 3 })
+      mario.current.rotation.set(0, 0, 0)
     }
   }, [shouldLaunch])
   return (
-    <group
-      {...props}
-      rotation={[0, Math.PI, 0]}
-      dispose={null}
-      ref={mario}
-    >
+    <group {...props} rotation={[0, Math.PI, 0]} dispose={null} ref={mario}>
       <mesh
         castShadow
         receiveShadow
@@ -91,10 +92,7 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLau
         geometry={nodes.mt_mario.geometry}
         material={materials.mt_mario}
       />
-      <Sphere
-        position={[0, 0.6, -1.2]}
-        scale={scale * 1.2}
-      >
+      <Sphere position={[0, 0.6, -1.2]} scale={scale * 1.2}>
         <FakeGlowMaterial />
       </Sphere>
 
@@ -103,9 +101,8 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLau
         position={[0.3, 0.65, -1.35]}
         rotation={[Math.PI / 1.5, 0, 0]}
         scale={scale}
-        
       >
-        <FakeFlame isBoosting={isBoosting}/>
+        <FakeFlame isBoosting={isBoosting} />
       </Cylinder>
 
       <Cylinder
@@ -130,9 +127,8 @@ export function Mario({ currentSpeed, steeringAngleWheels, isBoosting, shouldLau
         rotation={[Math.PI / 1.5, 0, 0]}
         scale={scale * 0.8}
       >
-        <FakeFlame isBoosting={isBoosting}/>
+        <FakeFlame isBoosting={isBoosting} />
       </Cylinder>
-
     </group>
   )
 }

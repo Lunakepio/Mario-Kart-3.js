@@ -1,4 +1,5 @@
 # Mario Kart 3.js - JavaScript/WebGL Mario Kart
+
 [Link](https://mario-kart-3-js.vercel.app/)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Lunakepio/Mario-Kart-3.js)
@@ -53,7 +54,7 @@ Start the dev server
 
 - [ ] Add curve/length modifiers to drift particles 3/4
 
-- [ ] Add Skid marks 
+- [ ] Add Skid marks
 
 - [x] Add smokes
 

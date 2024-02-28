@@ -11,9 +11,25 @@ export function ario(props) {
   const { nodes, materials } = useGLTF('/mariokart-transformed.glb')
   return (
     <group {...props} dispose={null}>
-      <mesh castShadow receiveShadow geometry={nodes.mt_kart_Mario_S.geometry} material={materials.mt_kart_Mario_S} />
-      <mesh castShadow receiveShadow geometry={nodes.mt_Kart_Mario_Tire_S001.geometry} material={materials.mt_Kart_Mario_Tire_S} position={[0, 0.22, -0.347]} />
-      <mesh castShadow receiveShadow geometry={nodes.mt_mario.geometry} material={materials.mt_mario} />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_kart_Mario_S.geometry}
+        material={materials.mt_kart_Mario_S}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_Kart_Mario_Tire_S001.geometry}
+        material={materials.mt_Kart_Mario_Tire_S}
+        position={[0, 0.22, -0.347]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.mt_mario.geometry}
+        material={materials.mt_mario}
+      />
     </group>
   )
 }

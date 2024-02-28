@@ -1,27 +1,27 @@
 {
-    "name": "Mario Kart Dev Container",
-    "image": "mcr.microsoft.com/devcontainers/javascript-node",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "eamodio.gitlens",
-                "esbenp.prettier-vscode",
-                "VisualStudioExptTeam.vscodeintellicode",
-                "dbaeumer.vscode-eslint",
-                "dsznajder.es7-react-js-snippets",
-                "antfu.vite",
-                "meganrogge.template-string-converter",
-                "ambar.bundle-size",
-                "aaron-bond.better-comments"
-            ]
-        }
-    },
-    "forwardPorts": [4000],
-    "portsAttributes": {
-        "4000": {
-            "label": "Application",
-            "onAutoForward": "notify"
-        }
-    },
-    "postCreateCommand": "npm install"
+  "name": "Mario Kart Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        "antfu.vite",
+        "meganrogge.template-string-converter",
+        "ambar.bundle-size",
+        "aaron-bond.better-comments"
+      ]
+    }
+  },
+  "forwardPorts": [4000],
+  "portsAttributes": {
+    "4000": {
+      "label": "Application",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm install"
 }

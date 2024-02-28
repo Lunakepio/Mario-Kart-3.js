@@ -9,25 +9,30 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^9.96.4",
-    "@react-three/fiber": "^8.15.15",
-    "@react-three/postprocessing": "^2.15.11",
-    "@react-three/rapier": "^1.2.1",
+    "@react-three/drei": "^9.99.4",
+    "@react-three/fiber": "^8.15.16",
+    "@react-three/postprocessing": "^2.16.0",
+    "@react-three/rapier": "^1.3.0",
     "gsap": "^3.12.5",
     "leva": "^0.9.35",
-    "playroomkit": "^0.0.66",
+    "playroomkit": "^0.0.68",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-gamepad": "^1.0.3",
     "react-joystick-component": "^6.2.1",
-    "three": "^0.160.1",
-    "three-mesh-bvh": "^0.7.0",
-    "zustand": "^4.5.0"
+    "three": "^0.161.0",
+    "three-mesh-bvh": "^0.7.3",
+    "vite-tsconfig-paths": "^4.3.1",
+    "zustand": "^4.5.1"
   },
   "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@vitejs/plugin-react-swc": "^3.0.0",
-    "vite": "^4.2.0"
+    "@types/react": "^18.2.60",
+    "@types/react-dom": "^18.2.19",
+    "@types/three": "^0.161.2",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
   }
 }

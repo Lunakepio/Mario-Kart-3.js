@@ -1,62 +1,47 @@
 import {
   Environment,
-  OrbitControls,
   PerspectiveCamera,
-  Lightformer,
-  Bvh,
-} from "@react-three/drei";
-import { Ground } from "./Ground";
-import { PlayerController } from "./PlayerController";
-import { PlayerControllerGamepad } from "./PlayerControllerGamepad";
-import { PlayerControllerKeyboard } from "./PlayerControllerKeyboard";
-import { PlayerControllerTouch } from "./PlayerControllerTouch";
-import { Paris } from "./models/tracks/Tour_paris_promenade";
+} from '@react-three/drei'
+import { Ground } from './Ground'
+import { PlayerController } from './PlayerController'
+import { PlayerControllerGamepad } from './PlayerControllerGamepad'
+import { PlayerControllerKeyboard } from './PlayerControllerKeyboard'
+import { PlayerControllerTouch } from './PlayerControllerTouch'
 import {
   EffectComposer,
-  N8AO,
   Bloom,
   TiltShift2,
   HueSaturation,
   SMAA,
-  ChromaticAberration,
-  Vignette,
-  LUT,
-} from "@react-three/postprocessing";
-import { Banana } from "./models/items/Banana_peel_mario_kart";
-import { ItemBox } from "./models/misc/Gift";
-import { useStore } from "./store";
-import { Shell } from "./models/items/Mario_shell_red";
-import { Coin } from "./models/misc/Super_mario_bros_coin";
+} from '@react-three/postprocessing'
+import { Banana } from './models/items/Banana_peel_mario_kart'
+import { ItemBox } from './models/misc/Gift'
+import { useStore } from './store'
+import { Shell } from './models/items/Mario_shell_red'
+import { Coin } from './models/misc/Super_mario_bros_coin'
 import {
-  RPC,
   getState,
-  insertCoin,
-  isHost,
   myPlayer,
-  onPlayerJoin,
   useMultiplayerState,
-} from "playroomkit";
-import { PlayerDummies } from "./PlayerDummies";
-import { useEffect, useState, useRef } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { LUTPass, LUTCubeLoader } from "three-stdlib";
-import { useCurvedPathPoints } from "./useCurvedPath";
-import { ParisBis } from "./models/tracks/Paris-bis";
+} from 'playroomkit'
+import { PlayerDummies } from './PlayerDummies'
+import { useEffect, useState, useRef } from 'react'
+import { useFrame, useLoader } from '@react-three/fiber'
+import { LUTCubeLoader } from 'three-stdlib'
+import { useCurvedPathPoints } from './useCurvedPath'
+import { ParisBis } from './models/tracks/Paris-bis'
 
 export const Experience = () => {
-  const onCollide = (event) => {};
+  const onCollide = (event) => {}
   const { gameStarted, bananas, shells, players, id, actions, controls } =
-    useStore();
-  const [networkBananas, setNetworkBananas] = useMultiplayerState(
-    "bananas",
-    []
-  );
+    useStore()
+  const [networkBananas, setNetworkBananas] = useMultiplayerState('bananas', [])
 
-  const { points, loading, error } = useCurvedPathPoints("./CurvedPath.json");
+  const { points, loading, error } = useCurvedPathPoints('./CurvedPath.json')
 
-  const [networkShells, setNetworkShells] = useMultiplayerState("shells", []);
-  const [pointest, setPointest] = useState([]);
-  const [currentPoint, setCurrentPoint] = useState(0);
+  const [networkShells, setNetworkShells] = useMultiplayerState('shells', [])
+  const [pointest, setPointest] = useState([])
+  const [currentPoint, setCurrentPoint] = useState(0)
   useEffect(() => {
     if (points) {
       //This is adjusted to Paris scale
@@ -64,14 +49,14 @@ export const Experience = () => {
         x: point.x * 50,
         y: point.y * 50,
         z: point.z * 50,
-      }));
-      setPointest(scaledPoints.reverse());
+      }))
+      setPointest(scaledPoints.reverse())
     }
-  }, [points]);
+  }, [points])
 
-  const testing = getState("bananas");
-  const cam = useRef();
-  const lookAtTarget = useRef();
+  const testing = getState('bananas')
+  const cam = useRef()
+  const lookAtTarget = useRef()
   // useEffect(() => {
   //   setNetworkBananas(bananas);
   // }, [bananas]);
@@ -79,41 +64,41 @@ export const Experience = () => {
   // useEffect(() => {
   //   setNetworkShells(shells);
   // }, [shells]);
-  const speedFactor = 5;
-  const { texture } = useLoader(LUTCubeLoader, "./cubicle-99.CUBE");
+  const speedFactor = 5
+  const { texture } = useLoader(LUTCubeLoader, './cubicle-99.CUBE')
   useFrame((state, delta) => {
     if (!gameStarted) {
-      const camera = cam.current;
+      const camera = cam.current
 
       if (currentPoint < pointest.length - 1) {
-        camera.position.lerp(pointest[currentPoint], delta * speedFactor);
+        camera.position.lerp(pointest[currentPoint], delta * speedFactor)
         lookAtTarget.current.position.lerp(
           pointest[currentPoint + 1],
           delta * speedFactor
-        );
-        camera.lookAt(lookAtTarget.current.position);
+        )
+        camera.lookAt(lookAtTarget.current.position)
 
         if (camera.position.distanceTo(pointest[currentPoint]) < 5) {
-          setCurrentPoint(currentPoint + 1);
+          setCurrentPoint(currentPoint + 1)
         }
       } else {
-        setCurrentPoint(0);
+        setCurrentPoint(0)
       }
     }
-  });
+  })
 
   return (
     <>
       {gameStarted &&
         players.map((player) => {
           const ControllerComponent =
-            controls === "keyboard"
+            controls === 'keyboard'
               ? PlayerControllerKeyboard
-              : controls === "gamepad"
+              : controls === 'gamepad'
               ? PlayerControllerGamepad
-              : controls === "touch"
+              : controls === 'touch'
               ? PlayerControllerTouch
-              : PlayerController;
+              : PlayerController
 
           return (
             <ControllerComponent
@@ -125,7 +110,7 @@ export const Experience = () => {
               networkBananas={networkBananas}
               networkShells={networkShells}
             />
-          );
+          )
         })}
       {gameStarted &&
         players.map((player) => (
@@ -207,5 +192,5 @@ export const Experience = () => {
         {/* <Vignette eskil={false} offset={0.1} darkness={0.4} /> */}
       </EffectComposer>
     </>
-  );
-};
+  )
+}

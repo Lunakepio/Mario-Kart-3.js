@@ -2,12 +2,18 @@
  * FakeFlame material component by Anderson Mancini - Jan 2024.
  */
 
-import React, { useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { shaderMaterial } from '@react-three/drei'
 import { extend, useFrame } from '@react-three/fiber'
 import { Color, DoubleSide, AdditiveBlending } from 'three'
 
-export default function FakeFlame({ falloff = 3, glowInternalRadius = 1.0, glowColor = 'orange', glowSharpness = 1.0 , isBoosting,}) {
+export default function FakeFlame({
+  falloff = 3,
+  glowInternalRadius = 1.0,
+  glowColor = 'orange',
+  glowSharpness = 1.0,
+  isBoosting = false,
+}) {
   const FakeFlame = useMemo(() => {
     return shaderMaterial(
       {
