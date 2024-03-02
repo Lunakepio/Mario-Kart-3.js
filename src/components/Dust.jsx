@@ -32,6 +32,7 @@ export function Dust({ count = 500, opacity = 0.1, size = 0.6 }) {
   let time = 0
   let i = 0
   useFrame((state,delta ) => {
+    if(!leftWheel && !rightWheel) return;
     const rotation = leftWheel.kartRotation;
     if (state.clock.getElapsedTime() - time > 0.02 && leftWheel && rightWheel && ref.current && leftWheel.isSpinning) {
       time = state.clock.getElapsedTime()

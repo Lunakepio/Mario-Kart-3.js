@@ -13,8 +13,8 @@ export const items = [
 ]
 
 export const useStore = create((set, get) => ({
-  gameStarted: true,
-  controls: "gamepad",
+  gameStarted: false,
+  controls: "",
   particles1: [],
   particles2: [],
   leftWheel: null,

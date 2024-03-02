@@ -19,6 +19,7 @@ export function Skid({ count = 50000, opacity = 0.5, size = 0.3 }) {
   const { leftWheel, rightWheel } = useStore();
   let index = 0
   useFrame(() => {
+    if(!leftWheel && !rightWheel) return;
     const rotation = leftWheel.kartRotation;
     if (leftWheel && rightWheel && ref.current && (leftWheel.isSpinning || rightWheel.isSpinning)) {
       setItemAt(ref.current, rotation, leftWheel, index++);
