@@ -38,7 +38,7 @@ function App() {
 
   const { actions } = useStore();
   const start = async () => {
-    await insertCoin();
+    await insertCoin({ skipLobby: true});
 
     onPlayerJoin((state) => {
       actions.addPlayer(state);
