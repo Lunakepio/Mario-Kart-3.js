@@ -15,7 +15,6 @@ import { DriftParticlesRight } from "./Particles/drifts/DriftParticlesRight";
 
 import { PointParticle } from "./Particles/drifts/PointParticle";
 
-import { SmokeParticles } from "./Particles/smoke/SmokeParticles";
 import { useStore } from "./store";
 import { Cylinder } from "@react-three/drei";
 import FakeGlowMaterial from "./ShaderMaterials/FakeGlow/FakeGlowMaterial";
@@ -34,7 +33,6 @@ export const PlayerControllerGamepad = ({
   networkBananas,
   networkShells,
 }) => {
-
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
   const kart = useRef();
@@ -84,7 +82,8 @@ export const PlayerControllerGamepad = ({
   const effectiveBoost = useRef(0);
   const text = useRef();
 
-  const { actions, shouldSlowDown, item, bananas, coins, id, controls } = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins, id, controls } =
+    useStore();
   const slowDownDuration = useRef(1500);
   const { buttonA, buttonB, RB, LB, joystick, select, start } = useGamepad();
 
@@ -94,14 +93,11 @@ export const PlayerControllerGamepad = ({
   const leftWheel = useRef();
   const isDrifting = useRef(false);
   useEffect(() => {
-    if(leftWheel.current && rightWheel.current && body.current) {
+    if (leftWheel.current && rightWheel.current && body.current) {
       actions.setLeftWheel(leftWheel.current);
       actions.setRightWheel(rightWheel.current);
-      actions.setIsDrifting(isDrifting.current);
     }
   }, [body.current]);
-  
-      
 
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
@@ -129,6 +125,7 @@ export const PlayerControllerGamepad = ({
     if (start) {
       actions.setGameStarted(false);
     }
+    leftWheel.current.kartRotation = kartRotation ;
 
     if (!driftLeft.current && !driftRight.current) {
       steeringAngle = currentSteeringSpeed * -joystick[0];
@@ -169,6 +166,7 @@ export const PlayerControllerGamepad = ({
       }
     }
     if (shouldSlow) {
+      rightWheel.current.isSpinning = true;
       setCurrentSpeed(
         Math.max(currentSpeed - decceleration * 2 * delta * 144, 0)
       );
@@ -176,6 +174,7 @@ export const PlayerControllerGamepad = ({
       slowDownDuration.current -= 1500 * delta;
       setShouldLaunch(true);
       if (slowDownDuration.current <= 1) {
+        rightWheel.current.isSpinning = false;
         actions.setShouldSlowDown(false);
         slowDownDuration.current = 1500;
         setShouldLaunch(false);
@@ -299,9 +298,13 @@ export const PlayerControllerGamepad = ({
         steeringAngle * 25 + 0.4,
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
+      if(isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
+
+      }
     }
-    if (driftRight.current) {
+    if (driftRight.current ) {
       driftDirection.current = -1;
       driftForce.current = 0.4;
       mario.current.rotation.y = THREE.MathUtils.lerp(
@@ -309,7 +312,11 @@ export const PlayerControllerGamepad = ({
         -(-steeringAngle * 25 + 0.4),
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
+      if(isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
+
+      }
     }
     if (!driftLeft.current && !driftRight.current) {
       mario.current.rotation.y = THREE.MathUtils.lerp(
@@ -318,6 +325,12 @@ export const PlayerControllerGamepad = ({
         0.05 * delta * 144
       );
       setScale(0);
+
+      if((joystick[0] > 0.8 || joystick[0] < -0.8) && currentSpeed > 20 && isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+      } else {
+        leftWheel.current.isSpinning = false;
+      }
     }
     if (accumulatedDriftPower.current > blueTurboThreshold) {
       setTurboColor(0x00ffff);
@@ -386,6 +399,7 @@ export const PlayerControllerGamepad = ({
       targetXPosition,
       0.01 * delta * 144
     );
+
 
     cam.current.position.z = THREE.MathUtils.lerp(
       cam.current.position.z,
@@ -473,7 +487,6 @@ export const PlayerControllerGamepad = ({
       actions.useItem();
     }
 
-
     player.setState("position", body.current.translation());
     player.setState("rotation", kartRotation + mario.current.rotation.y);
     player.setState("isBoosting", isBoosting);
@@ -550,8 +563,7 @@ export const PlayerControllerGamepad = ({
               opacity={0.4}
             />
           </mesh>
-          <mesh position={[-0.46, 0.05, 0.3]} ref={leftWheel}>
-          </mesh>
+          <mesh position={[-0.46, 0.05, 0.3]} ref={leftWheel}></mesh>
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale * 10}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <FakeGlowMaterial
@@ -561,12 +573,10 @@ export const PlayerControllerGamepad = ({
               glowSharpness={1}
             />
           </mesh>
-          <mesh position={[0.46, 0.05, 0.3]} ref={rightWheel}>
-          </mesh>
+          <mesh position={[0.46, 0.05, 0.3]} ref={rightWheel}></mesh>
           {/* <FlameParticles isBoosting={isBoosting} /> */}
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
-          <SmokeParticles driftRight={driftRight.current} driftLeft={driftLeft.current} />
           <PointParticle
             position={[-0.6, 0.05, 0.5]}
             png="./particles/circle.png"

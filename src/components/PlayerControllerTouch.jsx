@@ -86,6 +86,15 @@ export const PlayerControllerTouch = ({
 
   const { actions, shouldSlowDown, item, bananas, coins, id, controls, joystickX, driftButton, itemButton, menuButton } = useStore();
   const slowDownDuration = useRef(1500);
+  const rightWheel = useRef();
+  const leftWheel = useRef();
+  const isDrifting = useRef(false);
+  useEffect(() => {
+    if (leftWheel.current && rightWheel.current && body.current) {
+      actions.setLeftWheel(leftWheel.current);
+      actions.setRightWheel(rightWheel.current);
+    }
+  }, [body.current]);
 
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
@@ -108,7 +117,7 @@ export const PlayerControllerTouch = ({
       0,
       -Math.cos(kartRotation)
     );
-
+    leftWheel.current.kartRotation = kartRotation;
     if (menuButton) {
       actions.setGameStarted(false);
     }
@@ -153,6 +162,8 @@ export const PlayerControllerTouch = ({
         );
       }
     if (shouldSlow) {
+      rightWheel.current.isSpinning = true;
+
       setCurrentSpeed(
         Math.max(currentSpeed - decceleration * 2 * delta * 144, 0)
       );
@@ -160,6 +171,8 @@ export const PlayerControllerTouch = ({
       slowDownDuration.current -= 1500 * delta;
       setShouldLaunch(true);
       if (slowDownDuration.current <= 1) {
+        rightWheel.current.isSpinning = false;
+
         actions.setShouldSlowDown(false);
         slowDownDuration.current = 1500;
         setShouldLaunch(false);
@@ -252,7 +265,11 @@ export const PlayerControllerTouch = ({
         steeringAngle * 25 + 0.4,
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
+      if(isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
+
+      }
     }
     if (driftRight.current) {
       driftDirection.current = -1;
@@ -262,7 +279,11 @@ export const PlayerControllerTouch = ({
         -(-steeringAngle * 25 + 0.4),
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
+      if(isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
+
+      }
     }
     if (!driftLeft.current && !driftRight.current) {
       mario.current.rotation.y = THREE.MathUtils.lerp(
@@ -271,6 +292,11 @@ export const PlayerControllerTouch = ({
         0.05 * delta * 144
       );
       setScale(0);
+      if((joystickX > 0.8 || joystickX < -0.8) && currentSpeed > 20 && isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+      } else {
+        leftWheel.current.isSpinning = false;
+      }
     }
     if (accumulatedDriftPower.current > blueTurboThreshold) {
       setTurboColor(0x00ffff);
@@ -466,6 +492,8 @@ export const PlayerControllerTouch = ({
               opacity={0.4}
             />
           </mesh>
+          <mesh position={[-0.46, 0.05, 0.3]} ref={leftWheel}></mesh>
+          <mesh position={[0.46, 0.05, 0.3]} ref={rightWheel}></mesh>
           <mesh position={[0.6, 0.05, 0.5]} scale={scale * 10}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <FakeGlowMaterial

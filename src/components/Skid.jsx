@@ -14,16 +14,15 @@ const v = new Vector3()
 
 
 
-export function Skid({ count = 500, opacity = 0.5, size = 0.3 }) {
+export function Skid({ count = 50000, opacity = 0.5, size = 0.3 }) {
   const ref = useRef(null);
   const { leftWheel, rightWheel } = useStore();
   let index = 0
   useFrame(() => {
-    const isDrifting = useStore.getState()
-    console.log(isDrifting)
-    if (leftWheel && rightWheel && ref.current && isDrifting) {
-      setItemAt(ref.current, leftWheel.rotation, leftWheel, index++);
-      setItemAt(ref.current, rightWheel.rotation, rightWheel, index++);
+    const rotation = leftWheel.kartRotation;
+    if (leftWheel && rightWheel && ref.current && (leftWheel.isSpinning || rightWheel.isSpinning)) {
+      setItemAt(ref.current, rotation, leftWheel, index++);
+      setItemAt(ref.current, rotation, rightWheel, index++);
       
       if (index === count) index = 0
     }
@@ -48,7 +47,7 @@ export function Skid({ count = 500, opacity = 0.5, size = 0.3 }) {
 
 function setItemAt(instances, rotation, body, index) {
   o.position.copy(body.getWorldPosition(v));
-  o.rotation.copy(rotation)
+  o.rotation.set(0, rotation, 0);
   o.scale.setScalar(1)
   o.updateMatrix()
   instances.setMatrixAt(index, o.matrix)

@@ -43,6 +43,7 @@ import { LUTPass, LUTCubeLoader } from "three-stdlib";
 import { useCurvedPathPoints } from "./useCurvedPath";
 import { ParisBis } from "./models/tracks/Paris-bis";
 import { Skid } from "./Skid";
+import { Dust } from "./Dust";
 
 export const Experience = () => {
   const onCollide = (event) => {};
@@ -152,10 +153,11 @@ export const Experience = () => {
       <ParisBis position={[0, 0, 0]} />
       <ItemBox position={[-20, 2.5, -119]} />
       <Coin position={[-30, 2, -119]} />
+      <Skid />
+      <Dust />
 
       <Ground position={[0, 0, 0]} />
       <Environment resolution={256} preset="lobby" />
-      <Skid />
       {networkBananas.map((banana) => (
         <Banana
           key={banana.id}
