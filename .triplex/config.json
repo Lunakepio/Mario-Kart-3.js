@@ -3,13 +3,5 @@
   "components": ["../src/components/**/*.(j|t)sx"],
   "files": ["../src/components/**/*.(j|t)sx"],
   "provider": "./provider.tsx",
-  "assetsDir": "models",
-  "rendererAttributes": {
-    "gl": {
-      "antialias": false,
-      "stencil": false,
-      "depth": false,
-      "powerPreference": "high-performance"
-    }
-  }
+  "assetsDir": "models"
 }
