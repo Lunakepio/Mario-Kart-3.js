@@ -4,12 +4,20 @@ Command: npx gltfjsx@6.2.16 .\mariokarttest.glb --shadows
 */
 
 import React, { useEffect, useRef } from 'react'
-import { Cylinder, OrbitControls, Sphere, useGLTF } from '@react-three/drei'
+import { Cylinder, Sphere, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import FakeGlowMaterial from '../../ShaderMaterials/FakeGlow/FakeGlowMaterial'
 import FakeFlame from '../../ShaderMaterials/FakeFlame/FakeFlame'
 import { useStore } from '../../store'
 import gsap from 'gsap'
+import { Group, Mesh, Object3DEventMap } from 'three'
+
+type MarioProps = {
+  currentSpeed: number
+  steeringAngleWheels: number
+  isBoosting: boolean
+  shouldLaunch: boolean
+}
 
 export function Mario({
   currentSpeed,
@@ -17,17 +25,17 @@ export function Mario({
   isBoosting,
   shouldLaunch,
   ...props
-}) {
+}: MarioProps) {
   const { nodes, materials } = useGLTF('./models/characters/mariokarttest.glb')
 
-  const frontLeftWheel = useRef()
-  const frontRightWheel = useRef()
-  const rearWheels = useRef()
-  const frontWheels = useRef()
+  const frontLeftWheel = useRef<Mesh>(null!)
+  const frontRightWheel = useRef<Mesh>(null!)
+  const rearWheels = useRef<Mesh>(null!)
+  const frontWheels = useRef<Mesh>(null!)
   const [scale, setScale] = React.useState(1)
   const { actions } = useStore()
   const [shouldSlow, setShouldSlow] = React.useState(false)
-  const mario = useRef()
+  const mario = useRef<Group<Object3DEventMap>>(null!)
   // isBoosting = true;
 
   useFrame((_, delta) => {

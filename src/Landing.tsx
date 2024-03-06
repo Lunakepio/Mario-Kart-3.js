@@ -5,9 +5,9 @@ import gsap from 'gsap'
 export const Landing = () => {
   const { gameStarted, actions } = useStore()
 
-  const logo = useRef()
-  const startButton = useRef()
-  const homeRef = useRef()
+  const logo = useRef<null | HTMLImageElement>(null)
+  const startButton = useRef<null | HTMLDivElement>(null)
+  const homeRef = useRef<null | HTMLDivElement>()
   const [setupStatus, setSetupStatus] = useState(0)
   const [controlStyle, setControlStyle] = useState('')
 
@@ -37,7 +37,7 @@ export const Landing = () => {
       }
     }
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         setSetupStatus(1)
       }
