@@ -92,8 +92,19 @@ export const PlayerControllerKeyboard = ({
   const effectiveBoost = useRef(0);
   const text = useRef();
 
-  const { actions, shouldSlowDown, item, bananas, coins, id, controls } = useStore();
+  const { actions, shouldSlowDown, item, bananas, coins, id, controls } =
+    useStore();
   const slowDownDuration = useRef(1500);
+
+  const rightWheel = useRef();
+  const leftWheel = useRef();
+  const isDrifting = useRef(false);
+  useEffect(() => {
+    if (leftWheel.current && rightWheel.current && body.current) {
+      actions.setLeftWheel(leftWheel.current);
+      actions.setRightWheel(rightWheel.current);
+    }
+  }, [body.current]);
 
   useFrame(({ pointer, clock }, delta) => {
     if (player.id !== id) return;
@@ -116,7 +127,7 @@ export const PlayerControllerKeyboard = ({
       0,
       -Math.cos(kartRotation)
     );
-    
+    leftWheel.current.kartRotation = kartRotation;
     if (escPressed) {
       actions.setGameStarted(false);
     }
@@ -168,6 +179,7 @@ export const PlayerControllerKeyboard = ({
       }
     }
     if (shouldSlow) {
+      rightWheel.current.isSpinning = true;
       setCurrentSpeed(
         Math.max(currentSpeed - decceleration * 2 * delta * 144, 0)
       );
@@ -175,6 +187,7 @@ export const PlayerControllerKeyboard = ({
       slowDownDuration.current -= 1500 * delta;
       setShouldLaunch(true);
       if (slowDownDuration.current <= 1) {
+        rightWheel.current.isSpinning = false;
         actions.setShouldSlowDown(false);
         slowDownDuration.current = 1500;
         setShouldLaunch(false);
@@ -300,7 +313,11 @@ export const PlayerControllerKeyboard = ({
         steeringAngle * 25 + 0.4,
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (steeringAngle + 1) * delta * 144;
+      if (isOnFloor.current) {
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current +=
+          0.1 * (steeringAngle + 1) * delta * 144;
+      }
     }
     if (driftRight.current) {
       driftDirection.current = -1;
@@ -310,7 +327,11 @@ export const PlayerControllerKeyboard = ({
         -(-steeringAngle * 25 + 0.4),
         0.05 * delta * 144
       );
-      accumulatedDriftPower.current += 0.1 * (-steeringAngle + 1) * delta * 144;
+      if (isOnFloor.current) {
+        leftWheel.current.isSpinning = true;
+        accumulatedDriftPower.current +=
+          0.1 * (-steeringAngle + 1) * delta * 144;
+      }
     }
     if (!driftLeft.current && !driftRight.current) {
       mario.current.rotation.y = THREE.MathUtils.lerp(
@@ -319,6 +340,11 @@ export const PlayerControllerKeyboard = ({
         0.05 * delta * 144
       );
       setScale(0);
+      if((leftPressed || rightPressed) && currentSpeed > 20 && isOnFloor.current){
+        leftWheel.current.isSpinning = true;
+      } else {
+        leftWheel.current.isSpinning = false;
+      }
     }
     if (accumulatedDriftPower.current > blueTurboThreshold) {
       setTurboColor(0x00ffff);
@@ -529,6 +555,8 @@ export const PlayerControllerKeyboard = ({
               opacity={0.4}
             />
           </mesh>
+          <mesh position={[-0.46, 0.05, 0.3]} ref={leftWheel}></mesh>
+          <mesh position={[0.46, 0.05, 0.3]} ref={rightWheel}></mesh>
           <mesh position={[0.6, 0.05, 0.5]} scale={scale * 10}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <FakeGlowMaterial
@@ -548,6 +576,7 @@ export const PlayerControllerKeyboard = ({
               opacity={0.4}
             />
           </mesh>
+
           <mesh position={[-0.6, 0.05, 0.5]} scale={scale * 10}>
             <sphereGeometry args={[0.05, 16, 16]} />
             <FakeGlowMaterial
@@ -560,7 +589,10 @@ export const PlayerControllerKeyboard = ({
           {/* <FlameParticles isBoosting={isBoosting} /> */}
           <DriftParticlesLeft turboColor={turboColor} scale={scale} />
           <DriftParticlesRight turboColor={turboColor} scale={scale} />
-          <SmokeParticles driftRight={driftRight.current} driftLeft={driftLeft.current} />
+          <SmokeParticles
+            driftRight={driftRight.current}
+            driftLeft={driftLeft.current}
+          />
           <PointParticle
             position={[-0.6, 0.05, 0.5]}
             png="./particles/circle.png"

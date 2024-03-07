@@ -1,0 +1,7 @@
+{
+  "$schema": "https://triplex.dev/config.schema.json",
+  "components": ["../src/components/**/*.(j|t)sx"],
+  "files": ["../src/components/**/*.(j|t)sx"],
+  "provider": "./provider.tsx",
+  "assetsDir": "models"
+}
