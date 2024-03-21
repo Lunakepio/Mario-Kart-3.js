@@ -8,7 +8,6 @@ import {
 import { Ground } from "./Ground";
 import { PlayerController } from "./PlayerController";
 import { PlayerControllerGamepad } from "./PlayerControllerGamepad";
-import { PlayerControllerKeyboard } from "./PlayerControllerKeyboard";
 import { PlayerControllerTouch } from "./PlayerControllerTouch";
 import { Paris } from "./models/tracks/Tour_paris_promenade";
 import {
@@ -110,7 +109,7 @@ export const Experience = () => {
         players.map((player) => {
           const ControllerComponent =
             controls === "keyboard"
-              ? PlayerControllerKeyboard
+              ? PlayerController
               : controls === "gamepad"
               ? PlayerControllerGamepad
               : controls === "touch"
@@ -126,6 +125,7 @@ export const Experience = () => {
               setNetworkShells={setNetworkShells}
               networkBananas={networkBananas}
               networkShells={networkShells}
+              control={controls}
             />
           );
         })}
