@@ -32,11 +32,16 @@ export const PlayerController = ({
   setNetworkShells,
   networkBananas,
   networkShells,
+  control
 }) => {
   const upPressed = useKeyboardControls((state) => state[Controls.up]);
   const downPressed = useKeyboardControls((state) => state[Controls.down]);
-  const leftPressed = useKeyboardControls((state) => state[Controls.left]);
-  const rightPressed = useKeyboardControls((state) => state[Controls.right]);
+  let leftPressed = null;
+  let rightPressed = null;
+  if(control == "keyboard"){
+    leftPressed = useKeyboardControls((state) => state[Controls.left]);
+    rightPressed = useKeyboardControls((state) => state[Controls.right]);
+  }
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const shootPressed = useKeyboardControls((state) => state[Controls.shoot]);
   const resetPressed = useKeyboardControls((state) => state[Controls.reset]);
@@ -104,6 +109,12 @@ export const PlayerController = ({
     }
   }, [body.current]);
   useFrame(({ pointer, clock }, delta) => {
+
+    if(control != "keyboard"){
+      leftPressed = pointer.x < -0.1;
+      rightPressed = pointer.x > 0.1;
+    }
+
     if (player.id !== id) return;
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
@@ -131,35 +142,38 @@ export const PlayerController = ({
     if(kartRotation){
       leftWheel.current.kartRotation = kartRotation;
     }
-    if (leftPressed && currentSpeed > 0) {
-      steeringAngle = currentSteeringSpeed;
-      targetXPosition = -camMaxOffset;
-    } else if (rightPressed && currentSpeed > 0) {
-      steeringAngle = -currentSteeringSpeed;
-      targetXPosition = camMaxOffset;
-    } else if (rightPressed && currentSpeed < 0) {
-      steeringAngle = currentSteeringSpeed;
-      targetXPosition = -camMaxOffset;
-    } else if (leftPressed && currentSpeed < 0) {
-      steeringAngle = -currentSteeringSpeed;
-      targetXPosition = camMaxOffset;
-    } else {
-      steeringAngle = 0;
-      targetXPosition = 0;
-      1;
-    }
 
     // mouse steering
 
-    if (!driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -pointer.x;
-      targetXPosition = -camMaxOffset * -pointer.x;
-    } else if (driftLeft.current && !driftRight.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x - 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
-    } else if (driftRight.current && !driftLeft.current) {
-      steeringAngle = currentSteeringSpeed * -(pointer.x + 1);
-      targetXPosition = -camMaxOffset * -pointer.x;
+    if(control == "keyboard"){
+      if (leftPressed && currentSpeed > 0) {
+        steeringAngle = currentSteeringSpeed;
+        targetXPosition = -camMaxOffset;
+      } else if (rightPressed && currentSpeed > 0) {
+        steeringAngle = -currentSteeringSpeed;
+        targetXPosition = camMaxOffset;
+      } else if (rightPressed && currentSpeed < 0) {
+        steeringAngle = currentSteeringSpeed;
+        targetXPosition = -camMaxOffset;
+      } else if (leftPressed && currentSpeed < 0) {
+        steeringAngle = -currentSteeringSpeed;
+        targetXPosition = camMaxOffset;
+      } else {
+        steeringAngle = 0;
+        targetXPosition = 0;
+        1;
+      }
+    }else{
+      if (!driftLeft.current && !driftRight.current) {
+        steeringAngle = currentSteeringSpeed * -pointer.x;
+        targetXPosition = -camMaxOffset * -pointer.x;
+      } else if (driftLeft.current && !driftRight.current) {
+        steeringAngle = currentSteeringSpeed * -(pointer.x - 1);
+        targetXPosition = -camMaxOffset * -pointer.x;
+      } else if (driftRight.current && !driftLeft.current) {
+        steeringAngle = currentSteeringSpeed * -(pointer.x + 1);
+        targetXPosition = -camMaxOffset * -pointer.x;
+      }
     }
     // ACCELERATING
     const shouldSlow = actions.getShouldSlowDown();
@@ -288,7 +302,7 @@ export const PlayerController = ({
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
       upPressed &&
-      pointer.x < -0.1 &&
+      leftPressed &&
       !driftRight.current
     ) {
       driftLeft.current = true;
@@ -297,7 +311,7 @@ export const PlayerController = ({
       jumpIsHeld.current &&
       currentSteeringSpeed > 0 &&
       upPressed &&
-      pointer.x > 0.1 &&
+      rightPressed &&
       !driftLeft.current
     ) {
       driftRight.current = true;
@@ -352,7 +366,7 @@ export const PlayerController = ({
         0.05 * delta * 144
       );
       setScale(0);
-      if((pointer.x > 0.8 || pointer.x < -0.8) && currentSpeed > 20 && isOnFloor.current){
+      if(((control == "keyboard" && (leftPressed || rightPressed)) || (control != "keyboard" && (pointer.x > 0.8 || pointer.x < -0.8))) && currentSpeed > 20 && isOnFloor.current){
         leftWheel.current.isSpinning = true;
       } else {
         leftWheel.current.isSpinning = false;

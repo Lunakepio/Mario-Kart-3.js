@@ -32,6 +32,7 @@ export const PlayerControllerGamepad = ({
   setNetworkShells,
   networkBananas,
   networkShells,
+  control
 }) => {
   const [isOnGround, setIsOnGround] = useState(false);
   const body = useRef();
