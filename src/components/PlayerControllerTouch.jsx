@@ -100,8 +100,8 @@ export const PlayerControllerTouch = ({
     if (player.id !== id) return;
     const time = clock.getElapsedTime();
     if (!body.current && !mario.current) return;
-    engineSound.current.setVolume(currentSpeed / 300 + 0.2);
-    engineSound.current.setPlaybackRate(currentSpeed / 10 + 0.1);
+    engineSound.current.setVolume(Math.abs(currentSpeed) / 300 + 0.2);
+    engineSound.current.setPlaybackRate(Math.abs(currentSpeed)  / 10 + 0.1);
     jumpSound.current.setPlaybackRate(1.5);
     jumpSound.current.setVolume(0.5);
     driftSound.current.setVolume(0.2);
