@@ -13,9 +13,11 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { useStore } from "../../store";
+import {  PositionalAudio } from "@react-three/drei";
 
 export function Coin(props) {
   const group = useRef();
+  const coinSound = useRef();
   const { nodes, materials } = useGLTF(
     "./models/misc/super_mario_bros_coin-transformed.glb"
   );
@@ -24,6 +26,8 @@ export function Coin(props) {
   const frames = useRef(0);
   useFrame((state, delta) => {
 
+    coinSound.current.setPlaybackRate(1.5);
+    coinSound.current.setVolume(0.5);
     group.current.rotation.y += 4 * delta;
     if(scale < 0.424 && frames.current > 0){
       frames.current -= 1 * delta * 144;
@@ -48,6 +52,7 @@ export function Coin(props) {
         onIntersectionEnter={({ manifold, target, other}) => {
           if(other.rigidBodyObject.name === "player"){
             actions.addCoins();
+            coinSound.current.play();
             setScale(0);
             frames.current = 600;
             body.current.setEnable(false);
@@ -64,6 +69,12 @@ export function Coin(props) {
           scale={scale}
         />
       </RigidBody>
+      <PositionalAudio
+          ref={coinSound}
+          url="./sounds/coin.mp3"
+          loop={false}
+          distance={1000}
+        />
     </>
   );
 }
