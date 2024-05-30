@@ -37,7 +37,7 @@ To get started, follow these steps:
 ```
 
 ## 🕹️ Gameplay Controls
-### Keyboard/Mouse
+### Keyboard/Mouse [QWERTY]
 - Use the <kbd>W</kbd> key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
 - Steer with the mouse.
 - Press and hold the space bar to initiate a drift. Steer and counter steer to maintain the drift. Release it to get a mini - turbo.
@@ -45,11 +45,7 @@ To get started, follow these steps:
 - Press <kbd>R</kbd> to reset your position, usable anytime.
 
 ### Gamepad
-- Use the ```???``` to accelerate.
-- Steer with ```???```.
-- Press and hold ```???``` to initiate a drift. Steer and counter steer to maintain the drift. Release it to get a mini - turbo.
-- Press ```???``` to use the current item.
-- Press ```???``` to reset your position, usable anytime.
+⚠️ Not yet implemented.
 
 ### Mobile
 - Kart accelerates on its own.
@@ -58,9 +54,9 @@ To get started, follow these steps:
 - Press ```item button``` to use the current item.
 - Reset not yet available.
 
-### Keyboard
+### Keyboard [QWERTY]
 - Use the <kbd>W</kbd> key to accelerate, the mouse to steer for now (will be updated for mobile/gamepad/keyboard).
-- Steer with ```???```.
+- Steer with <kbd>A</kbd> & <kbd>D</kbd>.
 - Press and hold the space bar to initiate a drift. Steer and counter steer to maintain the drift. Release it to get a mini - turbo.
 - Press <kbd>E</kbd> key to use the current item.
 - Press <kbd>R</kbd> to reset your position, usable anytime.
