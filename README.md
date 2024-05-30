@@ -50,6 +50,13 @@ To get started, follow these steps:
 - Press ??? to use the current item.
 - Press ??? to reset your position, usable anytime.
 
+### Mobile
+- Kart accelerates on its own.
+- Steer with the pad on the top left corner
+- Press and hold drift button to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
+- Press item button to use the current item.
+- Reset not yet available.
+
 
 ## 💻 Code usage
 
