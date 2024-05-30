@@ -5,6 +5,7 @@
 <div align="center">
   <a href="https://github.com/Lunakepio/Mario-Kart-3.js/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Lunakepio/Mario-Kart-3.js"></a>
   <a href="https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+  <a href="https://github.com/Lunakepio/Mario-Kart-3.js/actions/workflows/deploy-to-gh-pages.yml"><img alt="Github Actions" src="https://img.shields.io/github/actions/workflow/status/Lunakepio/Mario-Kart-3.js/deploy-to-gh-pages.yml"></a>
 </div>
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Lunakepio/Mario-Kart-3.js)
@@ -44,17 +45,17 @@ To get started, follow these steps:
 - Press <kbd>R</kbd> to reset your position, usable anytime.
 
 ### Gamepad
-- Use the ??? to accelerate.
-- Steer with ???.
-- Press and hold ??? to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
-- Press ??? to use the current item.
-- Press ??? to reset your position, usable anytime.
+- Use the ```???``` to accelerate.
+- Steer with ```???```.
+- Press and hold ```???``` to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
+- Press ```???``` to use the current item.
+- Press ```???``` to reset your position, usable anytime.
 
 ### Mobile
 - Kart accelerates on its own.
-- Steer with the pad on the top left corner
-- Press and hold drift button to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
-- Press item button to use the current item.
+- Steer with the ```top left pad```.
+- Press and hold ```drift button``` to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
+- Press ```item button``` to use the current item.
 - Reset not yet available.
 
 
