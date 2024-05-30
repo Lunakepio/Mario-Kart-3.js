@@ -15,6 +15,12 @@
 ![](https://geps.dev/progress/50) of the work has been done up to now. 
 <br><br>
 
+### ✨ Our Contributors
+<a href="https://github.com/Lunakepio/Mario-Kart-3.js/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Lunakepio/Mario-Kart-3.js" />
+</a>
+
+
 ## ⬇️ Installation
 To get started, follow these steps:
 
