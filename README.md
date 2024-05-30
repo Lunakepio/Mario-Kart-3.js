@@ -53,7 +53,7 @@ To get started, follow these steps:
 
 ### Mobile
 - Kart accelerates on its own.
-- Steer with the ```top left pad```.
+- Steer with the ```upper left pad```.
 - Press and hold ```drift button``` to initiate a drift. Steer and counter steer to maintain the drift. release it to get a mini - turbo.
 - Press ```item button``` to use the current item.
 - Reset not yet available.
@@ -81,8 +81,6 @@ To get started, follow these steps:
 
 - [ ] Design Landing page
 
-- [ ] Add items
-
 - [ ] Add texture to the flame shaders
 
 - [ ] Add curve/length modifiers to drift particles 3/4
@@ -105,7 +103,7 @@ To get started, follow these steps:
 
 - [ ] Add Minimap
 
-- [ ] Items
+- [ ] Add Items
   - [ ] Tennis ball
   - [ ] Bomb
   - [ ] Real red shell
