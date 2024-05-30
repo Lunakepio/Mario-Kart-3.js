@@ -2,6 +2,11 @@
 
 
 # Welcome to Mario Kart 3.js, a JavaScript/WebGL Mario Kart project!
+<div align="center">
+  <a href="https://github.com/Lunakepio/Mario-Kart-3.js/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Lunakepio/Mario-Kart-3.js"></a>
+  <a href="https://github.com/Lunakepio/Mario-Kart-3.js/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+</div>
+
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Lunakepio/Mario-Kart-3.js)
 
 ⚠️ DISCLAIMER : Please note that this project is still in progress, so your patience is appreciated as we work on it. Enjoy !
@@ -92,7 +97,3 @@ To get started, follow these steps:
   - [ ] Real red shell
   - [ ] Treats
   - [ ] ?
-
-## License
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
