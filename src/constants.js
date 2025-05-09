@@ -1,7 +1,7 @@
 export const kartSettings = {
   speed: {
     min: -10,
-    max: 40,
+    max: 30,
     default: 0,
   },
 

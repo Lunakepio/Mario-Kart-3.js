@@ -157,11 +157,15 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
                 worldPosition.z +
                   randFloat(startPositionMin[2], startPositionMax[2]),
               ],
-              direction: [
-                randFloat(directionMin[0], directionMax[0]),
-                randFloat(directionMin[1], directionMax[1]),
-                randFloat(directionMin[2], directionMax[2]),
-              ],
+              direction: (() => {
+                const dir = new Vector3(
+                  randFloat(directionMin[0], directionMax[0]),
+                  randFloat(directionMin[1], directionMax[1]),
+                  randFloat(directionMin[2], directionMax[2])
+                );
+                dir.applyQuaternion(worldQuaternion);
+                return [dir.x, dir.y, dir.z];
+              })(),
               scale: [randSize, randSize, randSize],
               rotation: [
                 worldRotation.x +

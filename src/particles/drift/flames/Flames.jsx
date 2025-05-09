@@ -47,7 +47,8 @@ export const Flames = () => {
     if (!ref.current) return;
     const camera = state.camera;
     const flamePositions = useGameStore.getState().flamePositions;
-    if (flamePositions && state.clock.getElapsedTime() - lastFiredTimeRef.current >= addInterval) {
+    const isBoosting = useGameStore.getState().isBoosting;
+    if (flamePositions && state.clock.getElapsedTime() - lastFiredTimeRef.current >= addInterval && isBoosting) {
       const [left, right] = flamePositions;
       ref.current.addInstances(1, (obj) => {
         obj.position.set(left.x, left.y, left.z);

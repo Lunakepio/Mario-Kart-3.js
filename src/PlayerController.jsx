@@ -34,10 +34,13 @@ export const PlayerController = () => {
   const smoothedDirectionRef = useRef(new Vector3(0, 0, -1));
   
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
-  const setBoostPower = useGameStore((state) => state.setBoostPower);
+  const setIsBoosting = useGameStore((state) => state.setIsBoosting);
   
   function updateSpeed(forward, backward, delta) {
-    speedRef.current = lerp(speedRef.current, kartSettings.speed.max * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
+    const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 20 : 0);
+    maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
+    speedRef.current = lerp(speedRef.current, maxSpeed * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
+    turbo.current -= delta;
   }
   
   function groundRaycast(position) {
@@ -73,7 +76,7 @@ export const PlayerController = () => {
     const inputTurn = (Number(left) - Number(right) + driftDirection.current) * 0.1;
   
     rotationSpeedRef.current = lerp(rotationSpeedRef.current, inputTurn, 8 * delta);
-    const targetRotation = player.rotation.y + rotationSpeedRef.current * speedRef.current / (kartSettings.speed.max ) ;
+    const targetRotation = player.rotation.y + rotationSpeedRef.current * (speedRef.current > 40 ? 40 : speedRef.current) / (kartSettings.speed.max ) ;
   
     player.rotation.y = lerp(player.rotation.y, targetRotation, 8 * delta);
   }
@@ -88,6 +91,9 @@ export const PlayerController = () => {
     
     if(!spaceKey){
       jumpIsHeld.current = false;
+      if(turbo.current <= 0){
+        turbo.current = useGameStore.getState().boostPower ? useGameStore.getState().boostPower : 0 ;
+      }
       driftDirection.current = driftDirections.none;
       driftPower.current = 0;
     }

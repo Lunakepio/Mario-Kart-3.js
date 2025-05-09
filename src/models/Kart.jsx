@@ -54,7 +54,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
       yRotation.current = lerp(
         yRotation.current,
         Number(right) - Number(left),
-        2 * delta
+        4 * delta
       );
       frontWheels.current.rotation.y = -yRotation.current * 0.2;
       wheelRef.current.rotation.y = -yRotation.current;
@@ -93,7 +93,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
         //  rightEmitterRef?.current?.updateNbParticles?.(driftLevel.nbParticles);
       }
       setFlamePositions([flamePositionLeftRef.current.getWorldPosition(new Vector3()), flamePositionRightRef.current.getWorldPosition(new Vector3())]);
-      
+      setBoostPower(driftLevel.threshold / 2);
     }
   });
 
@@ -145,6 +145,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
           ></mesh>
           <group position={[0.9, -0.3, -0.9]}>
             <Glow ref={glow1Ref} />
+            
             <VFXEmitter
               ref={leftEmitterRef}
               emitter="drifting"
@@ -160,8 +161,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
                 startRotationMax: [0, 0, 0],
                 particlesLifetime: [0.2, 0.4],
                 speed: [6, 10],
-                directionMin: [-0.3, 0.2, 0],
-                directionMax: [-0.8, 0.7, 1],
+                directionMin: [0.3, 0.2, 0],
+                directionMax: [0.8, 0.7, 0],
                 rotationSpeedMin: [0, 0, -1],
                 rotationSpeedMax: [0, 0, 1],
                 size: [0.1, 0.5],
@@ -186,8 +187,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
                 startRotationMax: [0, 0, 0],
                 particlesLifetime: [0.2, 0.4],
                 speed: [6, 10],
-                directionMin: [0.3, 0.2, 0],
-                directionMax: [0.8, 0.7, 1],
+                directionMin: [-0.3, 0.2, 0],
+                directionMax: [-0.8, 0.7, 0],
                 rotationSpeedMin: [0, 0, -1],
                 rotationSpeedMax: [0, 0, 1],
                 size: [0.1, 0.5],
