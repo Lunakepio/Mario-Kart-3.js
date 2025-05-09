@@ -13,7 +13,7 @@ import { useGLTF } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 
 export function Track(props) {
-  const { nodes, materials } = useGLTF('/track-transformed.glb')
+  const { nodes, materials } = useGLTF('/models/track-transformed.glb')
   return (
     <group {...props} dispose={null}
      position={[155, -28.4, 15]} scale={0.08}>
@@ -34,4 +34,4 @@ export function Track(props) {
   )
 }
 
-useGLTF.preload('/track-transformed.glb')
+useGLTF.preload('/models/track-transformed.glb')

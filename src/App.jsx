@@ -16,7 +16,7 @@ export const App = () => {
     { name: "jump", keys: ["Space"] },
   ];
   
-  const alphaTexture = useTexture('./alpha.png');
+  const alphaTexture = useTexture('./textures/particles/alpha.png');
 
   return (
 
