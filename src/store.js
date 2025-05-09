@@ -6,5 +6,7 @@ export const useGameStore = create((set) => ({
   setPlayerPosition: (position) => set({ playerPosition: position }),
   flamePositions: null,
   setFlamePositions: (positions) => set({ flamePositions: positions }),
+  boostPower: 0,
+  setBoostPower: (power) => set({ boostPower: power }),
 
 }));

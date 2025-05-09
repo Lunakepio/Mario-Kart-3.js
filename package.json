@@ -16,6 +16,7 @@
     "@react-three/rapier": "^2.1.0",
     "@three.ez/instanced-mesh": "^0.3.4",
     "gsap": "^3.13.0",
+    "leva": "^0.10.0",
     "r3f-perf": "^7.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

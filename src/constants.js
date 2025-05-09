@@ -17,13 +17,13 @@ export const drifts = {
   level2: {
     name: "blue",
     threshold: 3,
-    color: "#00e5ff",
+    color: "#00ffff",
     nbParticles: 15,
   },
   level1: {
     name: "yellow",
     threshold: 1,
-    color: "#ffe600",
+    color: "#FFA22B",
     nbParticles: 5,
   },
 };

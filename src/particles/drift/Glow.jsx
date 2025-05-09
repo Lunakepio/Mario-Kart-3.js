@@ -35,7 +35,7 @@ export const Glow = forwardRef((props, ref) => {
       float end = 0.5;
       float fade = smoothstep(end, start, dist);
       float colorScalar = 3.0;
-      gl_FragColor = vec4(lightColor * (colorScalar * fade), fade * opacity);
+      gl_FragColor = vec4(lightColor * (colorScalar * fade), fade * opacity * 0.3);
     }
   `;
 
@@ -72,7 +72,7 @@ export const Glow = forwardRef((props, ref) => {
   });
   
 
-  const size = 0.4;
+  const size = 1;
 
   return (
     <Billboard>
@@ -83,7 +83,7 @@ export const Glow = forwardRef((props, ref) => {
           uniforms={{
             time: { value: 0 },
             color: { value: new Color(0xffffff) },
-            opacity: { value: 1.0 },
+            opacity: { value: 1. },
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}

@@ -19,7 +19,7 @@ export const Flames = () => {
       new ShaderMaterial({
         uniforms: { 
           uCurrentTime: { value: 0 },
-          color: { value: new Color(0xECC62B).multiplyScalar(4)},
+          color: { value: new Color(0xFFA22B).multiplyScalar(4)},
           uTimeOffset: { value: 0}
         },        
         vertexShader: vertexShader,

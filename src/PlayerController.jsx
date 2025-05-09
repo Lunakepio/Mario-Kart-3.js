@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber"
 import { useRef } from "react";
 import { Vector3, Quaternion } from "three";
 import { lerp } from "three/src/math/MathUtils.js";
-import { kartSettings } from "./constants";
+import { getDriftLevel, kartSettings } from "./constants";
 import { useGameStore } from "./store";
 
 export const PlayerController = () => {
@@ -24,6 +24,7 @@ export const PlayerController = () => {
   }
   const driftDirection = useRef(driftDirections.none);
   const driftPower = useRef(0);
+  const turbo = useRef(0);
   
   const [, get] = useKeyboardControls();
   const { world, rapier } = useRapier();
@@ -33,6 +34,7 @@ export const PlayerController = () => {
   const smoothedDirectionRef = useRef(new Vector3(0, 0, -1));
   
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
+  const setBoostPower = useGameStore((state) => state.setBoostPower);
   
   function updateSpeed(forward, backward, delta) {
     speedRef.current = lerp(speedRef.current, kartSettings.speed.max * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
@@ -115,7 +117,7 @@ export const PlayerController = () => {
     
 
       // cameraGroup.rotation.y = lerp(cameraGroup.rotation.y, angle * 0.4, 10 * delta);
-      kart.rotation.y = lerp(kart.rotation.y, angle + driftDirection.current * 0.1, 8 * delta);
+    kart.rotation.y = lerp(kart.rotation.y, angle * 1.3 + driftDirection.current * 0.1, 6 * delta);
   
 
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));

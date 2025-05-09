@@ -27,13 +27,13 @@ export const Lighting = () => {
   
   return (
     <>
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.} />
       <directionalLight
             castShadow
             ref={directionalLight}
             position={[0, 0, 0]}
             intensity={1}
-            color={"#add8e6"}
+            color={"#FFFFFF"}
             // shadow-normalBias={0.04}
             shadow-bias={-0.001}
             shadow-mapSize={[4096, 4096]}
@@ -52,7 +52,7 @@ export const Lighting = () => {
               {/* <Helper type={CameraHelper} /> */}
             </orthographicCamera>
           </directionalLight>
-          <Environment preset="apartment" />
+          <Environment preset="apartment"  background backgroundBlurriness={1}/>
     </>
   );
 };

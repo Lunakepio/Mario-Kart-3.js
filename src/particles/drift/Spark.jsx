@@ -56,7 +56,7 @@ export const Spark = forwardRef((props, ref) => {
     },
     setColor: (newColor) => {
       if (materialRef.current) {
-        materialRef.current.color = newColor.multiplyScalar(4);
+        materialRef.current.color = newColor.multiplyScalar(12);
       }
     },
     mesh: meshRef,
