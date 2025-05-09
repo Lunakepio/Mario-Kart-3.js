@@ -37,7 +37,7 @@ export const PlayerController = () => {
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
   
   function updateSpeed(forward, backward, delta) {
-    const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 20 : 0);
+    const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
     speedRef.current = lerp(speedRef.current, maxSpeed * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
     turbo.current -= delta;
@@ -122,11 +122,12 @@ export const PlayerController = () => {
       );
     
 
-      // cameraGroup.rotation.y = lerp(cameraGroup.rotation.y, angle * 0.4, 10 * delta);
+      cameraGroupRef.current.rotation.y = lerp(cameraGroupRef.current.rotation.y, angle * 0.1, 10 * delta);
     kart.rotation.y = lerp(kart.rotation.y, angle * 1.3 + driftDirection.current * 0.1, 6 * delta);
   
 
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));
+    camera.position.z =  10 + speedRef.current * 0.05
     const direction = smoothedDirectionRef.current;
     const rbPosition = rigidBody.translation();
   
@@ -170,7 +171,7 @@ export const PlayerController = () => {
       </RigidBody>
     <group ref={playerRef}>
       <group ref={cameraGroupRef}>
-        <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 4, 15]} />
+        <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 2, 10]} />
       </group>
 
       <group ref={kartRef}>

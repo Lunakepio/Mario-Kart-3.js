@@ -17,6 +17,7 @@ export const App = () => {
   ];
   
   const alphaTexture = useTexture('./textures/particles/alpha.png');
+  const smokeTexture = useTexture('./textures/particles/smoke.png');
 
   return (
 
@@ -34,6 +35,19 @@ export const App = () => {
               frustumCulled: false,
             }}
             alphaMap={alphaTexture}
+          />
+          <VFXParticles
+            name="smoke"
+            settings={{
+              fadeAlpha: [1, 0],
+              fadeSize: [0.5, 1],
+              intensity: 0.5,
+              nbParticles: 100,
+              renderMode: "billboard",
+              gravity: [0, 0, 0],
+              frustumCulled: false,
+            }}
+            alphaMap={smokeTexture}
           />
           <KeyboardControls map={controls}>
             <Physics timestep={"vary"} gravity={[0, -90, 0]}>

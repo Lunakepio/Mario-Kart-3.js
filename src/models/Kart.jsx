@@ -29,6 +29,9 @@ export function Kart({ speed, driftDirection, driftPower }) {
   const glow1Ref = useRef(null);
   const glow2Ref = useRef(null);
 
+  const smoke1Ref = useRef(null);
+  const smoke2Ref = useRef(null);
+
   const [, get] = useKeyboardControls();
   const yRotation = useRef(0);
   const wheelRef = useRef(null);
@@ -56,8 +59,17 @@ export function Kart({ speed, driftDirection, driftPower }) {
         Number(right) - Number(left),
         4 * delta
       );
+      
       frontWheels.current.rotation.y = -yRotation.current * 0.2;
       wheelRef.current.rotation.y = -yRotation.current;
+
+      if(speed.current > 15){
+        smoke1Ref.current?.stopEmitting();
+        smoke2Ref.current?.stopEmitting();
+      } else {
+        smoke1Ref.current?.startEmitting();
+        smoke2Ref.current?.startEmitting();
+      }
 
       groupRef.current.rotation.y = lerp(
         groupRef.current.rotation.y,
@@ -107,9 +119,57 @@ export function Kart({ speed, driftDirection, driftPower }) {
   }, [])
   return (
     <group ref={groupRef} dispose={null}>
-      <group position={[0.55, 0, 1.5]} rotation-x={-Math.PI / 9} ref={flamePositionLeftRef}>
+      <group position={[0.5, 0, 1.5]} rotation-x={-Math.PI / 9} ref={flamePositionLeftRef}>
+      <VFXEmitter
+      ref={smoke1Ref}
+              emitter="smoke"
+              settings={{
+                duration: 0.02,
+                delay: 0.1,
+                nbParticles: 1,
+                spawnMode: "time",
+                loop: true,
+                startPositionMin: [0, 0, 0],
+                startPositionMax: [0, 0, 0],
+                startRotationMin: [0, 0, -1],
+                startRotationMax: [0, 0, 1],
+                particlesLifetime: [0.2, 0.4],
+                speed: [2, 2],
+                colorStart: "#ffffff",
+                colorEnd: "#ffffff",
+                directionMin: [0., 0., 1],
+                directionMax: [0, 0.1, 1],
+                rotationSpeedMin: [0, 0, -1],
+                rotationSpeedMax: [0, 0, 1],
+                size: [0.5, 1],
+              }}
+            />
       </group>
       <group position={[-0.5, 0, 1.5]} rotation-x={-Math.PI / 9} ref={flamePositionRightRef}>
+      <VFXEmitter
+      ref={smoke2Ref}
+              emitter="smoke"
+              settings={{
+                duration: 0.02,
+                delay: 0.1,
+                nbParticles: 1,
+                spawnMode: "time",
+                loop: true,
+                startPositionMin: [0, 0, 0],
+                startPositionMax: [0, 0, 0],
+                startRotationMin: [0, 0, -1],
+                startRotationMax: [0, 0, 1],
+                particlesLifetime: [0.2, 0.4],
+                speed: [2, 2],
+                colorStart: "#ffffff",
+                colorEnd: "#ffffff",
+                directionMin: [0., 0., 1],
+                directionMax: [0, 0.1, 1],
+                rotationSpeedMin: [0, 0, -1],
+                rotationSpeedMax: [0, 0, 1],
+                size: [0.5, 1],
+              }}
+            />
       </group>
       <group position-y={-0.5} scale={1} rotation-y={Math.PI}>
         <mesh
