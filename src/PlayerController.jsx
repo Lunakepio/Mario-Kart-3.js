@@ -1,4 +1,3 @@
-import { BallCollider, RigidBody, useRapier, vec3 } from "@react-three/rapier"
 import { Kart } from "./models/Kart"
 import { PerspectiveCamera, useKeyboardControls, OrbitControls } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
@@ -27,7 +26,6 @@ export const PlayerController = () => {
   const turbo = useRef(0);
   
   const [, get] = useKeyboardControls();
-  const { world, rapier } = useRapier();
   
   const speedRef = useRef(0);
   const rotationSpeedRef = useRef(0);
@@ -41,6 +39,7 @@ export const PlayerController = () => {
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
     speedRef.current = lerp(speedRef.current, maxSpeed * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
     turbo.current -= delta;
+
   }
   
   function groundRaycast(position) {
@@ -81,9 +80,9 @@ export const PlayerController = () => {
     player.rotation.y = lerp(player.rotation.y, targetRotation, 8 * delta);
   }
   
-  function jumpPlayer(spaceKey, left, right, rb){
+  function jumpPlayer(spaceKey, left, right, ){
     if(spaceKey && !jumpIsHeld.current){
-      rb.applyImpulse({ x: 0, y: 45, z: 0 }, true);
+      // rb.applyImpulse({ x: 0, y: 45, z: 0 }, true);
       jumpIsHeld.current = true;
       driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
     }
@@ -105,7 +104,7 @@ export const PlayerController = () => {
     }
   }
 
-  function updatePlayer(rigidBody, player, speed, camera, kart, delta) {
+  function updatePlayer( player, speed, camera, kart, delta) {
 
     const desiredDirection = new Vector3(
       -Math.sin(player.rotation.y),
@@ -122,22 +121,17 @@ export const PlayerController = () => {
       );
     
 
-      cameraGroupRef.current.rotation.y = lerp(cameraGroupRef.current.rotation.y, angle * 0.1, 10 * delta);
     kart.rotation.y = lerp(kart.rotation.y, angle * 1.3 + driftDirection.current * 0.1, 6 * delta);
   
 
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));
-    camera.position.z =  10 + speedRef.current * 0.05
+    camera.position.lerp(cameraGroupRef.current.getWorldPosition(new Vector3()), 8 * delta);
     const direction = smoothedDirectionRef.current;
-    const rbPosition = rigidBody.translation();
+
+
+    player.position.x += direction.x * speed * delta;
+    player.position.z += direction.z * speed * delta;
   
-    rigidBody.setLinvel({
-      x: direction.x * speed,
-      y: rigidBody.linvel().y,
-      z: direction.z * speed,
-    });
-  
-    player.position.lerp(vec3(rbPosition), 30 * delta);
     setPlayerPosition(player.position);
   }
 
@@ -145,18 +139,18 @@ export const PlayerController = () => {
   useFrame((state, delta)=>{
     if(!playerRef.current && !rbRef.current) return;
     const player = playerRef.current;
-    const rb = rbRef.current;
     const cameraGroup = cameraGroupRef.current;
     const kart = kartRef.current;
+    const camera = state.camera
     
-    if(!player || !rb || !cameraGroup || !kart) return;   
+    if(!player || !cameraGroup || !kart) return;   
     const { forward, backward, left, right, jump } = get();
     updateSpeed(forward, backward, delta); 
     rotatePlayer(left, right, player, delta);
-    updatePlayer(rb, player, speedRef.current, cameraRef.current, kart, delta);
-    jumpPlayer(jump, left, right, rb);
+    updatePlayer(player, speedRef.current, camera, kart, delta);
+    jumpPlayer(jump, left, right);
     driftPlayer(delta);
-    groundRaycast(rbRef.current.translation());  
+
   })
   
   return(
@@ -164,14 +158,8 @@ export const PlayerController = () => {
       <group >
 
       </group>
-      <RigidBody 
-        ref={rbRef} colliders={'false'} ccd={true} canSleep={false}>
-        <BallCollider args={[1]}  />
-
-      </RigidBody>
     <group ref={playerRef}>
-      <group ref={cameraGroupRef}>
-        <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 2, 10]} />
+      <group ref={cameraGroupRef} position={[0, 2, 5]} >
       </group>
 
       <group ref={kartRef}>
@@ -179,10 +167,7 @@ export const PlayerController = () => {
           <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} />
 
         <group ref={cameraLookAtRef} position={[0,0,-3]}>
-          {/* <mesh>
-            <boxGeometry args={[1, 1, 1]}/>
-            <meshStandardMaterial/>
-          </mesh> */}
+
         </group>
       </group>
     </group>

@@ -36,12 +36,12 @@ varying vec2 vUv;
       float dist = distance(vUv, center);
     
       float n = noise(vUv * 3.0 + vec2(0.0, uCurrentTime + uTimeOffset * 5.)) ;
-      dist += n * 0.15; 
+      dist += n * 0.2; 
       
       float end = 0.3;
       float start = 0.;
       
-      float innerFade = smoothstep(start, uCurrentTime * 6., dist);
+      float innerFade = smoothstep(start, uCurrentTime * 15., dist);
       float fade = dist < end ? innerFade : 0.0;
       float colorScalar = 3.0;
       float o = clamp(uCurrentTime * 20., 0., 1.);

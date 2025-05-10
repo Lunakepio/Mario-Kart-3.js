@@ -1,4 +1,4 @@
-import { KeyboardControls, OrbitControls, useTexture } from "@react-three/drei";
+import { Bvh, KeyboardControls, OrbitControls, useTexture } from "@react-three/drei";
 import { WebGPUCanvas } from "./WebGPUCanvas";
 import { Suspense } from "react";
 import { Physics } from "@react-three/rapier";
@@ -49,11 +49,24 @@ export const App = () => {
             }}
             alphaMap={smokeTexture}
           />
+          <VFXParticles
+            name="dust"
+            settings={{
+              fadeAlpha: [1, 0],
+              fadeSize: [0, 1],
+              intensity: 3,
+              nbParticles: 1000,
+              renderMode: "billboard",
+              gravity: [0, 1, 0],
+              frustumCulled: false,
+            }}
+            alphaMap={smokeTexture}
+          />
           <KeyboardControls map={controls}>
-            <Physics timestep={"vary"} gravity={[0, -90, 0]}>
-              <TrackScene />
+              <Bvh firstHitOnly={true} >
+                <TrackScene />
+              </Bvh>
               <Lighting />
-            </Physics>
           </KeyboardControls>
         </Suspense>
         <Composer/>
