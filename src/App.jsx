@@ -1,11 +1,10 @@
-import { Bvh, KeyboardControls, OrbitControls, useTexture } from "@react-three/drei";
-import { WebGPUCanvas } from "./WebGPUCanvas";
-import { Suspense } from "react";
-import { Physics } from "@react-three/rapier";
+import { Bvh, KeyboardControls, useTexture,} from "@react-three/drei";
+import { Suspense, useEffect } from "react";
 import { TrackScene } from "./TrackScene";
 import { Lighting } from "./Lighting";
 import VFXParticles from "./wawa-vfx/VFXParticles";
 import { Composer } from "./Composer";
+import { useThree } from "@react-three/fiber";
 
 export const App = () => {
   const controls = [
@@ -16,26 +15,19 @@ export const App = () => {
     { name: "jump", keys: ["Space"] },
   ];
   
-  const alphaTexture = useTexture('./textures/particles/alpha.png');
   const smokeTexture = useTexture('./textures/particles/smoke.png');
+  const {camera} = useThree()
+
+  useEffect(() => {
+    if(camera){
+      camera.layers.enable(1);
+    }
+  }, [camera])
 
   return (
 
       <>
         <Suspense fallback={null}>
-          <VFXParticles
-            name="drifting"
-            settings={{
-              fadeAlpha: [0, 1],
-              fadeSize: [0, 0],
-              intensity: 4,
-              nbParticles: 1000,
-              renderMode: "stretchBillboard",
-              gravity: [0, -6, 0],
-              frustumCulled: false,
-            }}
-            alphaMap={alphaTexture}
-          />
           <VFXParticles
             name="smoke"
             settings={{
@@ -63,9 +55,8 @@ export const App = () => {
             alphaMap={smokeTexture}
           />
           <KeyboardControls map={controls}>
-              <Bvh firstHitOnly={true} >
                 <TrackScene />
-              </Bvh>
+                
               <Lighting />
           </KeyboardControls>
         </Suspense>

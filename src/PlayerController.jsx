@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber"
 import { useRef } from "react";
 import { Vector3, Quaternion } from "three";
 import { lerp } from "three/src/math/MathUtils.js";
-import { getDriftLevel, kartSettings } from "./constants";
+import { kartSettings } from "./constants";
 import { useGameStore } from "./store";
 
 export const PlayerController = () => {
@@ -13,8 +13,6 @@ export const PlayerController = () => {
   const cameraGroupRef = useRef(null);
   const cameraLookAtRef = useRef(null);
   const kartRef = useRef(null);
-  const cameraRef = useRef(null);
-  const groundRef = useRef(0);
   const jumpIsHeld = useRef(false);
   const driftDirections = {
     none : 0,
@@ -41,35 +39,6 @@ export const PlayerController = () => {
     turbo.current -= delta;
 
   }
-  
-  function groundRaycast(position) {
-    const ray = new rapier.Ray(position, {
-      x: 0,
-      y: -1,
-      z: 0
-    });
-  
-    const raycastResult = world.castRayAndGetNormal(
-      ray,
-      1,
-      false,
-      undefined,
-      undefined,
-      undefined,
-      position,
-    );
-  
-    if (raycastResult) {
-      groundRef.current = raycastResult;
-
-  
-
-      // if (testRef.current) {
-      //   testRef.current.quaternion.slerp(quaternion, 0.1);
-      // }
-    }
-  }
-
   
   function rotatePlayer(left, right, player, delta) {
     const inputTurn = (Number(left) - Number(right) + driftDirection.current) * 0.1;

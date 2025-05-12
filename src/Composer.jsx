@@ -1,4 +1,4 @@
-import { Bloom, ChromaticAberration, EffectComposer, ShockWave, TiltShift2, WaterEffect } from "@react-three/postprocessing";
+import { Bloom, ChromaticAberration, EffectComposer, N8AO, TiltShift2, } from "@react-three/postprocessing";
 
 
 export const Composer = () => {
@@ -7,11 +7,12 @@ export const Composer = () => {
 
 
   return (
-    <EffectComposer>
+    <EffectComposer disableNormalPass multisampling={8}>
       <Bloom luminanceThreshold={0.} intensity={0.2} mipmapBlur />
       <ChromaticAberration opacity={0.5}/>
       <TiltShift2 blur={0.1}/>
-      {/* <N8AO /> */}
+      {/* <N8AO  aoRadius={50} distanceFalloff={0.2} intensity={40} screenSpaceRadius halfRes/> */}
     </EffectComposer>
   );
 };
+

@@ -10,9 +10,8 @@ export const KartDust = ({ wheelStates }) => {
       const ref = dustRefs.current[i];
       if (!ref) return;
 
-      console.log(wheel.position)
       const position = wheel.position;
-      // position.y -= 0.5;
+     
       ref.setPosition(position);
       if (wheel.shouldEmit) {
         ref.start();
@@ -24,9 +23,11 @@ export const KartDust = ({ wheelStates }) => {
 
   return (
     <>
-      {wheelStates.map((wheel, i) => (
+    <group rotation-y={Math.PI} layers={1} position-y={-0.5}>
+            {wheelStates.map((wheel, i) => (
         <Dust key={i} ref={(el) => (dustRefs.current[i] = el)} />
       ))}
+    </group>
     </>
   );
 };

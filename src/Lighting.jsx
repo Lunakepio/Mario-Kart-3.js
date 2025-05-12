@@ -1,4 +1,4 @@
-import { Environment } from "@react-three/drei";
+import { Environment, Lightformer, Sky } from "@react-three/drei";
 import { useRef } from "react";
 import { useGameStore } from "./store";
 import { useFrame } from "@react-three/fiber";
@@ -12,13 +12,13 @@ export const Lighting = () => {
         if (!playerPosition && !directionalLight.current) return;
     
         if(playerPosition){
-        directionalLight.current.position.x = playerPosition.x - 5;
+        directionalLight.current.position.x = playerPosition.x +1.5;
         directionalLight.current.target.position.x = playerPosition.x;
     
-        directionalLight.current.position.y = playerPosition.y + 30;
+        directionalLight.current.position.y = playerPosition.y + 10;
         directionalLight.current.target.position.y = playerPosition.y;
     
-        directionalLight.current.position.z = playerPosition.z - 40;
+        directionalLight.current.position.z = playerPosition.z - 5;
         directionalLight.current.target.position.z = playerPosition.z;
     
         directionalLight.current.target.updateMatrixWorld();
@@ -32,10 +32,9 @@ export const Lighting = () => {
             castShadow
             ref={directionalLight}
             position={[0, 0, 0]}
-            intensity={1}
-            color={"#FFFFFF"}
-            // shadow-normalBias={0.04}
-            shadow-bias={-0.001}
+            intensity={3}
+            color={"#FFA22B"}
+            shadow-bias={-0.0001}
             shadow-mapSize={[4096, 4096]}
             // layers={1}
             
@@ -43,16 +42,27 @@ export const Lighting = () => {
             <orthographicCamera
               attach="shadow-camera"
               near={1}
-              far={100}
+              far={1000}
               top={100}
               right={100}
-              left={-100}
               bottom={-100}
             >
               {/* <Helper type={CameraHelper} /> */}
             </orthographicCamera>
           </directionalLight>
-          <Environment preset="apartment"  background backgroundBlurriness={1}/>
+          {/* <directionalLight 
+          position={[20, 20, -100]}
+          color={"#FFA22B"}
+          intensity={10}
+
+          /> */}
+            
+
+ 
+          <Environment background >
+            <Lightformer color={"#FFA22B"} intensity={1000} position={[20, 20, -100]} />
+            <Sky distance={450000} sunPosition={[20, 20, -100]} inclination={0} azimuth={0.25} />
+           </Environment>
     </>
   );
 };

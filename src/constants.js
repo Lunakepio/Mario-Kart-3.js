@@ -14,18 +14,19 @@ export const drifts = {
     color: "#b100ff",
     nbParticles: 25,
   },
-  level2: {
-    name: "blue",
-    threshold: 3,
-    color: "#00ffff",
-    nbParticles: 15,
-  },
-  level1: {
+    level2: {
     name: "yellow",
-    threshold: 1,
+    threshold: 3,
     color: "#FFA22B",
     nbParticles: 5,
   },
+  level1: {
+    name: "blue",
+    threshold: 1,
+    color: "#00ffff",
+    nbParticles: 15,
+  },
+
 };
 
 const driftLevels = Object.values(drifts).sort(

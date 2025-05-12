@@ -75,15 +75,15 @@ export const Glow = forwardRef((props, ref) => {
   const size = 1;
 
   return (
-    <Billboard>
-      <mesh>
+    <Billboard layers={1}>
+      <mesh layers={1}>
         <planeGeometry args={[size, size]} />
         <shaderMaterial
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
             color: { value: new Color(0xffffff) },
-            opacity: { value: 1. },
+            opacity: { value: 0. },
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}

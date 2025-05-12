@@ -22,7 +22,7 @@ export const Dust = forwardRef(({ position }, ref) => {
   }, [position]);
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} layers={1}>
     <VFXEmitter
       ref={dustRef}
       emitter="dust"
@@ -41,7 +41,7 @@ export const Dust = forwardRef(({ position }, ref) => {
         colorStart: "#B2996E",
         colorEnd: "#352C1C",
         directionMin: [0, 0, 0],
-        directionMax: [0, 0, 10],
+        directionMax: [0, 0, 0],
         rotationSpeedMin: [0, 0, -1],
         rotationSpeedMax: [0, 0, 1],
         size: [0.5, 1],

@@ -13,7 +13,7 @@ import { Glow } from "../particles/drift/Glow.jsx";
 import { useGameStore } from "../store.js";
 import { Raycaster, Vector3, Quaternion } from "three";
 import { KartDust } from "./KartDust.jsx";
-
+import { Sparks } from "../particles/sparks/Sparks.jsx";
 const raycaster = new Raycaster();
 
 export function Kart({ speed, driftDirection, driftPower }) {
@@ -34,8 +34,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
   const bodyRef = useRef(null);
 
-  const leftEmitterRef = useRef(null);
-  const rightEmitterRef = useRef(null);
+  const sparksLeftRef = useRef(null);
+  const sparksRightRef = useRef(null);
 
   const glow1Ref = useRef(null);
   const glow2Ref = useRef(null);
@@ -141,26 +141,24 @@ export function Kart({ speed, driftDirection, driftPower }) {
       if (isDrifting !== isDriftingRef.current) {
         isDriftingRef.current = isDrifting;
         if (isDrifting) {
-          leftEmitterRef?.current?.startEmitting(true);
-          rightEmitterRef?.current?.startEmitting(true);
+          sparksLeftRef?.current?.setEmitState(true);
+          sparksRightRef?.current?.setEmitState(true);
           glow1Ref?.current?.setOpacity(1);
           glow2Ref?.current?.setOpacity(1);
         } else {
-          leftEmitterRef?.current?.stopEmitting();
-          rightEmitterRef?.current?.stopEmitting();
+          sparksLeftRef?.current?.setEmitState(false);
+          sparksRightRef?.current?.setEmitState(false);
           glow1Ref?.current?.setOpacity(0);
           glow2Ref?.current?.setOpacity(0);
         }
       }
 
       if (isDrifting) {
-        leftEmitterRef?.current?.updateColor(driftLevel.color);
-        rightEmitterRef?.current?.updateColor(driftLevel.color);
         glow1Ref?.current?.setColor(driftLevel.color);
         glow2Ref?.current?.setColor(driftLevel.color);
+        sparksLeftRef?.current?.setColor(driftLevel.color);
+        sparksRightRef?.current?.setColor(driftLevel.color);
 
-        //  leftEmitterRef?.current?.updateNbParticles?.(driftLevel.nbParticles);
-        //  rightEmitterRef?.current?.updateNbParticles?.(driftLevel.nbParticles);
       }
       setFlamePositions([
         flamePositionLeftRef.current.getWorldPosition(new Vector3()),
@@ -171,9 +169,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
   });
 
   useEffect(() => {
-    if (leftEmitterRef.current && rightEmitterRef.current) {
-      leftEmitterRef?.current?.stopEmitting();
-      rightEmitterRef?.current?.stopEmitting();
+    if (glow1Ref.current && glow2Ref.current) {
+
       glow1Ref?.current?.setOpacity(0);
       glow2Ref?.current?.setOpacity(0);
     }
@@ -250,6 +247,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
           material={materials.m_Body}
           ref={bodyRef}
         >
+
         <mesh
           ref={wheelRef}
           castShadow
@@ -271,55 +269,11 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
         <group position={[0.95, -1.4, -0.9]}>
           <Glow ref={glow1Ref} />
-
-          <VFXEmitter
-            ref={leftEmitterRef}
-            emitter="drifting"
-            settings={{
-              duration: 0.02,
-              delay: 0.1,
-              nbParticles: 1,
-              spawnMode: "time",
-              loop: true,
-              startPositionMin: [0, 0, 0],
-              startPositionMax: [0, 0, 0],
-              startRotationMin: [0, 0, 0],
-              startRotationMax: [0, 0, 0],
-              particlesLifetime: [0.2, 0.4],
-              speed: [6, 10],
-              directionMin: [0.3, 0.2, 0],
-              directionMax: [0.8, 0.7, 0],
-              rotationSpeedMin: [0, 0, -1],
-              rotationSpeedMax: [0, 0, 1],
-              size: [0.1, 0.5],
-            }}
-          />
+          <Sparks ref={sparksLeftRef} left={true} />
           </group>
-        <group position={[-0.95, -1.4, -0.9]}>
+        <group position={[-.95, -1.4, -0.9]}>
           <Glow ref={glow2Ref} />
-
-          <VFXEmitter
-            ref={rightEmitterRef}
-            emitter="drifting"
-            settings={{
-              duration: 0.02,
-              delay: 0.1,
-              nbParticles: 1,
-              spawnMode: "time",
-              loop: true,
-              startPositionMin: [0, 0, 0],
-              startPositionMax: [0, 0, 0],
-              startRotationMin: [0, 0, 0],
-              startRotationMax: [0, 0, 0],
-              particlesLifetime: [0.2, 0.4],
-              speed: [6, 10],
-              directionMin: [-0.3, 0.2, 0],
-              directionMax: [-0.8, 0.7, 0],
-              rotationSpeedMin: [0, 0, -1],
-              rotationSpeedMax: [0, 0, 1],
-              size: [0.1, 0.5],
-            }}
-          />
+              <Sparks ref={sparksRightRef}/>
         </group>
         <mesh
           ref={wheel2}
