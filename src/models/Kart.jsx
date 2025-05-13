@@ -268,11 +268,11 @@ export function Kart({ speed, driftDirection, driftPower }) {
         </mesh>
 
         <group position={[0.95, -1.4, -0.9]}>
-          <Glow ref={glow1Ref} />
+          <Glow ref={glow1Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksLeftRef} left={true} />
           </group>
         <group position={[-.95, -1.4, -0.9]}>
-          <Glow ref={glow2Ref} />
+          <Glow ref={glow2Ref} driftDirection={driftDirection} />
               <Sparks ref={sparksRightRef}/>
         </group>
         <mesh

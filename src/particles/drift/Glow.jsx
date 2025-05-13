@@ -1,26 +1,80 @@
-import { Billboard } from "@react-three/drei";
+import { Billboard, useKeyboardControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { AdditiveBlending, Color } from "three";
 import { Spark } from "./Spark";
+import { lerp } from "three/src/math/MathUtils.js";
 
 
-export const Glow = forwardRef((props, ref) => {
+export const Glow = forwardRef(({ driftDirection }, ref) => {
   const materialRef = useRef(null);
   const sparkRef = useRef(null);
 
   const vertexShader = /* glsl */ `
     uniform float time;
+    uniform float timeOffset;
+    uniform vec3 color;
     varying vec2 vUv;
-
+    varying vec3 vNormal;
     varying vec3 vPosition;
-    void main() {
-      vUv = uv;
-      vPosition = position;
-      float scale = 1.0;
-      vec3 scaledPosition = position * scale;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(scaledPosition, 1.0);
+    uniform float xDisplacement;
+    
+     vec2 hash( vec2 p )
+    {
+      p = vec2( dot(p,vec2(127.1,311.7)),
+          dot(p,vec2(269.5,183.3)) );
+      return -1.0 + 2.0*fract(sin(p)*43758.5453123);
     }
+    
+    float noise( in vec2 p )
+      {
+        const float K1 = 0.366025404; // (sqrt(3)-1)/2;
+        const float K2 = 0.211324865; // (3-sqrt(3))/6;
+        
+        vec2 i = floor( p + (p.x+p.y)*K1 );
+        
+        vec2 a = p - i + (i.x+i.y)*K2;
+        vec2 o = (a.x>a.y) ? vec2(1.0,0.0) : vec2(0.0,1.0);
+        vec2 b = a - o + K2;
+        vec2 c = a - 1.0 + 2.0*K2;
+        
+        vec3 h = max( 0.5-vec3(dot(a,a), dot(b,b), dot(c,c) ), 0.0 );
+        
+        vec3 n = h*h*h*h*vec3( dot(a,hash(i+0.0)), dot(b,hash(i+o)), dot(c,hash(i+1.0)));
+        
+        return dot( n, vec3(70.0) );
+      }
+      
+  void main() {
+    vUv = uv;
+    vPosition = position;
+    vNormal = normal;
+
+    vec3 radialDir = normalize(vec3(vPosition.xy + 1e-4, 0.0));
+        
+    float n = noise(position.xy * 15. + vec2((time + timeOffset) * 4.0, 0.0));
+    
+    float edgeFactor = length(vPosition.xy);
+    float displacement = abs(n * edgeFactor * 5.);
+
+    // float vertexIdMod = mod(float(gl_VertexID), 6.0);
+
+    if (mod(float(gl_VertexID), 2.0) > 0.5 || (color.r > 0.8 && color.g > 0.8)) {
+      displacement = 0.0;
+    } else {
+        vPosition.x += xDisplacement * edgeFactor;
+        vPosition.y -= edgeFactor * 0.05;
+    }
+
+    float scale = 1.0 + abs(sin(time * 40.));
+    vec3 scaledPosition = vPosition * scale;
+    vec3 newPosition = scaledPosition + radialDir * displacement;
+
+    vec4 modelPosition = modelMatrix * vec4(newPosition, 1.0);
+    vec4 viewPosition = viewMatrix * modelPosition;
+    gl_Position = projectionMatrix * viewPosition;
+  }
+
   `;
 
   const fragmentShader = /* glsl */ `
@@ -61,47 +115,35 @@ export const Glow = forwardRef((props, ref) => {
     return abs(fract(x) - 0.5) * 2.0;
   }
 
-  // void main() {
-  //   vec2 center = vec2(0.5);
-  //   vec2 uv = vUv - center;
+ void main() {
+      float displacedRadius = length(vPosition.xy);
 
-  //   float radius = length(uv);
-  //   float angle = atan(uv.y, uv.x);
-  //   float points = 12.0;
+        vec2 center = vec2(0.5);
+      vec2 uv = vUv;
 
-  //   float noiseFactor = noise(uv * 0.5 + time * 5.);
-  //   float randomOffset = noise(vec2(angle * 1.5, time * 5.)) * 6.28; // Random offset per angle
-  //   float jaggedRadius = 0.3 * sin(points * angle + randomOffset);
-  //   if (radius > jaggedRadius) discard;
+      vec2 diff = uv - center;
+      float radius = length(diff);
+      float innerThreshold = 0.1;
+      float outerThreshold = 0.4; 
 
-  //   vec3 finalColor = color;
-  //   gl_FragColor = vec4(finalColor, opacity);
-  // }
+      float edgeFactor = smoothstep(innerThreshold, outerThreshold, radius);
+      float fade = smoothstep(1.0, 0.0, radius) - 0.5;
+      fade = (color. r > 0.5 && color.g > 0.5) ? fade : 1.0;
 
-void main() {
-  vec2 center = vec2(0.5);
-  vec2 uv = vUv;
+      vec3 finalColor = mix(vec3(1.0), color, edgeFactor);
 
-  vec2 diff = uv - center;
-  float radius = length(diff);
 
-  float angle = atan(diff.y, diff.x);
-  float noiseValue = noise(vec2(angle * 1.5, time * 7.));
+      gl_FragColor = vec4(finalColor, opacity * fade);
+ }
+`;
 
-  bool isWhite = color.r > 0.5 && color.g > 0.5;
-  float threshold = 0.3 + 0.5 * noiseValue * (!isWhite ? 1.0 : 0.1);
-
-  if (radius > threshold) discard;
-
-  float t = smoothstep(0.0, threshold, radius);
-  vec3 finalColor = mix(vec3(1.0), color, t); 
-
-  gl_FragColor = vec4(finalColor, opacity);
-}`;
-
-  useFrame((state) => {
+ const [, get] = useKeyboardControls();
+  useFrame((state, delta) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
+      const { left, right } = get();
+    
+      materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current + Number(left) - Number(right)) * 0.5;
     }
   });
 
@@ -132,18 +174,20 @@ void main() {
   });
   
 
-  const size = 0.5;
+  const size = 0.1;
 
   return (
     <Billboard layers={1}>
       <mesh layers={1}>
-        <planeGeometry args={[size, size]} />
+        <circleGeometry args={[size, 16]} />
         <shaderMaterial
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
             color: { value: new Color(0xffffff) },
             opacity: { value: 1 },
+            timeOffset: { value: Math.random() * 3},
+            xDisplacement: { value: 0 },
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
