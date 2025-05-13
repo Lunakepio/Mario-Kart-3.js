@@ -33,6 +33,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
 ]);
 
   const bodyRef = useRef(null);
+  const dampenedSpeedRef = useRef(0);
+  const prevSpeedRef = useRef(0);
 
   const sparksLeftRef = useRef(null);
   const sparksRightRef = useRef(null);
@@ -103,16 +105,32 @@ export function Kart({ speed, driftDirection, driftPower }) {
       const a = wheelPositions[0];
       const b = wheelPositions[1];
       const c = wheelPositions[2];
+      const d = wheelPositions[3];
 
-      const ab = new Vector3().subVectors(b, a);
-      const ac = new Vector3().subVectors(c, a);
-      const normal = new Vector3().crossVectors(ab, ac).normalize();
+      const currentSpeed = speed.current;
+      const prevSpeed = prevSpeedRef.current || currentSpeed;
+      const acceleration = (currentSpeed - prevSpeed) / delta;
+      prevSpeedRef.current = currentSpeed;
 
-      const quaternion = new Quaternion();
-      quaternion.setFromUnitVectors(new Vector3(0, 1, 0), normal);
+      dampenedSpeedRef.current = lerp(dampenedSpeedRef.current, acceleration, 8 * delta);
 
-      bodyRef.current.quaternion.slerp(quaternion, delta * 12);
-      bodyRef.current.position.y = wheelPositions[0].y + 0.65;
+      const pitch = ((c.y + d.y) - (a.y + b.y)) * 0.5;
+      const roll = (b.y - a.y + d.y - c.y) * 0.5;
+      
+      const averageYPos = 0.65 + (a.y + b.y + c.y + d.y) / 4;
+
+      bodyRef.current.rotation.x = lerp(
+        bodyRef.current.rotation.x,
+        pitch,
+        5 * delta
+      );
+
+      bodyRef.current.rotation.z = lerp(
+        bodyRef.current.rotation.z,
+        roll, 
+        5 * delta
+      );
+      bodyRef.current.position.y = lerp(bodyRef.current.position.y, averageYPos, 5 * delta);
 
       yRotation.current = lerp(
         yRotation.current,
@@ -137,6 +155,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
         4 * delta
       );
 
+
       const driftLevel = getDriftLevel(driftPower.current);
       if (isDrifting !== isDriftingRef.current) {
         isDriftingRef.current = isDrifting;
@@ -156,6 +175,9 @@ export function Kart({ speed, driftDirection, driftPower }) {
       if (isDrifting) {
         glow1Ref?.current?.setColor(driftLevel.color);
         glow2Ref?.current?.setColor(driftLevel.color);
+        glow1Ref?.current?.setLevel(driftLevel.threshold);
+        glow2Ref?.current?.setLevel(driftLevel.threshold);
+
         sparksLeftRef?.current?.setColor(driftLevel.color);
         sparksRightRef?.current?.setColor(driftLevel.color);
 

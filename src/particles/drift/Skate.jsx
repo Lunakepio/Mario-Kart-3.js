@@ -6,7 +6,7 @@ import { Spark } from "./Spark";
 import { lerp } from "three/src/math/MathUtils.js";
 
 
-export const Glow = forwardRef(({ driftDirection }, ref) => {
+export const Skate = forwardRef(({ driftDirection }, ref) => {
   const materialRef = useRef(null);
   const sparkRef = useRef(null);
 
