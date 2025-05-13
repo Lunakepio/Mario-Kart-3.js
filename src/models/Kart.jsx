@@ -14,6 +14,7 @@ import { useGameStore } from "../store.js";
 import { Raycaster, Vector3, Quaternion } from "three";
 import { KartDust } from "./KartDust.jsx";
 import { Sparks } from "../particles/sparks/Sparks.jsx";
+import { Skate } from "../particles/drift/Skate.jsx";
 const raycaster = new Raycaster();
 
 export function Kart({ speed, driftDirection, driftPower }) {
@@ -26,18 +27,24 @@ export function Kart({ speed, driftDirection, driftPower }) {
   const groupRef = useRef(null);
   const frontWheels = useRef(null);
   const dustWheelStates = useRef([
-  { position: new Vector3(), shouldEmit: false },
-  { position: new Vector3(), shouldEmit: false },
-  { position: new Vector3(), shouldEmit: false },
-  { position: new Vector3(), shouldEmit: false },
-]);
+    { position: new Vector3(), shouldEmit: false },
+    { position: new Vector3(), shouldEmit: false },
+    { position: new Vector3(), shouldEmit: false },
+    { position: new Vector3(), shouldEmit: false },
+  ]);
 
   const bodyRef = useRef(null);
   const dampenedSpeedRef = useRef(0);
   const prevSpeedRef = useRef(0);
 
+  const leftParticles = useRef(null);
+  const rightParticles = useRef(null);
+
   const sparksLeftRef = useRef(null);
   const sparksRightRef = useRef(null);
+
+  const skate1Ref = useRef(null);
+  const skate2Ref = useRef(null);
 
   const glow1Ref = useRef(null);
   const glow2Ref = useRef(null);
@@ -72,10 +79,11 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
     if (intersects.length > 0) {
       const hit = intersects[0];
-      if(hit.object.name.includes('ground')){
+      if (hit.object.name.includes("ground")) {
         wheel.current.position.y = hit.point.y + 0.7;
       }
-      wheel.current.isOnDirt = hit.object.name.includes('dirt') && speed.current > 20;
+      wheel.current.isOnDirt =
+        hit.object.name.includes("dirt") && speed.current > 20;
     }
   }
   useFrame((_, delta) => {
@@ -93,14 +101,31 @@ export function Kart({ speed, driftDirection, driftPower }) {
       getGroundPosition(wheel2);
       getGroundPosition(wheel3);
 
-      const wheelPositions = [wheel0, wheel1, wheel2, wheel3].map((wheel, index) => {
-         const position = wheel.current.getWorldPosition(new Vector3());
-         const localPos = wheel.current.position;
-        dustWheelStates.current[index].position = localPos;
-        dustWheelStates.current[index].shouldEmit = wheel.current.isOnDirt;
-      
-        return position;
-      });
+      const wheelPositions = [wheel0, wheel1, wheel2, wheel3].map(
+        (wheel, index) => {
+          const position = wheel.current.getWorldPosition(new Vector3());
+          const localPos = wheel.current.position;
+          dustWheelStates.current[index].position = localPos;
+          dustWheelStates.current[index].shouldEmit = wheel.current.isOnDirt;
+
+          index == 0
+            ? leftParticles.current.position.set(
+                localPos.x - 0.2,
+                localPos.y - .7,
+                localPos.z
+              )
+            : null;
+          index == 1
+            ? rightParticles.current.position.set(
+                localPos.x + .2,
+                localPos.y - .7,
+                localPos.z
+              )
+            : null;
+
+          return position;
+        }
+      );
 
       const a = wheelPositions[0];
       const b = wheelPositions[1];
@@ -112,11 +137,15 @@ export function Kart({ speed, driftDirection, driftPower }) {
       const acceleration = (currentSpeed - prevSpeed) / delta;
       prevSpeedRef.current = currentSpeed;
 
-      dampenedSpeedRef.current = lerp(dampenedSpeedRef.current, acceleration, 8 * delta);
+      dampenedSpeedRef.current = lerp(
+        dampenedSpeedRef.current,
+        acceleration,
+        8 * delta
+      );
 
-      const pitch = ((c.y + d.y) - (a.y + b.y)) * 0.5;
+      const pitch = (c.y + d.y - (a.y + b.y)) * 0.5;
       const roll = (b.y - a.y + d.y - c.y) * 0.5;
-      
+
       const averageYPos = 0.65 + (a.y + b.y + c.y + d.y) / 4;
 
       bodyRef.current.rotation.x = lerp(
@@ -127,10 +156,14 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
       bodyRef.current.rotation.z = lerp(
         bodyRef.current.rotation.z,
-        roll, 
+        roll,
         5 * delta
       );
-      bodyRef.current.position.y = lerp(bodyRef.current.position.y, averageYPos, 5 * delta);
+      bodyRef.current.position.y = lerp(
+        bodyRef.current.position.y,
+        averageYPos,
+        5 * delta
+      );
 
       yRotation.current = lerp(
         yRotation.current,
@@ -155,7 +188,6 @@ export function Kart({ speed, driftDirection, driftPower }) {
         4 * delta
       );
 
-
       const driftLevel = getDriftLevel(driftPower.current);
       if (isDrifting !== isDriftingRef.current) {
         isDriftingRef.current = isDrifting;
@@ -164,11 +196,15 @@ export function Kart({ speed, driftDirection, driftPower }) {
           sparksRightRef?.current?.setEmitState(true);
           glow1Ref?.current?.setOpacity(1);
           glow2Ref?.current?.setOpacity(1);
+          skate1Ref?.current?.setOpacity(1);
+          skate2Ref?.current?.setOpacity(1);
         } else {
           sparksLeftRef?.current?.setEmitState(false);
           sparksRightRef?.current?.setEmitState(false);
           glow1Ref?.current?.setOpacity(0);
           glow2Ref?.current?.setOpacity(0);
+          skate1Ref?.current?.setOpacity(0);
+          skate2Ref?.current?.setOpacity(0);
         }
       }
 
@@ -177,10 +213,10 @@ export function Kart({ speed, driftDirection, driftPower }) {
         glow2Ref?.current?.setColor(driftLevel.color);
         glow1Ref?.current?.setLevel(driftLevel.threshold);
         glow2Ref?.current?.setLevel(driftLevel.threshold);
+    
 
         sparksLeftRef?.current?.setColor(driftLevel.color);
         sparksRightRef?.current?.setColor(driftLevel.color);
-
       }
       setFlamePositions([
         flamePositionLeftRef.current.getWorldPosition(new Vector3()),
@@ -192,149 +228,153 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
   useEffect(() => {
     if (glow1Ref.current && glow2Ref.current) {
-
       glow1Ref?.current?.setOpacity(0);
       glow2Ref?.current?.setOpacity(0);
     }
   }, []);
   return (
     <>
-    <KartDust wheelStates={dustWheelStates.current} />
-    <group ref={groupRef} dispose={null}>
-      <group
-        position={[0.5, -1.1, 1.5]}
-        rotation-x={-Math.PI / 9}
-        ref={flamePositionLeftRef}
-      >
-        <VFXEmitter
-          ref={smoke1Ref}
-          emitter="smoke"
-          settings={{
-            duration: 0.02,
-            delay: 0.1,
-            nbParticles: 1,
-            spawnMode: "time",
-            loop: true,
-            startPositionMin: [0, 0, 0],
-            startPositionMax: [0, 0, 0],
-            startRotationMin: [0, 0, -1],
-            startRotationMax: [0, 0, 1],
-            particlesLifetime: [0.2, 0.4],
-            speed: [2, 2],
-            colorStart: "#ffffff",
-            colorEnd: "#ffffff",
-            directionMin: [0, 0, 0.8],
-            directionMax: [0, 0.5, 1],
-            rotationSpeedMin: [0, 0, -1],
-            rotationSpeedMax: [0, 0, 1],
-            size: [0.5, 1],
-          }}
-        />
-      </group>
-      <group
-        position={[-0.5, -1.1, 1.5]}
-        rotation-x={-Math.PI / 9}
-        ref={flamePositionRightRef}
-      >
-        <VFXEmitter
-          ref={smoke2Ref}
-          emitter="smoke"
-          settings={{
-            duration: 0.02,
-            delay: 0.1,
-            nbParticles: 1,
-            spawnMode: "time",
-            loop: true,
-            startPositionMin: [0, 0, 0],
-            startPositionMax: [0, 0, 0],
-            startRotationMin: [0, 0, -1],
-            startRotationMax: [0, 0, 1],
-            particlesLifetime: [0.2, 0.4],
-            speed: [2, 2],
-            colorStart: "#ffffff",
-            colorEnd: "#ffffff",
-            directionMin: [0, 0, 0.8],
-            directionMax: [0, 0.5, 1],
-            rotationSpeedMin: [0, 0, -1],
-            rotationSpeedMax: [0, 0, 1],
-            size: [0.5, 1],
-          }}
-        />
-      </group>
-      <group position-y={-0.5} scale={1} rotation-y={Math.PI}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.body.geometry}
-          material={materials.m_Body}
-          ref={bodyRef}
-        >
-
-        <mesh
-          ref={wheelRef}
-          castShadow
-          receiveShadow
-          geometry={nodes.d_wheel.geometry}
-          material={materials.m_Body}
-          position={[0, 0.355, 0.542]}
-          rotation={[-1.134, 0, 0]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.booster.geometry}
-          material={materials.m_Body}
-          position={[0, 0.25, -0.55]}
-          rotation={[0.279, 0, 0]}
-        />
-        </mesh>
-
-        <group position={[0.95, -1.4, -0.9]}>
+      <KartDust wheelStates={dustWheelStates.current} />
+      <group ref={groupRef} dispose={null}>
+        <group ref={leftParticles} rotation-y={Math.PI}>
           <Glow ref={glow1Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksLeftRef} left={true} />
+          <group position={[-.15, 0.3, -0.4]}>
+            <Skate ref={skate1Ref} />
           </group>
-        <group position={[-.95, -1.4, -0.9]}>
+        </group>
+        <group ref={rightParticles} rotation-y={Math.PI}>
           <Glow ref={glow2Ref} driftDirection={driftDirection} />
-              <Sparks ref={sparksRightRef}/>
+          <Sparks ref={sparksRightRef} />
+          <group position={[.15, 0.3, -0.4]}>
+            <Skate ref={skate2Ref} />
+          </group>
         </group>
-        <mesh
-          ref={wheel2}
-          castShadow
-          receiveShadow
-          geometry={nodes.wheel_2.geometry}
-          material={materials.m_Tire}
-          position={[-0.77, -0.137, -0.7]}
-        />
-        <mesh
-          ref={wheel3}
-          castShadow
-          receiveShadow
-          geometry={nodes.wheel_3.geometry}
-          material={materials.m_Tire}
-          position={[0.74, -0.137, -0.7]}
-        ></mesh>
-        <group ref={frontWheels}>
+        <group
+          position={[0.5, -1.1, 1.5]}
+          rotation-x={-Math.PI / 9}
+          ref={flamePositionLeftRef}
+        >
+          <VFXEmitter
+            ref={smoke1Ref}
+            emitter="smoke"
+            settings={{
+              duration: 0.02,
+              delay: 0.1,
+              nbParticles: 1,
+              spawnMode: "time",
+              loop: true,
+              startPositionMin: [0, 0, 0],
+              startPositionMax: [0, 0, 0],
+              startRotationMin: [0, 0, -1],
+              startRotationMax: [0, 0, 1],
+              particlesLifetime: [0.2, 0.4],
+              speed: [2, 2],
+              colorStart: "#ffffff",
+              colorEnd: "#ffffff",
+              directionMin: [0, 0, 0.8],
+              directionMax: [0, 0.5, 1],
+              rotationSpeedMin: [0, 0, -1],
+              rotationSpeedMax: [0, 0, 1],
+              size: [0.5, 1],
+            }}
+          />
+        </group>
+        <group
+          position={[-0.5, -1.1, 1.5]}
+          rotation-x={-Math.PI / 9}
+          ref={flamePositionRightRef}
+        >
+          <VFXEmitter
+            ref={smoke2Ref}
+            emitter="smoke"
+            settings={{
+              duration: 0.02,
+              delay: 0.1,
+              nbParticles: 1,
+              spawnMode: "time",
+              loop: true,
+              startPositionMin: [0, 0, 0],
+              startPositionMax: [0, 0, 0],
+              startRotationMin: [0, 0, -1],
+              startRotationMax: [0, 0, 1],
+              particlesLifetime: [0.2, 0.4],
+              speed: [2, 2],
+              colorStart: "#ffffff",
+              colorEnd: "#ffffff",
+              directionMin: [0, 0, 0.8],
+              directionMax: [0, 0.5, 1],
+              rotationSpeedMin: [0, 0, -1],
+              rotationSpeedMax: [0, 0, 1],
+              size: [0.5, 1],
+            }}
+          />
+        </group>
+        <group position-y={-0.5} scale={1} rotation-y={Math.PI}>
           <mesh
-            ref={wheel1}
             castShadow
             receiveShadow
-            geometry={nodes.wheel_1.geometry}
-            material={materials.m_Tire}
-            position={[0.7, -0.2, 0.7]}
-          />
-          <mesh
-            ref={wheel0}
-            castShadow
-            receiveShadow
-            geometry={nodes.wheel_0.geometry}
-            material={materials.m_Tire}
-            position={[-0.7, -0.2, 0.7]}
-          />
-        </group>
+            geometry={nodes.body.geometry}
+            material={materials.m_Body}
+            ref={bodyRef}
+          >
+            <mesh
+              ref={wheelRef}
+              castShadow
+              receiveShadow
+              geometry={nodes.d_wheel.geometry}
+              material={materials.m_Body}
+              position={[0, 0.355, 0.542]}
+              rotation={[-1.134, 0, 0]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes.booster.geometry}
+              material={materials.m_Body}
+              position={[0, 0.25, -0.55]}
+              rotation={[0.279, 0, 0]}
+            />
+          </mesh>
 
-        {/* <mesh castShadow receiveShadow geometry={nodes.shape.geometry} material={materials['default']} /> */}
+          <mesh
+            ref={wheel2}
+            castShadow
+            receiveShadow
+            geometry={nodes.wheel_2.geometry}
+            material={materials.m_Tire}
+            position={[-0.77, -0.137, -0.7]}
+          />
+          <mesh
+            ref={wheel3}
+            castShadow
+            receiveShadow
+            geometry={nodes.wheel_3.geometry}
+            material={materials.m_Tire}
+            position={[0.74, -0.137, -0.7]}
+          ></mesh>
+          <group ref={frontWheels}>
+            <mesh
+              ref={wheel1}
+              castShadow
+              receiveShadow
+              geometry={nodes.wheel_1.geometry}
+              material={materials.m_Tire}
+              position={[0.7, -0.2, 0.7]}
+            ></mesh>
+            <mesh
+              ref={wheel0}
+              castShadow
+              receiveShadow
+              geometry={nodes.wheel_0.geometry}
+              material={materials.m_Tire}
+              position={[-0.7, -0.2, 0.7]}
+            />
+          </group>
+
+          {/* <mesh castShadow receiveShadow geometry={nodes.shape.geometry} material={materials['default']} /> */}
+        </group>
       </group>
-    </group>
     </>
   );
 }

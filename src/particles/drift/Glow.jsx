@@ -61,8 +61,7 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
     if (mod(float(gl_VertexID), 2.0) > 0.5 || (color.r > 0.8 && color.g > 0.8)) {
       displacement = 0.0;
     } else {
-        vPosition.x += xDisplacement * edgeFactor;
-        vPosition.y -= edgeFactor * 0.1;
+      vPosition.xy += vec2(xDisplacement * edgeFactor, -(abs(xDisplacement * edgeFactor)));
     }
 
     float scale = 1.0 + abs(sin(time * 40.)) * 0.3;
@@ -142,7 +141,7 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
       const { left, right } = get();
     
-      materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.5;
+      materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
     }
   });
 

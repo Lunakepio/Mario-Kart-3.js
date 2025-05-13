@@ -1,25 +1,20 @@
-import { Billboard, useKeyboardControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { AdditiveBlending, Color } from "three";
-import { Spark } from "./Spark";
-import { lerp } from "three/src/math/MathUtils.js";
+import { AdditiveBlending, BackSide, DoubleSide } from "three";
 
 
-export const Skate = forwardRef(({ driftDirection }, ref) => {
+
+export const Skate = forwardRef((props, ref) => {
   const materialRef = useRef(null);
-  const sparkRef = useRef(null);
 
   const vertexShader = /* glsl */ `
     uniform float time;
-    uniform float timeOffset;
-    uniform float level;
-    uniform vec3 color;
     varying vec2 vUv;
     varying vec3 vNormal;
     varying vec3 vPosition;
     uniform float xDisplacement;
     
+    #define PI 3.1415926535897932384626433832795
      vec2 hash( vec2 p )
     {
       p = vec2( dot(p,vec2(127.1,311.7)),
@@ -46,42 +41,35 @@ export const Skate = forwardRef(({ driftDirection }, ref) => {
         return dot( n, vec3(70.0) );
       }
       
-  void main() {
-    vUv = uv;
-    vPosition = position;
-    vNormal = normal;
+void main() {
+  vUv = uv;
+  vPosition = position;
+  vNormal = normal;
 
-    vec3 radialDir = normalize(vec3(vPosition.xy + 1e-4, 0.0));
-        
-    float n = noise(position.xy * 20. + vec2((time + timeOffset * 10.) * 4.0, 0.0));
-    
-    float edgeFactor = length(vPosition.xy);
-    float displacement = abs(n * edgeFactor * (4.0 + level * 0.2));
+  float centeredY = vUv.y - 0.5;
 
-    if (mod(float(gl_VertexID), 2.0) > 0.5 || (color.r > 0.8 && color.g > 0.8)) {
-      displacement = 0.0;
-    } else {
-        vPosition.x += xDisplacement * edgeFactor;
-        vPosition.y -= edgeFactor * 0.1;
-    }
+  float curvature = 5.;
+  float angle = centeredY * PI / curvature;
+  float radius = curvature;
 
-    float scale = 1.0 + abs(sin(time * 40.)) * 0.3;
-    vec3 scaledPosition = vPosition * scale;
-    vec3 newPosition = scaledPosition + radialDir * displacement;
+  vec3 localPosition = position;
+  float newZ = radius - cos(angle) * radius;
 
-    vec4 modelPosition = modelMatrix * vec4(newPosition, 1.0);
-    vec4 viewPosition = viewMatrix * modelPosition;
-    gl_Position = projectionMatrix * viewPosition;
-  }
+  localPosition.z += newZ;
+
+  vec4 modelPosition = modelMatrix * vec4(localPosition, 1.0);
+  vec4 viewPosition = viewMatrix * modelPosition;
+  gl_Position = projectionMatrix * viewPosition;
+}
 
   `;
 
   const fragmentShader = /* glsl */ `
     uniform float time;
-    uniform vec3 color;
     uniform float opacity;
     varying vec2 vUv;
     varying vec3 vPosition;
+    varying vec3 vNormal;
 
      vec2 hash( vec2 p )
     {
@@ -114,59 +102,51 @@ export const Skate = forwardRef(({ driftDirection }, ref) => {
     return abs(fract(x) - 0.5) * 2.0;
   }
 
- void main() {
-      float displacedRadius = length(vPosition.xy);
+  float random(float x) {
+  return fract(sin(x) * 43758.5453123);
+}
+    void main() {
+      vec3 normal = normalize(vNormal);
+      vec3 viewDirection = normalize(cameraPosition - vPosition);
+      
+      float fresnel = dot(viewDirection, normal);
+      fresnel = pow(1.0 - fresnel, 2.5);
+      float falloff = smoothstep(0.0, 1.0, fresnel);
+      
+      vec3 lightColor = vec3(0.937, 0.776, 0.489);
+      float luminance = dot(lightColor, vec3(0.299, 0.587, 0.114));
+      float desaturationFactor = 0.3;
+      lightColor = mix(lightColor, vec3(luminance), desaturationFactor);
 
-        vec2 center = vec2(0.5);
-      vec2 uv = vUv;
 
-      vec2 diff = uv - center;
-      float radius = length(diff);
-      float innerThreshold = 0.1;
-      float outerThreshold = 0.4; 
-
-      float edgeFactor = smoothstep(innerThreshold, outerThreshold, radius);
-      float fade = smoothstep(1.0, 0.0, radius) - 0.5;
-      fade = (color. r > 0.5 && color.g > 0.5) ? fade : 1.0;
-
-      vec3 finalColor = mix(vec3(1.0), color, edgeFactor);
+      float stripe = smoothstep(0., 0.5, clamp(abs(fract(vUv.y +random(sin(time))) - 0.5), 0.0, 1.0));
+      stripe = 1.0 - stripe;
 
 
-      gl_FragColor = vec4(finalColor, opacity * fade);
- }
-`;
+      float n = noise(vec2(vUv.x * 6., time * 4.));
+      float flicker = smoothstep(0.2, 0.8, n); 
+      float intensity = stripe * flicker;
 
- const [, get] = useKeyboardControls();
-  useFrame((state, delta) => {
+
+      float verticalFade = smoothstep(0.1, 0.4, vUv.y);
+
+      vec3 finalColor = lightColor * intensity * verticalFade;
+
+      float alpha = 1.0 - smoothstep(0.0, 0.5, abs(vUv.y - 0.5));
+
+      gl_FragColor = vec4(vec3(1.0) * 2., intensity * alpha * opacity);
+    }
+  `;
+
+  useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
-      const { left, right } = get();
-    
-      materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.5;
     }
   });
 
   useImperativeHandle(ref, () => {
-    let prevColor = new Color(0xffffff);
   
     return {
-      setColor: (newColor) => {
-        const newCol = new Color(newColor);
-  
-        if (!newCol.equals(prevColor)) {
-          prevColor.copy(newCol);
-          materialRef.current.uniforms.color.value.copy(newCol);
-  
-          const isWhite = newCol.r === 1 && newCol.g === 1 && newCol.b === 1;
-          if (!isWhite) {
-            sparkRef.current?.setColor(newCol);
-            sparkRef.current?.emit();
-          }
-        }
-      },
-      setLevel: (level) => {
-        materialRef.current.uniforms.level.value = level;
-      },
       setOpacity: (newOpacity) => {
         if (materialRef.current) {
           materialRef.current.uniforms.opacity.value = newOpacity;
@@ -176,31 +156,27 @@ export const Skate = forwardRef(({ driftDirection }, ref) => {
   });
   
 
-  const size = 0.1;
+  const size = 0.7;
 
   return (
-    <Billboard layers={1}>
+    <>
       <mesh layers={1}>
-        <circleGeometry args={[size, 22]} />
+        <planeGeometry args={[size / 2, size, 1, 10]} />
         <shaderMaterial
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
-            color: { value: new Color(0xffffff) },
-            level: { value: 0 },
-            opacity: { value: 1 },
-            timeOffset: { value: Math.random() * 3},
-            xDisplacement: { value: 0 },
+            opacity: { value: 0. },
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
           transparent={true}
           depthWrite={false}
           depthTest={false}
-          blending={AdditiveBlending}
+          // blending={AdditiveBlending}
+          side={DoubleSide}
         />
       </mesh>
-      <Spark ref={sparkRef}/>
-    </Billboard>
+      </>
   );
 });
