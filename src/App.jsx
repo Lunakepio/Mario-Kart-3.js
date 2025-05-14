@@ -61,7 +61,7 @@ export const App = () => {
           </KeyboardControls>
           <Preload all />
         </Suspense>
-        {/* <Composer/> */}
+        <Composer/>
         {/* <OrbitControls /> */}
       </>
   );

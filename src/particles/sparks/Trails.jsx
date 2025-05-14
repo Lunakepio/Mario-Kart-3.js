@@ -28,7 +28,7 @@ export const Trails = ({ dash = 0.9, radius = 1, left}) => {
     <Fatline
       curve={points}
       width={0.005}
-      color={new THREE.Color(0xFFA22B).multiplyScalar(100)}
+      color={new THREE.Color(0xFFFFFF).multiplyScalar(100)}
       speed={2}
       dash={dash}
       delay={Math.random()}
@@ -66,6 +66,7 @@ function Fatline({ curve, width, color, speed, dash, delay, radius, left}) {
         geoRef.current.setPoints(newCurve)
         ref.current.material.dashOffset = 0
       }
+      ref.current.material.color = new THREE.Color(driftLevel.color).multiplyScalar(100);
     } else {
       ref.current.material.dashOffset = 0
       ref.current.visible = false;

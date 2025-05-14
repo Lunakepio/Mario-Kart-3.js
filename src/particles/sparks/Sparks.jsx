@@ -122,6 +122,7 @@ export const Sparks = forwardRef(({ left }, ref) => {
           vertexColors
           transparent
           depthWrite={false}
+          depthTest={false}
           blending={AdditiveBlending}
         />
       </points>
