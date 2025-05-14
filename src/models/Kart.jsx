@@ -15,6 +15,7 @@ import { Raycaster, Vector3, Quaternion } from "three";
 import { KartDust } from "./KartDust.jsx";
 import { Sparks } from "../particles/sparks/Sparks.jsx";
 import { Skate } from "../particles/drift/Skate.jsx";
+import { Trails } from "../particles/sparks/Trails.jsx";
 const raycaster = new Raycaster();
 
 export function Kart({ speed, driftDirection, driftPower }) {
@@ -63,6 +64,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
 
   const setFlamePositions = useGameStore((state) => state.setFlamePositions);
   const setBoostPower = useGameStore((state) => state.setBoostPower);
+  const setDriftLevel = useGameStore((state) => state.setDriftLevel);
   const { scene } = useThree();
 
   function getGroundPosition(wheel) {
@@ -198,6 +200,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
           glow2Ref?.current?.setOpacity(1);
           skate1Ref?.current?.setOpacity(1);
           skate2Ref?.current?.setOpacity(1);
+          
         } else {
           sparksLeftRef?.current?.setEmitState(false);
           sparksRightRef?.current?.setEmitState(false);
@@ -218,6 +221,8 @@ export function Kart({ speed, driftDirection, driftPower }) {
         sparksLeftRef?.current?.setColor(driftLevel.color);
         sparksRightRef?.current?.setColor(driftLevel.color);
       }
+      setDriftLevel(driftLevel);
+
       setFlamePositions([
         flamePositionLeftRef.current.getWorldPosition(new Vector3()),
         flamePositionRightRef.current.getWorldPosition(new Vector3()),
@@ -239,14 +244,16 @@ export function Kart({ speed, driftDirection, driftPower }) {
         <group ref={leftParticles} rotation-y={Math.PI}>
           <Glow ref={glow1Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksLeftRef} left={true} />
-          <group position={[-.15, 0.3, -0.4]}>
+          <Trails left={true} />
+          <group position={[-.15, 0.2, -0.4]}>
             <Skate ref={skate1Ref} />
           </group>
         </group>
         <group ref={rightParticles} rotation-y={Math.PI}>
           <Glow ref={glow2Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksRightRef} />
-          <group position={[.15, 0.3, -0.4]}>
+          <Trails/>
+          <group position={[.15, 0.2, -0.4]}>
             <Skate ref={skate2Ref} />
           </group>
         </group>
