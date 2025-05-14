@@ -114,14 +114,14 @@ export function Kart({ speed, driftDirection, driftPower }) {
             ? leftParticles.current.position.set(
                 localPos.x - 0.2,
                 localPos.y - .7,
-                localPos.z
+                localPos.z + .2
               )
             : null;
           index == 1
             ? rightParticles.current.position.set(
                 localPos.x + .2,
                 localPos.y - .7,
-                localPos.z
+                localPos.z + .2
               )
             : null;
 
@@ -245,7 +245,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
           <Glow ref={glow1Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksLeftRef} left={true} />
           <Trails left={true} />
-          <group position={[-.15, 0.2, -0.4]}>
+          <group position={[-.15, 0.2, -0.2]}>
             <Skate ref={skate1Ref} />
           </group>
         </group>
@@ -253,7 +253,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
           <Glow ref={glow2Ref} driftDirection={driftDirection} />
           <Sparks ref={sparksRightRef} />
           <Trails/>
-          <group position={[.15, 0.2, -0.4]}>
+          <group position={[.15, 0.2, -0.2]}>
             <Skate ref={skate2Ref} />
           </group>
         </group>
