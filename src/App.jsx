@@ -1,4 +1,4 @@
-import { Bvh, KeyboardControls, useTexture,} from "@react-three/drei";
+import { Bvh, KeyboardControls, Preload, useTexture,} from "@react-three/drei";
 import { Suspense, useEffect } from "react";
 import { TrackScene } from "./TrackScene";
 import { Lighting } from "./Lighting";
@@ -59,8 +59,9 @@ export const App = () => {
                 
               <Lighting />
           </KeyboardControls>
+          <Preload all />
         </Suspense>
-        <Composer/>
+        {/* <Composer/> */}
         {/* <OrbitControls /> */}
       </>
   );

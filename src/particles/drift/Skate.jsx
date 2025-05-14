@@ -48,7 +48,7 @@ void main() {
 
   float centeredY = vUv.y - 0.5;
 
-  float curvature = 5.;
+  float curvature = 4.;
   float angle = centeredY * PI / curvature;
   float radius = curvature;
 
@@ -134,7 +134,7 @@ void main() {
 
       float alpha = 1.0 - smoothstep(0.0, 0.5, abs(vUv.y - 0.5));
 
-      gl_FragColor = vec4(vec3(1.0) * 2., intensity * alpha * opacity);
+      gl_FragColor = vec4(vec3(1.0) * 3., intensity * alpha * opacity);
     }
   `;
 
@@ -161,7 +161,7 @@ void main() {
   return (
     <>
       <mesh layers={1}>
-        <planeGeometry args={[size / 2, size, 1, 10]} />
+        <planeGeometry args={[size / 2, size + 0.2, 1, 10]} />
         <shaderMaterial
           ref={materialRef}
           uniforms={{
@@ -172,7 +172,7 @@ void main() {
           fragmentShader={fragmentShader}
           transparent={true}
           depthWrite={false}
-          depthTest={false}
+          // depthTest={false}
           // blending={AdditiveBlending}
           side={DoubleSide}
         />

@@ -128,18 +128,16 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
       float fade = smoothstep(1.0, 0.0, radius) - 0.5;
       fade = (color. r > 0.5 && color.g > 0.5) ? fade : 1.0;
 
-      vec3 finalColor = mix(vec3(1.0), color, edgeFactor);
+      vec3 finalColor = mix(vec3(1.0), color * 10., edgeFactor);
 
 
       gl_FragColor = vec4(finalColor, opacity * fade);
  }
 `;
 
- const [, get] = useKeyboardControls();
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
-      const { left, right } = get();
     
       materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
     }

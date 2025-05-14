@@ -13,18 +13,21 @@ export const drifts = {
     threshold: 6,
     color: "#b100ff",
     nbParticles: 25,
+    level: 3,
   },
     level2: {
     name: "yellow",
     threshold: 3,
     color: "#FFA22B",
     nbParticles: 5,
+    level: 2,
   },
   level1: {
     name: "blue",
     threshold: 1,
     color: "#00ffff",
     nbParticles: 15,
+    level: 1,
   },
 
 };
@@ -44,5 +47,6 @@ export const getDriftLevel = (power) => {
     name: "none",
     color: "#ffffff",
     nbParticles: 5,
+    level: 0,
   };
 };

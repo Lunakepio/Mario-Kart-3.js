@@ -10,4 +10,6 @@ export const useGameStore = create((set) => ({
   setBoostPower: (power) => set({ boostPower: power }),
   isBoosting : false,
   setIsBoosting: (isBoosting) => set({ isBoosting }),
+  driftLevel: null,
+  setDriftLevel: (level) => set({ driftLevel: level }),
 }));
