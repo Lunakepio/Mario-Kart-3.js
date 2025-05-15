@@ -1,6 +1,6 @@
 import { PlayerController } from "./PlayerController";
 import { Grid } from "@react-three/drei";
-import { Track } from "./Track";
+import { Track } from "./models/Track";
 import Flames from "./particles/drift/flames/Flames";
 
 export const TrackScene = () => {

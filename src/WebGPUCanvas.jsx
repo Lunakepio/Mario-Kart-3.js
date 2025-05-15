@@ -12,7 +12,7 @@ export const WebGPUCanvas = () => {
       <Bvh firstHitOnly={true} >
         <App/>
       </Bvh>
-      <Perf />
+      {/* <Perf /> */}
     </Canvas>
   );
 }

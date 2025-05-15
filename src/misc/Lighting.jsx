@@ -1,7 +1,8 @@
 import { Environment, Lightformer, Sky } from "@react-three/drei";
 import { useRef } from "react";
-import { useGameStore } from "./store";
+import { useGameStore } from "../store";
 import { useFrame } from "@react-three/fiber";
+import { EnvironmentSphere } from "./EnvironmentSphere";
 
 export const Lighting = () => {
   const directionalLight = useRef(null)
@@ -57,12 +58,7 @@ export const Lighting = () => {
 
           /> */}
             
-
- 
-          <Environment background >
-            <Lightformer color={"#FFA22B"} intensity={1000} position={[20, 20, -100]} />
-            <Sky distance={450000} sunPosition={[20, 20, -100]} inclination={0} azimuth={0.25} />
-           </Environment>
+          <EnvironmentSphere />
     </>
   );
 };

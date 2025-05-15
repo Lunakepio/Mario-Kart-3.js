@@ -1,7 +1,7 @@
 import { Bvh, KeyboardControls, Preload, useTexture,} from "@react-three/drei";
 import { Suspense, useEffect } from "react";
 import { TrackScene } from "./TrackScene";
-import { Lighting } from "./Lighting";
+import { Lighting } from "./misc/Lighting";
 import VFXParticles from "./wawa-vfx/VFXParticles";
 import { Composer } from "./Composer";
 import { useThree } from "@react-three/fiber";
