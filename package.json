@@ -22,6 +22,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.176.0",
+    "three-custom-shader-material": "^6.3.6",
     "three.meshline": "^1.4.0",
     "vite-plugin-glsl": "^1.4.1",
     "zustand": "^5.0.4"

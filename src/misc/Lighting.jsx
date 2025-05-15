@@ -28,13 +28,12 @@ export const Lighting = () => {
   
   return (
     <>
-      <ambientLight intensity={0.} />
       <directionalLight
             castShadow
             ref={directionalLight}
             position={[0, 0, 0]}
             intensity={3}
-            color={"#FFA22B"}
+            color={"#FFA28b"}
             shadow-bias={-0.0001}
             shadow-mapSize={[4096, 4096]}
             // layers={1}

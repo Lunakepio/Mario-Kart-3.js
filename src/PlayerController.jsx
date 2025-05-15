@@ -6,6 +6,8 @@ import { Vector3, Quaternion } from "three";
 import { lerp } from "three/src/math/MathUtils.js";
 import { kartSettings } from "./constants";
 import { useGameStore } from "./store";
+import { useEffect } from "react";
+import gsap from "gsap";
 
 export const PlayerController = () => {
   const rbRef = useRef(null);
@@ -19,9 +21,11 @@ export const PlayerController = () => {
     left : 1.2,
     right: -1.2
   }
+  const jumpOffset = useRef(0);
   const driftDirection = useRef(driftDirections.none);
   const driftPower = useRef(0);
   const turbo = useRef(0);
+  const isJumping = useRef(false);
   
   const [, get] = useKeyboardControls();
   
@@ -31,6 +35,21 @@ export const PlayerController = () => {
   
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
+  
+  const jumpAnim = (left, right) => {
+      gsap.to(jumpOffset, {
+        current: .3,
+        duration: 0.1,
+        ease: "power2.out",
+        yoyo: true,
+        repeat: 1,
+        onComplete: () => {
+          isJumping.current = false;
+          // driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
+        }
+      })
+}
+
   
   function updateSpeed(forward, backward, delta) {
     const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
@@ -50,11 +69,16 @@ export const PlayerController = () => {
   }
   
   function jumpPlayer(spaceKey, left, right, ){
-    if(spaceKey && !jumpIsHeld.current){
+    if(spaceKey && !jumpIsHeld.current && !isJumping.current){
       // rb.applyImpulse({ x: 0, y: 45, z: 0 }, true);
+  
+      jumpAnim(left, right);
+      isJumping.current = true;
       jumpIsHeld.current = true;
       driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
+
     }
+    
 
     
     if(!spaceKey){
@@ -133,7 +157,7 @@ export const PlayerController = () => {
 
       <group ref={kartRef}>
       
-          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} />
+          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} />
 
         <group ref={cameraLookAtRef} position={[0,0,-3]}>
 

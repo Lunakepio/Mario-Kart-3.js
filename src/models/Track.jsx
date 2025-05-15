@@ -1,29 +1,30 @@
 import React, { useEffect } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useTexture } from '@react-three/drei'
+import { RepeatWrapping } from 'three'
 
 export function Track(props) {
   const { nodes, materials } = useGLTF('/models/track-transformed.glb')
-
+  
+  const normalMap = useTexture('/textures/normal.jpg')
+  
   useEffect(() => {
-    // Mark specific ground meshes
-    const groundMeshes = [
-      nodes.Object_4,
-      nodes.Object_6,
-      nodes.Object_9,
-      nodes.Object_10,
-      nodes.Object_11,
-      nodes.Object_12,
-      nodes.Object_22,
-      nodes.Object_25,
-      nodes.Object_27,
-      nodes.Object_24,
-    ]
-
-    groundMeshes.forEach((node) => {
-      if (node) node.userData.ground = true
-    })
-  }, [nodes])
-
+      if (normalMap) {
+        normalMap.wrapS = RepeatWrapping
+        normalMap.wrapT = RepeatWrapping
+  
+        // Adjust this based on how often you want it to tile on the mesh
+        normalMap.repeat.set(300, 300);
+        normalMap.offset.set(0, 0);
+  
+        // Optional: maintain aspect ratio manually if needed
+        normalMap.anisotropy = 32
+  
+      }
+  
+      materials.material_18.normalMap = normalMap
+    materials.material_18.roughness = 0.52;
+      materials.material_18.needsUpdate = true
+    }, [normalMap, materials.material_18])
   return (
     <group {...props} dispose={null} position={[155, -28.4, 15]} scale={0.08}>
       <mesh name={'ground'} castShadow receiveShadow geometry={nodes.Object_4.geometry} material={materials.material_0} />

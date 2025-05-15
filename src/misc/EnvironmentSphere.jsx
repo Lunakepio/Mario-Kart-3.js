@@ -1,4 +1,4 @@
-import { Environment } from "@react-three/drei";
+import { Billboard, Environment, useTexture } from "@react-three/drei";
 import { useControls } from "leva";
 import { BackSide, Color, DoubleSide } from "three";
 
@@ -40,6 +40,8 @@ const color2 = "#1461C5";
       gl_FragColor = vec4(color, 1.0);
     }
   `;
+  
+  const sunTexture = useTexture('/textures/sun.png')
 
   return (
     <> <mesh
@@ -59,7 +61,15 @@ const color2 = "#1461C5";
           toneMapped={false}
         />
       </mesh>
+        <mesh scale={100} position={[450,300, -1000]}>
+          <planeGeometry args={[1, 1]}/>
+          <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(10)} map={sunTexture} transparent depthWrite={false} />
+        </mesh>
     <Environment preset={'warehouse'}>
+      <mesh scale={100} position={[450,300, -1000]}>
+        <planeGeometry args={[1, 1]}/>
+        <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(5000)} map={sunTexture} transparent depthWrite={false} />
+      </mesh>
       {/* <mesh
         position={[0, 0, 0]}
         scale={[1200, 1200, 1200]}

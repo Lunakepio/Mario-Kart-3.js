@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 import React, { useEffect, useRef } from "react";
 import { useGLTF, useKeyboardControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { lerp } from "three/src/math/MathUtils.js";
+import { clamp, lerp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
 import { getDriftLevel } from "../constants.js";
 import { Glow } from "../particles/drift/Glow.jsx";
@@ -18,7 +18,7 @@ import { Skate } from "../particles/drift/Skate.jsx";
 import { Trails } from "../particles/sparks/Trails.jsx";
 const raycaster = new Raycaster();
 
-export function Kart({ speed, driftDirection, driftPower }) {
+export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
   const { nodes, materials } = useGLTF("/models/kart.glb");
 
   const wheel3 = useRef(null);
@@ -65,6 +65,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
   const setFlamePositions = useGameStore((state) => state.setFlamePositions);
   const setBoostPower = useGameStore((state) => state.setBoostPower);
   const setDriftLevel = useGameStore((state) => state.setDriftLevel);
+  const setGroundPosition = useGameStore((state) => state.setGroundPosition);
   const { scene } = useThree();
 
   function getGroundPosition(wheel) {
@@ -82,15 +83,15 @@ export function Kart({ speed, driftDirection, driftPower }) {
     if (intersects.length > 0) {
       const hit = intersects[0];
       if (hit.object.name.includes("ground")) {
-        wheel.current.position.y = hit.point.y + 0.7;
+        wheel.current.position.y = hit.point.y + 0.8 + jumpOffset.current;
       }
       wheel.current.isOnDirt =
-        hit.object.name.includes("dirt") && speed.current > 20;
+        (hit.object.name.includes("dirt") && speed.current > 20) && jumpOffset.current === 0;
     }
   }
   useFrame((_, delta) => {
     if (wheel0.current && wheel1.current && wheel2.current && wheel3.current) {
-      const isDrifting = !!driftDirection.current;
+      const isDrifting = !!driftDirection.current && jumpOffset.current === 0;
       const { left, right } = get();
       const rotationSpeed = speed.current * 0.01;
       wheel0.current.rotation.x += rotationSpeed;
@@ -149,23 +150,27 @@ export function Kart({ speed, driftDirection, driftPower }) {
       const roll = (b.y - a.y + d.y - c.y) * 0.5;
 
       const averageYPos = 0.65 + (a.y + b.y + c.y + d.y) / 4;
+      setGroundPosition(averageYPos);
+      
 
       bodyRef.current.rotation.x = lerp(
         bodyRef.current.rotation.x,
         pitch,
-        5 * delta
+        8 * delta
       );
 
       bodyRef.current.rotation.z = lerp(
         bodyRef.current.rotation.z,
         roll,
-        5 * delta
+        8 * delta
       );
-      bodyRef.current.position.y = lerp(
-        bodyRef.current.position.y,
-        averageYPos,
-        5 * delta
-      );
+      // bodyRef.current.position.y = lerp(
+      //   bodyRef.current.position.y,
+      //   averageYPos + jumpOffset.current * 0.2,
+      //   12 * delta
+      // );
+      
+      bodyRef.current.position.y = averageYPos + jumpOffset.current * 0.1
 
       yRotation.current = lerp(
         yRotation.current,
@@ -176,7 +181,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
       frontWheels.current.rotation.y = -yRotation.current * 0.1;
       wheelRef.current.rotation.y = -yRotation.current;
 
-      if (speed.current > 15) {
+      if (speed.current > 15 ) {
         smoke1Ref.current?.stopEmitting();
         smoke2Ref.current?.stopEmitting();
       } else {
@@ -239,6 +244,7 @@ export function Kart({ speed, driftDirection, driftPower }) {
   }, []);
   return (
     <>
+      {/* <pointLight intensity={2000} position={[0, 10, 0]}/> */}
       <KartDust wheelStates={dustWheelStates.current} />
       <group ref={groupRef} dispose={null}>
         <group ref={leftParticles} rotation-y={Math.PI}>

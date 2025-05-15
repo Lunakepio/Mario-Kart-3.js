@@ -27,7 +27,7 @@ export const App = () => {
   return (
 
       <>
-        <Suspense fallback={null}>
+        
           <VFXParticles
             name="smoke"
             settings={{
@@ -59,8 +59,7 @@ export const App = () => {
                 
               <Lighting />
           </KeyboardControls>
-          <Preload all />
-        </Suspense>
+
         <Composer/>
         {/* <OrbitControls /> */}
       </>

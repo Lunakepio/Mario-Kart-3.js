@@ -12,4 +12,6 @@ export const useGameStore = create((set) => ({
   setIsBoosting: (isBoosting) => set({ isBoosting }),
   driftLevel: null,
   setDriftLevel: (level) => set({ driftLevel: level }),
+  groundPosition: null,
+  setGroundPosition: (groundPosition) => set({groundPosition: groundPosition})
 }));
