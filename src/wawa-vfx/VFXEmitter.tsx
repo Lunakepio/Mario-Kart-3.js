@@ -81,7 +81,6 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
     const emit = useVFX((state) => state.emit);
 
     const shouldEmitRef = useRef<boolean>(true);
-    
 
     const stopEmitting = useCallback(() => {
       shouldEmitRef.current = false;
@@ -95,25 +94,11 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
       shouldEmitRef.current = true;
     }, []);
 
-    const colorRef = useRef<string[]>(colorStart);
-    
-    const updateColor = useCallback((newColorStart: string[]) => {
-      colorRef.current = newColorStart;
-    }, [])
-    
-    const nbParticlesRef = useRef<number>(nbParticles);
-    
-    const updateNbParticles = useCallback((newNbParticles: number = 1) => {
-        nbParticlesRef.current = newNbParticles;
-    }, [])
-    
     const ref = useRef<any>(null!);
     useImperativeHandle(forwardedRef, () => ({
       ...ref.current,
       stopEmitting,
       startEmitting,
-      updateColor,
-      updateNbParticles
     }));
 
     const emitted = useRef(0);
@@ -123,17 +108,17 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
       const time = clock.getElapsedTime();
       const shouldEmit = shouldEmitRef.current;
 
-      if (emitted.current < nbParticlesRef.current || loop) {
+      if (emitted.current < nbParticles || loop) {
         if (!ref || !shouldEmit) {
           return;
         }
         const particlesToEmit =
           spawnMode === "burst"
-            ? nbParticlesRef.current
+            ? nbParticles
             : Math.max(
                 0,
                 Math.floor(
-                  ((elapsedTime.current - delay) / duration) * nbParticlesRef.current
+                  ((elapsedTime.current - delay) / duration) * nbParticles
                 )
               );
 
@@ -147,7 +132,7 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
             worldRotation.setFromQuaternion(worldQuaternion);
 
             const randSize = randFloat(size[0], size[1]);
-            const color = colorRef.current
+            const color = colorStart[randInt(0, colorStart.length - 1)];
             return {
               position: [
                 worldPosition.x +
@@ -157,15 +142,11 @@ const VFXEmitter = forwardRef<VFXEmitterRef, VFXEmitterProps>(
                 worldPosition.z +
                   randFloat(startPositionMin[2], startPositionMax[2]),
               ],
-              direction: (() => {
-                const dir = new Vector3(
-                  randFloat(directionMin[0], directionMax[0]),
-                  randFloat(directionMin[1], directionMax[1]),
-                  randFloat(directionMin[2], directionMax[2])
-                );
-                dir.applyQuaternion(worldQuaternion);
-                return [dir.x, dir.y, dir.z];
-              })(),
+              direction: [
+                randFloat(directionMin[0], directionMax[0]),
+                randFloat(directionMin[1], directionMax[1]),
+                randFloat(directionMin[2], directionMax[2]),
+              ],
               scale: [randSize, randSize, randSize],
               rotation: [
                 worldRotation.x +

@@ -27,7 +27,6 @@ export const App = () => {
   return (
 
       <>
-        
           <VFXParticles
             name="smoke"
             settings={{

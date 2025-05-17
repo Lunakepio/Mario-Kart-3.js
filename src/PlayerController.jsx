@@ -26,6 +26,10 @@ export const PlayerController = () => {
   const driftPower = useRef(0);
   const turbo = useRef(0);
   const isJumping = useRef(false);
+  const backWheelOffset = useRef({
+    left: 0,
+    right: 0
+  })
   
   const [, get] = useKeyboardControls();
   
@@ -35,6 +39,7 @@ export const PlayerController = () => {
   
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
+  const setSpeed = useGameStore((state) => state.setSpeed);
   
   const jumpAnim = (left, right) => {
       gsap.to(jumpOffset, {
@@ -46,6 +51,25 @@ export const PlayerController = () => {
         onComplete: () => {
           isJumping.current = false;
           // driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
+          setTimeout(() => {
+            if(driftDirection.current !== 0){
+              gsap.to(backWheelOffset.current, {
+                left: driftDirection.current === driftDirections.left ? 0.2 : 0,
+                right: driftDirection.current === driftDirections.right ? 0.2 : 0,
+                duration: 0.5,
+                ease: "power2.out",
+                onComplete:() => {
+                  gsap.to(backWheelOffset.current, {
+                    left: 0,
+                    right: 0,
+                    duration: 0.4,
+                    ease: "bounce.out"
+                  })
+                }
+        
+              })
+            }
+          }, 400)
         }
       })
 }
@@ -55,6 +79,7 @@ export const PlayerController = () => {
     const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
     speedRef.current = lerp(speedRef.current, maxSpeed * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
+    setSpeed(speedRef.current);
     turbo.current -= delta;
 
   }
@@ -157,7 +182,7 @@ export const PlayerController = () => {
 
       <group ref={kartRef}>
       
-          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} />
+          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} backWheelOffset={backWheelOffset} />
 
         <group ref={cameraLookAtRef} position={[0,0,-3]}>
 

@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 import React, { useEffect, useRef } from "react";
 import { useGLTF, useKeyboardControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { clamp, lerp } from "three/src/math/MathUtils.js";
+import { lerp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
 import { getDriftLevel } from "../constants.js";
 import { Glow } from "../particles/drift/Glow.jsx";
@@ -18,7 +18,8 @@ import { Skate } from "../particles/drift/Skate.jsx";
 import { Trails } from "../particles/sparks/Trails.jsx";
 const raycaster = new Raycaster();
 
-export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
+
+export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelOffset }) {
   const { nodes, materials } = useGLTF("/models/kart.glb");
 
   const wheel3 = useRef(null);
@@ -66,9 +67,10 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
   const setBoostPower = useGameStore((state) => state.setBoostPower);
   const setDriftLevel = useGameStore((state) => state.setDriftLevel);
   const setGroundPosition = useGameStore((state) => state.setGroundPosition);
+  const setWheelPositions = useGameStore((state) => state.setWheelPositions);
   const { scene } = useThree();
 
-  function getGroundPosition(wheel) {
+  function getGroundPosition(wheel, offset = 0) {
     const origin = new Vector3();
     const direction = new Vector3(0, -1, 0);
 
@@ -83,7 +85,7 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
     if (intersects.length > 0) {
       const hit = intersects[0];
       if (hit.object.name.includes("ground")) {
-        wheel.current.position.y = hit.point.y + 0.8 + jumpOffset.current;
+        wheel.current.position.y = hit.point.y + 0.8 + jumpOffset.current + offset;
       }
       wheel.current.isOnDirt =
         (hit.object.name.includes("dirt") && speed.current > 20) && jumpOffset.current === 0;
@@ -99,10 +101,10 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
       wheel2.current.rotation.x += rotationSpeed;
       wheel3.current.rotation.x += rotationSpeed;
 
-      getGroundPosition(wheel0);
-      getGroundPosition(wheel1);
-      getGroundPosition(wheel2);
-      getGroundPosition(wheel3);
+      getGroundPosition(wheel0, backWheelOffset.current.right / 2);
+      getGroundPosition(wheel1, backWheelOffset.current.left / 2);
+      getGroundPosition(wheel2, backWheelOffset.current.right);
+      getGroundPosition(wheel3, backWheelOffset.current.left);
 
       const wheelPositions = [wheel0, wheel1, wheel2, wheel3].map(
         (wheel, index) => {
@@ -129,6 +131,8 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
           return position;
         }
       );
+      
+      setWheelPositions([...wheelPositions, groupRef.current.getWorldQuaternion(new Quaternion()).y]);
 
       const a = wheelPositions[0];
       const b = wheelPositions[1];
@@ -284,7 +288,6 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
               particlesLifetime: [0.2, 0.4],
               speed: [2, 2],
               colorStart: "#ffffff",
-              colorEnd: "#ffffff",
               directionMin: [0, 0, 0.8],
               directionMax: [0, 0.5, 1],
               rotationSpeedMin: [0, 0, -1],
@@ -314,7 +317,6 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset }) {
               particlesLifetime: [0.2, 0.4],
               speed: [2, 2],
               colorStart: "#ffffff",
-              colorEnd: "#ffffff",
               directionMin: [0, 0, 0.8],
               directionMax: [0, 0.5, 1],
               rotationSpeedMin: [0, 0, -1],
