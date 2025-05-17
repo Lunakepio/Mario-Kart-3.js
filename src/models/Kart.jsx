@@ -101,8 +101,8 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
       wheel2.current.rotation.x += rotationSpeed;
       wheel3.current.rotation.x += rotationSpeed;
 
-      getGroundPosition(wheel0, backWheelOffset.current.right / 2);
-      getGroundPosition(wheel1, backWheelOffset.current.left / 2);
+      getGroundPosition(wheel0, backWheelOffset.current.right);
+      getGroundPosition(wheel1, backWheelOffset.current.left);
       getGroundPosition(wheel2, backWheelOffset.current.right);
       getGroundPosition(wheel3, backWheelOffset.current.left);
 
@@ -113,18 +113,18 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
           dustWheelStates.current[index].position = localPos;
           dustWheelStates.current[index].shouldEmit = wheel.current.isOnDirt;
 
-          index == 0
+          index == 2
             ? leftParticles.current.position.set(
                 localPos.x - 0.2,
                 localPos.y - .7,
-                localPos.z + .2
+                localPos.z - 0.2
               )
             : null;
-          index == 1
+          index == 3
             ? rightParticles.current.position.set(
                 localPos.x + .2,
                 localPos.y - .7,
-                localPos.z + .2
+                localPos.z - 0.2
               )
             : null;
 
@@ -250,23 +250,25 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
     <>
       {/* <pointLight intensity={2000} position={[0, 10, 0]}/> */}
       <KartDust wheelStates={dustWheelStates.current} />
-      <group ref={groupRef} dispose={null}>
-        <group ref={leftParticles} rotation-y={Math.PI}>
-          <Glow ref={glow1Ref} driftDirection={driftDirection} />
-          <Sparks ref={sparksLeftRef} left={true} />
-          <Trails left={true} />
-          <group position={[-.15, 0.2, -0.2]}>
-            <Skate ref={skate1Ref} />
+      <group ref={groupRef} dispose={null} >
+
+        <group rotation-y={Math.PI}>
+          <group ref={leftParticles} >
+            <Glow ref={glow1Ref} driftDirection={driftDirection} />
+            <Sparks ref={sparksLeftRef}  />
+            <Trails  />
+            <group position={[.15, 0.2, -0.2]}>
+              <Skate ref={skate1Ref} />
+            </group>
           </group>
-        </group>
-        <group ref={rightParticles} rotation-y={Math.PI}>
-          <Glow ref={glow2Ref} driftDirection={driftDirection} />
-          <Sparks ref={sparksRightRef} />
-          <Trails/>
-          <group position={[.15, 0.2, -0.2]}>
-            <Skate ref={skate2Ref} />
-          </group>
-        </group>
+          <group ref={rightParticles}>
+            <Glow ref={glow2Ref} driftDirection={driftDirection} />
+            <Sparks ref={sparksRightRef} left={true}/>
+            <Trails left={true}/>
+            <group position={[-.15, 0.2, -0.2]}>
+              <Skate ref={skate2Ref} />
+            </group>
+          </group></group>
         <group
           position={[0.5, -1.1, 1.5]}
           rotation-x={-Math.PI / 9}

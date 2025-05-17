@@ -53,23 +53,24 @@ export const PlayerController = () => {
           // driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
           setTimeout(() => {
             if(driftDirection.current !== 0){
+              gsap.killTweensOf(backWheelOffset.current);
               gsap.to(backWheelOffset.current, {
-                left: driftDirection.current === driftDirections.left ? 0.2 : 0,
-                right: driftDirection.current === driftDirections.right ? 0.2 : 0,
-                duration: 0.5,
-                ease: "power2.out",
+                left: driftDirection.current === driftDirections.left ? 0.4 : 0,
+                right: driftDirection.current === driftDirections.right ? 0.4 : 0,
+                duration: 0.3,
+                ease: "power4.out",
                 onComplete:() => {
                   gsap.to(backWheelOffset.current, {
                     left: 0,
                     right: 0,
-                    duration: 0.4,
+                    duration: 0.8,
                     ease: "bounce.out"
                   })
                 }
         
               })
             }
-          }, 400)
+          }, 100)
         }
       })
 }
