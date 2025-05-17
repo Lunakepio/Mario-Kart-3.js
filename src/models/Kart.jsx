@@ -16,6 +16,7 @@ import { KartDust } from "./KartDust.jsx";
 import { Sparks } from "../particles/sparks/Sparks.jsx";
 import { Skate } from "../particles/drift/Skate.jsx";
 import { Trails } from "../particles/sparks/Trails.jsx";
+import VFXParticles from "../wawa-vfx/VFXParticles.tsx";
 const raycaster = new Raycaster();
 
 
@@ -257,6 +258,8 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
             <Glow ref={glow1Ref} driftDirection={driftDirection} />
             <Sparks ref={sparksLeftRef}  />
             <Trails  />
+      
+                
             <group position={[.15, 0.2, -0.2]}>
               <Skate ref={skate1Ref} />
             </group>
