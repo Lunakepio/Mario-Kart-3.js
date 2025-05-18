@@ -34,7 +34,7 @@ const color2 = "#1461C5";
       float t = smoothstep(-1., 1., vWorldNormal.y);
       vec3 color = mix(color1, color2, t);
     
-      color *= 3.;
+      color *= 4.;
     
     
       gl_FragColor = vec4(color, 1.0);
@@ -63,7 +63,7 @@ const color2 = "#1461C5";
       </mesh>
         <mesh scale={100} position={[450,300, -1000]}>
           <planeGeometry args={[1, 1]}/>
-          <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(10)} map={sunTexture} transparent depthWrite={false} />
+          <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(100)} map={sunTexture} transparent depthWrite={false} />
         </mesh>
     <Environment preset={'warehouse'}>
       <mesh scale={100} position={[450,300, -1000]}>
