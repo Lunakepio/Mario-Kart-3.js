@@ -246,18 +246,45 @@ int getHueRange(float hue) {
     else return 7;                                 // Magenta
 }
 
+const int NUM_RANGES = 8;
+const float TWO_PI = 6.28318530718;
+
+float circularDistance(float a, float b) {
+  float diff = abs(a - b);
+  return min(diff, 1.0 - diff); // Wrap hue
+}
+
 vec3 applyHslPerRange(vec3 color) {
-    vec3 hsv = rgbToHsv(color);
-    int range = getHueRange(hsv.x);
-    
-    // Adjustments
-    hsv.x += hueAdjust[range];  // wrap if needed
-    hsv.x = mod(hsv.x, 1.0);    // keep in 0-1 range
+  vec3 hsv = rgbToHsv(color);
+  float hue = hsv.x;
 
-    hsv.y = clamp(hsv.y + satAdjust[range], 0.0, 1.0);
-    hsv.z = clamp(hsv.z + lumAdjust[range], 0.0, 1.0);
+  float totalWeight = 0.0;
+  float hShift = 0.0;
+  float sShift = 0.0;
+  float lShift = 0.0;
 
-    return hsvToRgb(hsv);
+  for (int i = 0; i < NUM_RANGES; i++) {
+    float centerHue = float(i) / float(NUM_RANGES); // evenly spaced hue centers
+    float dist = circularDistance(hue, centerHue);
+
+    float sigma = 0.08; // Smaller = tighter influence
+    float weight = exp(-pow(dist, 2.0) / (2.0 * sigma * sigma));
+
+    hShift += weight * hueAdjust[i];
+    sShift += weight * satAdjust[i];
+    lShift += weight * lumAdjust[i];
+    totalWeight += weight;
+  }
+
+  hShift /= totalWeight;
+  sShift /= totalWeight;
+  lShift /= totalWeight;
+
+  hsv.x = mod(hsv.x + hShift, 1.0);
+  hsv.y = clamp(hsv.y + sShift, 0.0, 1.0);
+  hsv.z = clamp(hsv.z + lShift, 0.0, 1.0);
+
+  return hsvToRgb(hsv);
 }
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
