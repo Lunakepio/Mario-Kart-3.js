@@ -34,7 +34,7 @@ const color2 = "#1461C5";
       float t = smoothstep(-1., 1., vWorldNormal.y);
       vec3 color = mix(color1, color2, t);
     
-      color *= 4.;
+      color *= 6.;
     
     
       gl_FragColor = vec4(color, 1.0);

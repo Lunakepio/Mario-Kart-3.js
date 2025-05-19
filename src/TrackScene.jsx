@@ -1,15 +1,13 @@
 import { PlayerController } from "./PlayerController";
 import { Grid } from "@react-three/drei";
-import { Track } from "./models/Track";
 import Flames from "./particles/drift/flames/Flames";
 import VFXEmitter from "./wawa-vfx/VFXEmitter";
-
+import {Track} from './models/Mario-circuit-test';
 export const TrackScene = () => {
   return (
     <>
       <PlayerController />
       <Track />
-
 
       <Flames />
 

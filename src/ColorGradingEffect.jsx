@@ -31,6 +31,7 @@ uniform float uSplitToneBalance;
 uniform float motionStrength;
 uniform float uExposure;
 uniform float uKelvin;
+uniform float uChromaticAberration;
 
 vec2 hash(vec2 p) {
   p = vec2(
@@ -287,6 +288,32 @@ vec3 applyHslPerRange(vec3 color) {
   return hsvToRgb(hsv);
 }
 
+vec3 toneMapFilmic(vec3 x) {
+  return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
+}
+
+vec3 chromaticAberration(vec2 uv, float amount) {
+  float dist = distance(uv, vec2(0.5));
+  vec2 offset = (uv - 0.5) * amount * dist;
+  float r = texture2D(tDiffuse, uv + offset).r;
+  float g = texture2D(tDiffuse, uv).g;
+  float b = texture2D(tDiffuse, uv - offset).b;
+  return vec3(r, g, b);
+}
+
+vec3 applyLiftGammaGain(vec3 color, vec3 lift, vec3 gamma, vec3 gain) {
+    // Apply Lift (shadows)
+    vec3 lifted = color + lift;
+
+    // Apply Gain (highlights)
+    vec3 gained = lifted * gain;
+
+    // Apply Gamma (midtone compression/expansion)
+    vec3 corrected = pow(max(vec3(0.0), gained), 1.0 / max(vec3(0.01), gamma)); // Avoid div/0
+
+    return clamp(corrected, 0.0, 1.0);
+}
+
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   vec2 resolution = vec2(${window.innerWidth}., ${window.innerHeight}.);
   vec2 direction = motionDirection * motionStrength;
@@ -294,7 +321,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   vec4 blurredColor = blurMotion(tDiffuse, uv, resolution, direction, 12.0);
 
   vec3 color = blurredColor.rgb;
-
+  color = chromaticAberration(uv, uChromaticAberration);
   color = colorChannelMixer(color, uRedMix, uGreenMix, uBlueMix, uBrightness, 1.0);
   color = applyExposure(color, uExposure);
   color = colorContrast(color, uContrast);
@@ -305,6 +332,8 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   color = colorVibrancy(color, uVibrancy);
   color = splitToning(color, uShadowTint, uHighlightTint, uSplitToneBalance);
   color = applyHslPerRange(color);
+  color = toneMapFilmic(color);
+  
   fragColor = vec4(color, 1.0);
 }
 
@@ -332,9 +361,11 @@ export class ColorGradingEffect extends Effect {
         ["uSplitToneBalance", new Uniform(0.0)],
         ["uExposure", new Uniform(0)],
         ["uKelvin", new Uniform(5500)],
+        ["uChromaticAberration", new Uniform(0)],
         ["hueAdjust", new Uniform(new Float32Array(8))],
         ["satAdjust", new Uniform(new Float32Array(8))],
         ["lumAdjust", new Uniform(new Float32Array(8))],
+        
       ]),
     });
   }
@@ -347,7 +378,7 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("motionDirection").value.copy(dir);
     this.uniforms.get("motionStrength").value = strength;
   }
-
+  
   updateColorMix(
     red,
     green,
@@ -363,6 +394,7 @@ export class ColorGradingEffect extends Effect {
     splitToneBalance,
     exposure,
     kelvin,
+    chromaticAberration
   ) {
     this.uniforms.get("uRedMix").value = new Color(red);
     this.uniforms.get("uGreenMix").value = new Color(green);
@@ -378,6 +410,7 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("uSplitToneBalance").value = splitToneBalance;
     this.uniforms.get("uExposure").value = exposure;
     this.uniforms.get("uKelvin").value = kelvin;
+    this.uniforms.get("uChromaticAberration").value = chromaticAberration;
   }
   
   setHslAdjustments(hueAdjust, satAdjust, lumAdjust) {
@@ -413,6 +446,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     splitToneBalance,
     exposure,
     kelvin,
+    chromaticAberration
   } = useControls("Color Grading", {
     redMix: { value: "#FF0000", label: "Red Mix" },
     greenMix: {
@@ -424,7 +458,7 @@ export const ColorGrading = forwardRef((props, ref) => {
       label: "Blue Mix",
     },
     brightness: { value: 0.03, min: -1, max: 1, step: 0.001 },
-    contrast: { value: 1.23, min: 0, max: 3, step: 0.001 },
+    contrast: { value: 1.03, min: 0, max: 3, step: 0.001 },
     saturation: { value: 0.08, min: -1, max: 3, step: 0.001 },
     vibrancy: { value: 0.24, min: -1, max: 3, step: 0.001 },
     hueOffset: { value: 0, min: -Math.PI, max: Math.PI, step: 0.001 },
@@ -432,8 +466,9 @@ export const ColorGrading = forwardRef((props, ref) => {
     shadowTint: { value: "#d8d8d8", label: "Shadow Tint" },
     highlightTint: { value: "#ffffff", label: "Highlight Tint" },
     splitToneBalance: { value: 0, min: 0, max: 1, step: 0.001 },
-    exposure: { value: 0.04, min: -1, max: 3, step: 0.001 },
+    exposure: { value: -.5, min: -1, max: 3, step: 0.001 },
     kelvin: { value: 5900, min: 1000, max: 40000 },
+    chromaticAberration : { value : 0, min : -2, max : 2}
   });
   
   const hues = [
@@ -464,8 +499,9 @@ export const ColorGrading = forwardRef((props, ref) => {
     const hueAdjust = hues.map(h => hueControls[0][h].hue);
     const satAdjust = hues.map(h => hueControls[0][h].sat);
     const lumAdjust = hues.map(h => hueControls[0][h].lum);
-    console.log(hueControls[0]);
     effect.updateTime(state.clock.elapsedTime);
+
+
     effect.updateColorMix(
       redMix,
       greenMix,
@@ -481,6 +517,7 @@ export const ColorGrading = forwardRef((props, ref) => {
       splitToneBalance,
       exposure,
       kelvin,
+      chromaticAberration
     );
     effect.setHslAdjustments(hueAdjust, satAdjust, lumAdjust);
 
