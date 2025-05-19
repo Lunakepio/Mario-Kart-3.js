@@ -268,15 +268,15 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
   vec3 color = blurredColor.rgb;
 
+  color = colorChannelMixer(color, uRedMix, uGreenMix, uBlueMix, uBrightness, 1.0);
+  color = applyExposure(color, uExposure);
   color = colorContrast(color, uContrast);
+  color = gammaCorrect(color, uGamma);
+  color = colorTemperature(color, uKelvin);
+  color = colorHueRadians(color, uHueOffset);
   color = colorSaturation(color, uSaturation);
   color = colorVibrancy(color, uVibrancy);
-  color = colorChannelMixer(color, uRedMix, uGreenMix, uBlueMix, uBrightness, 1.0);
-  color = colorHueRadians(color, uHueOffset);
-  color = gammaCorrect(color, uGamma);
   color = splitToning(color, uShadowTint, uHighlightTint, uSplitToneBalance);
-  color = applyExposure(color, uExposure);
-  color = colorTemperature(color, uKelvin);
   color = applyHslPerRange(color);
   fragColor = vec4(color, 1.0);
 }
@@ -365,6 +365,8 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("lumAdjust").value.set(lumAdjust);
   }
 }
+
+
 export const ColorGrading = forwardRef((props, ref) => {
   const effect = useMemo(() => new ColorGradingEffect(), []);
   const { camera } = useThree();
@@ -394,17 +396,17 @@ export const ColorGrading = forwardRef((props, ref) => {
       value: "#0000FF",
       label: "Blue Mix",
     },
-    brightness: { value: 0, min: -1, max: 1, step: 0.001 },
-    contrast: { value: 1, min: 0, max: 3, step: 0.001 },
-    saturation: { value: 0., min: -1, max: 3, step: 0.001 },
-    vibrancy: { value: 0.12, min: -1, max: 3, step: 0.001 },
+    brightness: { value: 0.03, min: -1, max: 1, step: 0.001 },
+    contrast: { value: 1.23, min: 0, max: 3, step: 0.001 },
+    saturation: { value: 0.08, min: -1, max: 3, step: 0.001 },
+    vibrancy: { value: 0.24, min: -1, max: 3, step: 0.001 },
     hueOffset: { value: 0, min: -Math.PI, max: Math.PI, step: 0.001 },
     gamma: { value: 1, min: 0, max: 3, step: 0.001 },
-    shadowTint: { value: "#ffffff", label: "Shadow Tint" },
+    shadowTint: { value: "#d8d8d8", label: "Shadow Tint" },
     highlightTint: { value: "#ffffff", label: "Highlight Tint" },
     splitToneBalance: { value: 0, min: 0, max: 1, step: 0.001 },
-    exposure: { value: 0, min: -1, max: 3, step: 0.001 },
-    kelvin: { value: 5500, min: 1000, max: 40000 },
+    exposure: { value: 0.04, min: -1, max: 3, step: 0.001 },
+    kelvin: { value: 5900, min: 1000, max: 40000 },
   });
   
   const hues = [
@@ -460,7 +462,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     prevSpeed.current = lerp(prevSpeed.current, speed, 8 * delta);
 
     const verticalDir = new Vector2(0.0, normalizedSpeed);
-    const verticalStrength = Math.abs(normalizedSpeed) * 0.01;
+    const verticalStrength = Math.abs(normalizedSpeed) * 0.05;
 
     const currentQuat = camera.quaternion.clone();
     const deltaQuat = currentQuat
@@ -470,7 +472,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     const yawChange = deltaEuler.y;
 
     const horizontalDir = new Vector2(Math.sign(yawChange), 0.0);
-    const horizontalStrength = Math.abs(yawChange) * 0.2;
+    const horizontalStrength = Math.abs(yawChange) * 0.5;
 
     const combinedDir = new Vector2()
       .addScaledVector(horizontalDir, horizontalStrength)

@@ -18,8 +18,8 @@ export const PlayerController = () => {
   const jumpIsHeld = useRef(false);
   const driftDirections = {
     none : 0,
-    left : 1.2,
-    right: -1.2
+    left : 1.4,
+    right: -1.4
   }
   const jumpOffset = useRef(0);
   const driftDirection = useRef(driftDirections.none);
