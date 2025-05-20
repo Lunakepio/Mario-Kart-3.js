@@ -293,23 +293,30 @@ vec3 toneMapFilmic(vec3 x) {
 }
 
 vec3 chromaticAberration(vec2 uv, float amount) {
-  float dist = distance(uv, vec2(0.5));
-  vec2 offset = (uv - 0.5) * amount * dist;
-  float r = texture2D(tDiffuse, uv + offset).r;
+  vec2 center = vec2(0.5);
+
+  float dist = distance(uv, center);
+
+  float strength = pow(dist, 2.0) * amount;
+
+  vec2 direction = normalize(uv - center);
+
+  vec2 rOffset = direction * strength *  1.0;
+  vec2 bOffset = direction * strength * -1.0;
+
+  float r = texture2D(tDiffuse, uv + rOffset).r;
   float g = texture2D(tDiffuse, uv).g;
-  float b = texture2D(tDiffuse, uv - offset).b;
+  float b = texture2D(tDiffuse, uv + bOffset).b;
+
   return vec3(r, g, b);
 }
 
 vec3 applyLiftGammaGain(vec3 color, vec3 lift, vec3 gamma, vec3 gain) {
-    // Apply Lift (shadows)
     vec3 lifted = color + lift;
 
-    // Apply Gain (highlights)
     vec3 gained = lifted * gain;
 
-    // Apply Gamma (midtone compression/expansion)
-    vec3 corrected = pow(max(vec3(0.0), gained), 1.0 / max(vec3(0.01), gamma)); // Avoid div/0
+    vec3 corrected = pow(max(vec3(0.0), gained), 1.0 / max(vec3(0.01), gamma));
 
     return clamp(corrected, 0.0, 1.0);
 }
@@ -333,7 +340,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   color = splitToning(color, uShadowTint, uHighlightTint, uSplitToneBalance);
   color = applyHslPerRange(color);
   color = toneMapFilmic(color);
-  
+
   fragColor = vec4(color, 1.0);
 }
 
@@ -365,7 +372,7 @@ export class ColorGradingEffect extends Effect {
         ["hueAdjust", new Uniform(new Float32Array(8))],
         ["satAdjust", new Uniform(new Float32Array(8))],
         ["lumAdjust", new Uniform(new Float32Array(8))],
-        
+
       ]),
     });
   }
@@ -378,7 +385,7 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("motionDirection").value.copy(dir);
     this.uniforms.get("motionStrength").value = strength;
   }
-  
+
   updateColorMix(
     red,
     green,
@@ -412,14 +419,14 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("uKelvin").value = kelvin;
     this.uniforms.get("uChromaticAberration").value = chromaticAberration;
   }
-  
+
   setHslAdjustments(hueAdjust, satAdjust, lumAdjust) {
     if (!this.uniforms.has("hueAdjust")) {
       this.uniforms.set("hueAdjust", { value: new Float32Array(8) });
       this.uniforms.set("satAdjust", { value: new Float32Array(8) });
       this.uniforms.set("lumAdjust", { value: new Float32Array(8) });
     }
-  
+
     this.uniforms.get("hueAdjust").value.set(hueAdjust);
     this.uniforms.get("satAdjust").value.set(satAdjust);
     this.uniforms.get("lumAdjust").value.set(lumAdjust);
@@ -431,7 +438,7 @@ export const ColorGrading = forwardRef((props, ref) => {
   const effect = useMemo(() => new ColorGradingEffect(), []);
   const { camera } = useThree();
 
-  const {
+  let {
     redMix,
     greenMix,
     blueMix,
@@ -468,13 +475,13 @@ export const ColorGrading = forwardRef((props, ref) => {
     splitToneBalance: { value: 0, min: 0, max: 1, step: 0.001 },
     exposure: { value: -.5, min: -1, max: 3, step: 0.001 },
     kelvin: { value: 5900, min: 1000, max: 40000 },
-    chromaticAberration : { value : 0, min : -2, max : 2}
+    chromaticAberration : { value : 0, min : -5, max : 5}
   });
-  
+
   const hues = [
     "Red", "Orange", "Yellow", "Green", "Aqua", "Blue", "Purple", "Magenta"
   ];
-  
+
   const hueControls = useControls("Hue Adjustments", () =>
     Object.fromEntries(
       hues.map((hue, i) => [
@@ -494,13 +501,15 @@ export const ColorGrading = forwardRef((props, ref) => {
 
   useFrame((state, delta) => {
     if (!camera) return;
-    
+
     if (!hueControls) return;
     const hueAdjust = hues.map(h => hueControls[0][h].hue);
     const satAdjust = hues.map(h => hueControls[0][h].sat);
     const lumAdjust = hues.map(h => hueControls[0][h].lum);
     effect.updateTime(state.clock.elapsedTime);
 
+    const isBoosting = useGameStore.getState().isBoosting;
+    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.2 : 0, 4 * delta);
 
     effect.updateColorMix(
       redMix,
@@ -526,7 +535,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     prevSpeed.current = lerp(prevSpeed.current, speed, 8 * delta);
 
     const verticalDir = new Vector2(0.0, normalizedSpeed);
-    const verticalStrength = Math.abs(normalizedSpeed) * 0.05;
+    const verticalStrength = Math.abs(normalizedSpeed) * 0.2;
 
     const currentQuat = camera.quaternion.clone();
     const deltaQuat = currentQuat

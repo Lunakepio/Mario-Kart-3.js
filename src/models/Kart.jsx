@@ -78,7 +78,7 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
     wheel.current.getWorldPosition(origin);
 
     raycaster.set(origin, direction);
-    raycaster.far = 2;
+    raycaster.far = 1;
     raycaster.firstHitOnly = true;
 
     const intersects = raycaster.intersectObjects(scene.children, true);
@@ -272,64 +272,7 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
               <Skate ref={skate2Ref} />
             </group>
           </group></group>
-        <group
-          position={[0.5, -1.1, 1.5]}
-          rotation-x={-Math.PI / 9}
-          ref={flamePositionLeftRef}
-        >
-          <VFXEmitter
-            ref={smoke1Ref}
-            emitter="smoke"
-            settings={{
-              duration: 0.02,
-              delay: 0.1,
-              nbParticles: 1,
-              spawnMode: "time",
-              loop: true,
-              startPositionMin: [0, 0, 0],
-              startPositionMax: [0, 0, 0],
-              startRotationMin: [0, 0, -1],
-              startRotationMax: [0, 0, 1],
-              particlesLifetime: [0.2, 0.4],
-              speed: [2, 2],
-              colorStart: "#ffffff",
-              directionMin: [0, 0, 0.8],
-              directionMax: [0, 0.5, 1],
-              rotationSpeedMin: [0, 0, -1],
-              rotationSpeedMax: [0, 0, 1],
-              size: [0.5, 1],
-            }}
-          />
-        </group>
-        <group
-          position={[-0.5, -1.1, 1.5]}
-          rotation-x={-Math.PI / 9}
-          ref={flamePositionRightRef}
-        >
-          <VFXEmitter
-            ref={smoke2Ref}
-            emitter="smoke"
-            settings={{
-              duration: 0.02,
-              delay: 0.1,
-              nbParticles: 1,
-              spawnMode: "time",
-              loop: true,
-              startPositionMin: [0, 0, 0],
-              startPositionMax: [0, 0, 0],
-              startRotationMin: [0, 0, -1],
-              startRotationMax: [0, 0, 1],
-              particlesLifetime: [0.2, 0.4],
-              speed: [2, 2],
-              colorStart: "#ffffff",
-              directionMin: [0, 0, 0.8],
-              directionMax: [0, 0.5, 1],
-              rotationSpeedMin: [0, 0, -1],
-              rotationSpeedMax: [0, 0, 1],
-              size: [0.5, 1],
-            }}
-          />
-        </group>
+       
         <group position-y={-0.5} scale={1} rotation-y={Math.PI}>
           <mesh
             castShadow
@@ -355,6 +298,64 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
               position={[0, 0.25, -0.55]}
               rotation={[0.279, 0, 0]}
             />
+            <group
+              position={[0.5, 0.65, -1.5]}
+              rotation-x={-Math.PI / 9}
+              ref={flamePositionLeftRef}
+            >
+              <VFXEmitter
+                ref={smoke1Ref}
+                emitter="smoke"
+                settings={{
+                  duration: 0.02,
+                  delay: 0.1,
+                  nbParticles: 1,
+                  spawnMode: "time",
+                  loop: true,
+                  startPositionMin: [0, 0, 0],
+                  startPositionMax: [0, 0, 0],
+                  startRotationMin: [0, 0, -1],
+                  startRotationMax: [0, 0, 1],
+                  particlesLifetime: [0.2, 0.4],
+                  speed: [0.5, 1],
+                  colorStart: "#ffffff",
+                  directionMin: [-.1, 0, 0],
+                  directionMax: [.1, 0.01, 0.5],
+                  rotationSpeedMin: [0, 0, -1],
+                  rotationSpeedMax: [0, 0, 1],
+                  size: [0.5, 1],
+                }}
+              />
+            </group>
+            <group
+              position={[-0.5, 0.65, -1.5]}
+              rotation-x={-Math.PI / 9}
+              ref={flamePositionRightRef}
+            >
+              <VFXEmitter
+                ref={smoke2Ref}
+                emitter="smoke"
+                settings={{
+                  duration: 0.02,
+                  delay: 0.1,
+                  nbParticles: 1,
+                  spawnMode: "time",
+                  loop: true,
+                  startPositionMin: [0, 0, 0],
+                  startPositionMax: [0, 0, 0],
+                  startRotationMin: [0, 0, -1],
+                  startRotationMax: [0, 0, 1],
+                  particlesLifetime: [0.2, 0.4],
+                  speed: [0.5, 1],
+                  colorStart: "#ffffff",
+                  directionMin: [-.1, 0, 0],
+                  directionMax: [.1, 0.01, 0.5],
+                  rotationSpeedMin: [0, 0, -1],
+                  rotationSpeedMax: [0, 0, 1],
+                  size: [0.5, 1],
+                }}
+              />
+            </group>
           </mesh>
 
           <mesh

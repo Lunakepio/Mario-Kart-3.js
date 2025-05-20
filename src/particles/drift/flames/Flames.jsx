@@ -40,7 +40,7 @@ export const Flames = () => {
   }, []);
 
   const lastFiredTimeRef = useRef(0);
-  const addInterval = 0.05;
+  const addInterval = 0.03;
   const scaleTarget = 2;
 
   useFrame((state, delta) => {
@@ -51,7 +51,7 @@ export const Flames = () => {
     if (flamePositions && state.clock.getElapsedTime() - lastFiredTimeRef.current >= addInterval && isBoosting) {
       const [left, right] = flamePositions;
       ref.current.addInstances(1, (obj) => {
-        obj.position.set(left.x, left.y, left.z);
+        obj.position.set(left.x, left.y -.1, left.z);
         obj.currentTime = 0;
         obj.setUniform('uCurrentTime', 0);
         obj.setUniform('uTimeOffset', Math.random());
@@ -60,7 +60,7 @@ export const Flames = () => {
       });
 
       ref.current.addInstances(1, (obj) => {
-        obj.position.set(right.x, right.y, right.z);
+        obj.position.set(right.x, right.y -.1, right.z);
         obj.currentTime = 0;
         obj.setUniform('uCurrentTime', 0);
         obj.setUniform('uTimeOffset', Math.random());
@@ -75,7 +75,7 @@ export const Flames = () => {
       obj.currentTime += delta;
       obj.setUniform('uCurrentTime', obj.currentTime);
       obj.scale.lerp(new Vector3(scaleTarget, scaleTarget * 2, scaleTarget), 1 * delta);
-      obj.position.y += delta;
+      obj.position.y += delta * 13;
 
       const toCamera = new Vector3().subVectors(camera.getWorldPosition(new Vector3()), obj.position).normalize();
     

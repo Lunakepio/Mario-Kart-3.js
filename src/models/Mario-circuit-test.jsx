@@ -10,7 +10,7 @@ import { useGLTF } from '@react-three/drei'
 export function Track(props) {
   const { nodes, materials } = useGLTF('./models/mario-circuit-test-transformed.glb')
   return (
-    <group {...props} dispose={null} position={[155, -28.4, 15]} scale={0.08}>
+    <group {...props} dispose={null} position={[155, -28., 15]} scale={0.08}>
       <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_10.geometry} material={materials.material_5} />
       <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_11.geometry} material={materials.material_6} />
       <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_12.geometry} material={materials.material_7} />
