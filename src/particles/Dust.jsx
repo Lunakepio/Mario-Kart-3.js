@@ -38,7 +38,7 @@ export const Dust = forwardRef(({ position }, ref) => {
         startRotationMax: [0, 0, 1],
         particlesLifetime: [0.2, 0.7],
         speed: [2, 2],
-        colorStart: ["#c9bd93"],
+        colorStart: ["#c2c2c2"],
         directionMin: [0, 0, 0],
         directionMax: [0, 0, -.3],
         rotationSpeedMin: [0, 0, -1],

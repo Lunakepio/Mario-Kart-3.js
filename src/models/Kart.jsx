@@ -122,7 +122,6 @@ export function Kart({
       if (wheelIndex === 2 || wheelIndex === 3) {
         if (
           driftPower.current > 0.01 &&
-          driftPower.current < 1.2 &&
           jumpOffset.current === 0 &&
           offset < 0.05
         ) {
