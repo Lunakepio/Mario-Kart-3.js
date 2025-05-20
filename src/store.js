@@ -18,4 +18,6 @@ export const useGameStore = create((set) => ({
   setGroundPosition: (groundPosition) => set({groundPosition: groundPosition}),
   wheelPositions: null,
   setWheelPositions: (wheelPositions) => set({wheelPositions: wheelPositions}),
+  body: null,
+  setBody: (body) => set({body: body})
 }));

@@ -8,9 +8,19 @@ import React from 'react'
 import { Merged, useGLTF } from '@react-three/drei'
 import { useEffect } from 'react'
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh'
+import { useGameStore } from '../store'
+import { useRef } from 'react'
 
 export function Track(props) {
   const { nodes, materials, scene } = useGLTF('./models/mario-circuit-test-transformed.glb')
+  const trackRef = useRef(null)
+  
+  const setTrackScene = useGameStore((state) => state.setTrackScene);
+  useEffect(() => {
+    if(setTrackScene && trackRef.current){
+      setTrackScene(trackRef.current)
+    }
+  }, [setTrackScene])
 
   return (
     <group {...props} dispose={null} position={[155, -28., 15]} scale={0.08}>
@@ -20,7 +30,7 @@ export function Track(props) {
       <mesh name="ground" receiveShadow geometry={nodes.Object_13.geometry} material={materials.material_8} />
       <mesh name="ground" receiveShadow geometry={nodes.Object_18.geometry} material={materials.material_12} />
       <mesh name="ground" receiveShadow geometry={nodes.Object_22.geometry} material={materials.material_16} />
-      <mesh name="ground" receiveShadow geometry={nodes.Object_24.geometry} material={materials.material_18} />
+      <mesh ref={trackRef} name="ground" receiveShadow geometry={nodes.Object_24.geometry} material={materials.material_18} />
       <mesh name="ground" receiveShadow geometry={nodes.Object_25.geometry} material={materials.material_19} />
       <mesh name="ground speed" receiveShadow geometry={nodes.Object_27.geometry} material={materials.material_21} />
       <mesh name="ground" receiveShadow geometry={nodes.Object_47.geometry} material={materials.material_3} />

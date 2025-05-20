@@ -509,7 +509,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     effect.updateTime(state.clock.elapsedTime);
 
     const isBoosting = useGameStore.getState().isBoosting;
-    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.2 : 0, 4 * delta);
+    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.4 : 0, 4 * delta);
 
     effect.updateColorMix(
       redMix,

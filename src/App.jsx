@@ -5,6 +5,7 @@ import { Lighting } from "./misc/Lighting";
 import VFXParticles from "./wawa-vfx/VFXParticles";
 import { Composer } from "./Composer";
 import { useThree } from "@react-three/fiber";
+import { Skid } from "./particles/drift/Skid";
 
 export const App = () => {
   const controls = [
@@ -53,6 +54,7 @@ export const App = () => {
             }}
             alphaMap={smokeTexture}
           />
+          {/* <Skid/> */}
           <KeyboardControls map={controls}>
                 <TrackScene />
                 
