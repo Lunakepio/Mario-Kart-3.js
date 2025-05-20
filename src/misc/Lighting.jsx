@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { useGameStore } from "../store";
 import { useFrame } from "@react-three/fiber";
 import { EnvironmentSphere } from "./EnvironmentSphere";
+import { Helper } from "@react-three/drei";
+import { CameraHelper } from "three";
 
 export const Lighting = () => {
   const directionalLight = useRef(null)
@@ -13,13 +15,13 @@ export const Lighting = () => {
         if (!playerPosition && !directionalLight.current) return;
     
         if(playerPosition){
-        directionalLight.current.position.x = playerPosition.x +1.5;
+        directionalLight.current.position.x = playerPosition.x + 2;
         directionalLight.current.target.position.x = playerPosition.x;
     
-        directionalLight.current.position.y = playerPosition.y + 10;
+        directionalLight.current.position.y = playerPosition.y + 5;
         directionalLight.current.target.position.y = playerPosition.y;
     
-        directionalLight.current.position.z = playerPosition.z - 5;
+        directionalLight.current.position.z = playerPosition.z + 2 ;
         directionalLight.current.target.position.z = playerPosition.z;
     
         directionalLight.current.target.updateMatrixWorld();
@@ -33,19 +35,20 @@ export const Lighting = () => {
             ref={directionalLight}
             position={[0, 0, 0]}
             intensity={3}
-            color={"#FFA28b"}
+            color={"#FFffff"}
             shadow-bias={-0.0001}
-            shadow-mapSize={[4096, 4096]}
+            shadow-mapSize={[2048, 2048]}
             // layers={1}
             
           >
             <orthographicCamera
               attach="shadow-camera"
               near={1}
-              far={1000}
-              top={100}
-              right={100}
-              bottom={-100}
+              far={20}
+              top={5}
+              left={-5}
+              right={5}
+              bottom={-5}
             >
               {/* <Helper type={CameraHelper} /> */}
             </orthographicCamera>

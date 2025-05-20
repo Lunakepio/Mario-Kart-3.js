@@ -11,12 +11,11 @@ import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
 import { getDriftLevel } from "../constants.js";
 import { Glow } from "../particles/drift/Glow.jsx";
 import { useGameStore } from "../store.js";
-import { Raycaster, Vector3, Quaternion } from "three";
+import { Raycaster, Vector3, Quaternion, Sphere } from "three";
 import { KartDust } from "./KartDust.jsx";
 import { Sparks } from "../particles/sparks/Sparks.jsx";
 import { Skate } from "../particles/drift/Skate.jsx";
 import { Trails } from "../particles/sparks/Trails.jsx";
-import VFXParticles from "../wawa-vfx/VFXParticles.tsx";
 const raycaster = new Raycaster();
 
 
@@ -73,24 +72,24 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
 
   function getGroundPosition(wheel, offset = 0) {
     const origin = new Vector3();
-    const direction = new Vector3(0, -1, 0);
-
-    wheel.current.getWorldPosition(origin);
-
-    raycaster.set(origin, direction);
-    raycaster.far = 1;
-    raycaster.firstHitOnly = true;
-
-    const intersects = raycaster.intersectObjects(scene.children, true);
-
-    if (intersects.length > 0) {
-      const hit = intersects[0];
-      if (hit.object.name.includes("ground")) {
-        wheel.current.position.y = hit.point.y + 0.8 + jumpOffset.current + offset;
-      }
-      wheel.current.isOnDirt =
-        (hit.object.name.includes("dirt") && speed.current > 20) && jumpOffset.current === 0;
-    }
+        const direction = new Vector3(0, -1, 0);
+    
+        wheel.current.getWorldPosition(origin);
+    
+        raycaster.set(origin, direction);
+        raycaster.far = 1;
+        raycaster.firstHitOnly = true;
+    
+        const intersects = raycaster.intersectObjects(scene.children, true);
+    
+        if (intersects.length > 0) {
+          const hit = intersects[0];
+          if (hit.object.name.includes("ground")) {
+            wheel.current.position.y = hit.point.y + 0.8 + jumpOffset.current + offset;
+          }
+          wheel.current.isOnDirt =
+            (hit.object.name.includes("dirt") && speed.current > 5) && jumpOffset.current === 0;
+        }
   }
   useFrame((_, delta) => {
     if (wheel0.current && wheel1.current && wheel2.current && wheel3.current) {
@@ -161,13 +160,13 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
       bodyRef.current.rotation.x = lerp(
         bodyRef.current.rotation.x,
         pitch,
-        8 * delta
+        30 * delta
       );
 
       bodyRef.current.rotation.z = lerp(
         bodyRef.current.rotation.z,
         roll,
-        8 * delta
+        30 * delta
       );
       // bodyRef.current.position.y = lerp(
       //   bodyRef.current.position.y,
@@ -318,7 +317,7 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
                   startRotationMax: [0, 0, 1],
                   particlesLifetime: [0.2, 0.4],
                   speed: [0.5, 1],
-                  colorStart: "#ffffff",
+                  colorStart: ["#ffffff"],
                   directionMin: [-.1, 0, 0],
                   directionMax: [.1, 0.01, 0.5],
                   rotationSpeedMin: [0, 0, -1],
@@ -347,7 +346,7 @@ export function Kart({ speed, driftDirection, driftPower, jumpOffset, backWheelO
                   startRotationMax: [0, 0, 1],
                   particlesLifetime: [0.2, 0.4],
                   speed: [0.5, 1],
-                  colorStart: "#ffffff",
+                  colorStart: ["#ffffff"],
                   directionMin: [-.1, 0, 0],
                   directionMax: [.1, 0.01, 0.5],
                   rotationSpeedMin: [0, 0, -1],

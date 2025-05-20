@@ -5,22 +5,26 @@ Files: mario-circuit-test.glb [4.2MB] > C:\Users\mouli\Mario-Kart-3.js\public\ma
 */
 
 import React from 'react'
-import { useGLTF } from '@react-three/drei'
+import { Merged, useGLTF } from '@react-three/drei'
+import { useEffect } from 'react'
+import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh'
 
 export function Track(props) {
-  const { nodes, materials } = useGLTF('./models/mario-circuit-test-transformed.glb')
+  const { nodes, materials, scene } = useGLTF('./models/mario-circuit-test-transformed.glb')
+
   return (
     <group {...props} dispose={null} position={[155, -28., 15]} scale={0.08}>
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_10.geometry} material={materials.material_5} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_11.geometry} material={materials.material_6} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_12.geometry} material={materials.material_7} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_13.geometry} material={materials.material_8} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_18.geometry} material={materials.material_12} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_22.geometry} material={materials.material_16} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_24.geometry} material={materials.material_18} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_25.geometry} material={materials.material_19} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_27.geometry} material={materials.material_21} />
-      <mesh name="ground" castShadow receiveShadow geometry={nodes.Object_47.geometry} material={materials.material_3} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_10.geometry} material={materials.material_5} />
+      <mesh name="ground dirt" receiveShadow geometry={nodes.Object_11.geometry} material={materials.material_6} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_12.geometry} material={materials.material_7} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_13.geometry} material={materials.material_8} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_18.geometry} material={materials.material_12} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_22.geometry} material={materials.material_16} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_24.geometry} material={materials.material_18} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_25.geometry} material={materials.material_19} />
+      <mesh name="ground speed" receiveShadow geometry={nodes.Object_27.geometry} material={materials.material_21} />
+      <mesh name="ground" receiveShadow geometry={nodes.Object_47.geometry} material={materials.material_3} />
+
     </group>
   )
 }
