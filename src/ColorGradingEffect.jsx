@@ -10,8 +10,6 @@ const fragmentShader = /* glsl */ `
 uniform sampler2D tDiffuse;
 uniform float time;
 
-uniform vec2 motionDirection;
-
 uniform vec3 uRedMix;
 uniform vec3 uGreenMix;
 uniform vec3 uBlueMix;
@@ -28,7 +26,6 @@ uniform float uVibrancy;
 uniform float uHueOffset;
 uniform float uGamma;
 uniform float uSplitToneBalance;
-uniform float motionStrength;
 uniform float uExposure;
 uniform float uKelvin;
 uniform float uChromaticAberration;
@@ -76,22 +73,6 @@ float noise(in vec2 p) {
   );
 
   return dot(n, vec3(70.0));
-}
-
-vec4 blurMotion(sampler2D tex, vec2 uv, vec2 resolution, vec2 direction, float strength)
-{
-    vec4 color = vec4(0.0);
-    float total = 0.0;
-
-    for ( float i = -5.0; i <= 5.0; i++ )
-    {
-        float weight = 1.0 - abs(i) / 5.0;
-        vec2 offset = direction * ( i * strength ) / resolution;
-        color += texture2D(tex, uv + offset) * weight;
-        total += weight;
-    }
-
-    return color / total;
 }
 
 vec3 colorChannelMixer( vec3 inputColor, vec3 redMix, vec3 greenMix, vec3 blueMix, float brightness, float contrast )
@@ -322,12 +303,8 @@ vec3 applyLiftGammaGain(vec3 color, vec3 lift, vec3 gamma, vec3 gain) {
 }
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
-  vec2 resolution = vec2(${window.innerWidth}., ${window.innerHeight}.);
-  vec2 direction = motionDirection * motionStrength;
-  vec4 baseColor = texture2D(tDiffuse, uv);
-  vec4 blurredColor = blurMotion(tDiffuse, uv, resolution, direction, 12.0);
 
-  vec3 color = blurredColor.rgb;
+  vec3 color = texture2D(tDiffuse, uv).rgb;
   color = chromaticAberration(uv, uChromaticAberration);
   color = colorChannelMixer(color, uRedMix, uGreenMix, uBlueMix, uBrightness, 1.0);
   color = applyExposure(color, uExposure);
@@ -379,11 +356,6 @@ export class ColorGradingEffect extends Effect {
 
   updateTime(t) {
     this.uniforms.get("time").value = t;
-  }
-
-  updateMotion(dir, strength) {
-    this.uniforms.get("motionDirection").value.copy(dir);
-    this.uniforms.get("motionStrength").value = strength;
   }
 
   updateColorMix(
@@ -496,8 +468,6 @@ export const ColorGrading = forwardRef((props, ref) => {
     )
   );
 
-  const prevQuat = useRef(new Quaternion());
-  const prevSpeed = useRef(0);
 
   useFrame((state, delta) => {
     if (!camera) return;
@@ -529,40 +499,10 @@ export const ColorGrading = forwardRef((props, ref) => {
       chromaticAberration
     );
     effect.setHslAdjustments(hueAdjust, satAdjust, lumAdjust);
-
-    const speed = useGameStore.getState().speed;
-    const normalizedSpeed = Math.abs(prevSpeed.current / 30 - speed / 30);
-    prevSpeed.current = lerp(prevSpeed.current, speed, 8 * delta);
-
-    const verticalDir = new Vector2(0.0, normalizedSpeed);
-    const verticalStrength = Math.abs(normalizedSpeed) * 0.2;
-
-    const currentQuat = camera.quaternion.clone();
-    const deltaQuat = currentQuat
-      .clone()
-      .multiply(prevQuat.current.clone().invert());
-    const deltaEuler = new Euler().setFromQuaternion(deltaQuat);
-    const yawChange = deltaEuler.y;
-
-    const horizontalDir = new Vector2(Math.sign(yawChange), 0.0);
-    const horizontalStrength = Math.abs(yawChange) * 0.5;
-
-    const combinedDir = new Vector2()
-      .addScaledVector(horizontalDir, horizontalStrength)
-      .addScaledVector(verticalDir, verticalStrength);
-
-    const combinedStrength = combinedDir.length();
-    if (combinedStrength > 0.0) combinedDir.normalize();
-
-    prevQuat.current.copy(currentQuat);
-    effect.updateMotion(combinedDir, combinedStrength);
   });
 
   useEffect(() => {
     if (ref) ref.current = effect;
-    if (camera) {
-      prevQuat.current.copy(camera.quaternion);
-    }
   }, [effect, camera]);
 
   return <primitive object={effect} />;

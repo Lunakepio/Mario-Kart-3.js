@@ -146,11 +146,11 @@ export const PlayerController = () => {
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));
     camera.position.lerp(cameraGroupRef.current.getWorldPosition(new Vector3()), 12 * delta);
     
-    const body = useGameStore.getState().body;
-    if(body){
-      cameraGroupRef.current.position.y = lerp(cameraGroupRef.current.position.y, body.position.y + 2, 8 * delta);
-      cameraLookAtRef.current.position.y = body.position.y;
-    }
+    // const body = useGameStore.getState().body;
+    // if(body){
+    //   cameraGroupRef.current.position.y = lerp(cameraGroupRef.current.position.y, body.position.y + 2, 8 * delta);
+    //   cameraLookAtRef.current.position.y = body.position.y;
+    // }
     const direction = smoothedDirectionRef.current;
 
 
@@ -191,7 +191,7 @@ export const PlayerController = () => {
       
           <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} backWheelOffset={backWheelOffset} />
 
-        <group ref={cameraLookAtRef} position={[0,0,-3]}>
+        <group ref={cameraLookAtRef} position={[0, -2,-9]}>
 
         </group>
       </group>

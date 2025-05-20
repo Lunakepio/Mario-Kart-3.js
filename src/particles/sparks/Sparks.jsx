@@ -14,7 +14,7 @@ export const Sparks = forwardRef(({ left }, ref) => {
 
   const texture = useTexture("/textures/particles/alpha.png");
 
-  const particleCount = 2000;
+  const particleCount = 200;
   const positions = [];
   const colors = [];
   const sizes = [];

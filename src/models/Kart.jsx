@@ -112,7 +112,7 @@ export function Kart({
       const hit = intersects[0];
       if (hit.object.name.includes("ground")) {
         wheel.current.position.y =
-          hit.point.y + 0.75 + jumpOffset.current + offset;
+          hit.point.y + 0.78 + jumpOffset.current + offset;
       }
       wheel.current.isOnDirt =
         hit.object.name.includes("dirt") &&
