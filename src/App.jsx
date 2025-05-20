@@ -6,6 +6,7 @@ import VFXParticles from "./wawa-vfx/VFXParticles";
 import { Composer } from "./Composer";
 import { useThree } from "@react-three/fiber";
 import { Skid } from "./particles/drift/Skid";
+import { Leva } from "leva";
 
 export const App = () => {
   const controls = [
@@ -46,7 +47,7 @@ export const App = () => {
             settings={{
               fadeAlpha: [1, 0],
               fadeSize: [0, 1],
-              intensity: 3,
+              intensity: 50,
               nbParticles: 1000,
               renderMode: "billboard",
               gravity: [0, 1, 0],
@@ -62,6 +63,14 @@ export const App = () => {
           </KeyboardControls>
 
         <Composer/>
+        <Leva
+          fill // default = false,  true makes the pane fill the parent dom node it's rendered in
+          flat // default = false,  true removes border radius and shadow
+          oneLineLabels // default = false, alternative layout for labels, with labels and fields on separate rows
+          hideTitleBar // default = false, hides the GUI header
+          collapsed // default = false, when true the GUI is collpased
+          hidden // def
+        />
         {/* <OrbitControls /> */}
       </>
   );

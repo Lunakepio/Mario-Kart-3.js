@@ -1,0 +1,64 @@
+{
+  "name": "react-joystick-component",
+  "description": "A snazzy React joystick component",
+  "version": "6.2.1",
+  "keywords": [
+    "react",
+    "joystick",
+    "control",
+    "component",
+    "typescript"
+  ],
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "files": [
+    "build/lib",
+    "src"
+  ],
+  "scripts": {
+    "storybook": "start-storybook -p 6006 -c .storybook",
+    "build": "tsc",
+    "prepublish": "yarn build",
+    "deploy-storybook": "storybook-to-ghpages",
+    "test": "react-scripts test",
+    "lint": "tslint -c tslint.json 'src/**/*.tsx' --fix && eslint src/**/*.tsx --fix --ext .ts"
+  },
+  "repository": "https://github.com/elmarti/react-joystick-component",
+  "author": "elmarti elmarti.tech@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.4.9",
+    "@storybook/addon-essentials": "^6.4.9",
+    "@storybook/addon-links": "^6.4.9",
+    "@storybook/react": "^6.4.9",
+    "@storybook/storybook-deployer": "^2.8.16",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@types/jest": "^27.4.0",
+    "@types/react": "17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/storybook__addon-actions": "^5.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "8.2.3",
+    "cpx": "^1.5.0",
+    "eslint": "^8.6.0",
+    "jest": "^27.4.7",
+    "react": "17.0.2",
+    "react-docgen-typescript-webpack-plugin": "^1.1.0",
+    "react-dom": "17.0.2",
+    "react-parallax-tilt": "^1.5.85",
+    "semantic-release-gitmoji": "^1.4.2",
+    "storybook-addon-jsx": "^7.3.14",
+    "ts-jest": "^27.1.2",
+    "tslint": "^6.1.3",
+    "typescript": "4.5.4",
+    "@testing-library/react": "12.1.2",
+    "react-scripts": "^5.0.1"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.2",
+    "react-dom": ">=17.0.2"
+  }
+}

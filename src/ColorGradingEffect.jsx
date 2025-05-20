@@ -438,8 +438,8 @@ export const ColorGrading = forwardRef((props, ref) => {
     },
     brightness: { value: 0.03, min: -1, max: 1, step: 0.001 },
     contrast: { value: 1.03, min: 0, max: 3, step: 0.001 },
-    saturation: { value: 0.08, min: -1, max: 3, step: 0.001 },
-    vibrancy: { value: 0.24, min: -1, max: 3, step: 0.001 },
+    saturation: { value: 0.15, min: -1, max: 3, step: 0.001 },
+    vibrancy: { value: 0.3, min: -1, max: 3, step: 0.001 },
     hueOffset: { value: 0, min: -Math.PI, max: Math.PI, step: 0.001 },
     gamma: { value: 1, min: 0, max: 3, step: 0.001 },
     shadowTint: { value: "#d8d8d8", label: "Shadow Tint" },
@@ -479,7 +479,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     effect.updateTime(state.clock.elapsedTime);
 
     const isBoosting = useGameStore.getState().isBoosting;
-    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.4 : 0, 4 * delta);
+    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.2 : 0, 4 * delta);
 
     effect.updateColorMix(
       redMix,

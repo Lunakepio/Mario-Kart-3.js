@@ -8,6 +8,7 @@ import { kartSettings } from "./constants";
 import { useGameStore } from "./store";
 import { useEffect } from "react";
 import gsap from "gsap";
+import { useTouchScreen } from "./hooks/useTouchScreen";
 
 export const PlayerController = () => {
   const rbRef = useRef(null);
@@ -36,6 +37,8 @@ export const PlayerController = () => {
   const speedRef = useRef(0);
   const rotationSpeedRef = useRef(0);
   const smoothedDirectionRef = useRef(new Vector3(0, 0, -1));
+  
+  const isTouchScreen = useTouchScreen();
   
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
@@ -79,14 +82,15 @@ export const PlayerController = () => {
   function updateSpeed(forward, backward, delta) {
     const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
-    speedRef.current = lerp(speedRef.current, maxSpeed * Number(forward) + kartSettings.speed.min * Number(backward), 1.5 * delta);
+    const forwardAccel = Number(isTouchScreen || forward);
+    speedRef.current = lerp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward), 1.5 * delta);
     setSpeed(speedRef.current);
     turbo.current -= delta;
 
   }
   
-  function rotatePlayer(left, right, player, delta) {
-    const inputTurn = (Number(left) - Number(right) + driftDirection.current) * 0.1;
+  function rotatePlayer(left, right, player, joystickX, delta) {
+    const inputTurn = (-joystickX + (Number(left) - Number(right)) + driftDirection.current) * 0.1;
   
     rotationSpeedRef.current = lerp(rotationSpeedRef.current, inputTurn, 8 * delta);
     const targetRotation = player.rotation.y + rotationSpeedRef.current * (speedRef.current > 40 ? 40 : speedRef.current) / (kartSettings.speed.max ) ;
@@ -94,14 +98,14 @@ export const PlayerController = () => {
     player.rotation.y = lerp(player.rotation.y, targetRotation, 8 * delta);
   }
   
-  function jumpPlayer(spaceKey, left, right, ){
+  function jumpPlayer(spaceKey, left, right, joystickX ){
     if(spaceKey && !jumpIsHeld.current && !isJumping.current){
       // rb.applyImpulse({ x: 0, y: 45, z: 0 }, true);
   
       jumpAnim(left, right);
       isJumping.current = true;
       jumpIsHeld.current = true;
-      driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
+      driftDirection.current = left || joystickX < 0 ? driftDirections.left : right || joystickX > 0 ? driftDirections.right : driftDirections.none;
 
     }
     
@@ -169,11 +173,17 @@ export const PlayerController = () => {
     const camera = state.camera
     
     if(!player || !cameraGroup || !kart) return;   
+    
+    const joystick = useGameStore.getState().joystick;
+    const jumpButtonPressed = useGameStore.getState().jumpButtonPressed;
+  
     const { forward, backward, left, right, jump } = get();
+    
     updateSpeed(forward, backward, delta); 
-    rotatePlayer(left, right, player, delta);
+    rotatePlayer(left, right, player, joystick.x, delta);
     updatePlayer(player, speedRef.current, camera, kart, delta);
-    jumpPlayer(jump, left, right);
+    const isJumpPressed = jumpButtonPressed || jump;
+    jumpPlayer(isJumpPressed, left, right, joystick.x);
     driftPlayer(delta);
 
   })

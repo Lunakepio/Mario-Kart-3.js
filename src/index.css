@@ -1,13 +1,125 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Orbitron:wght@400..900&family=Oswald:wght@200..700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  user-select: none;
 }
+
 
 .canvas-container {
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.mobile-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  width: 100dvw;
+  .bottom-left {
+    position: absolute;
+    left: 7%;
+    bottom: 7%;
+  }
+  .bottom-right {
+    position: absolute;
+    right: 7%;
+    bottom: 7%;
+  }
+
+  .bottom-right button {
+    all: unset;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at 30% 30%, #58db84, #37995c);
+    color: #37995c;
+    font-weight: bold;
+    font-size: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 6px 0 #1f4c32, 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .bottom-right button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.15) 40%,
+      transparent 60%
+    );
+    pointer-events: none;
+    transform: rotate(-20deg);
+    z-index: 3;
+  }
+
+  .bottom-right button:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #1f4c32, 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: radial-gradient(circle at 30% 30%, #4fd176, #2e7a4d);
+  }
+}
+
+.pressed{
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1f4c32, 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: radial-gradient(circle at 30% 30%, #4fd176, #2e7a4d);
+}
+
+
+.joystick-base {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #c7c7c7 60%, #aaaaaa 100%);
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2),
+              inset 0 -2px 4px rgba(255, 255, 255, 0.2);
+  touch-action: none;
+}
+
+.joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  height: 40%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ddd, #999);
+  background-image: repeating-radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.3) 0px,
+    rgba(255, 255, 255, 0.1) 3px,
+    transparent 6px
+  );
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #666;
+  pointer-events: none;
+  transition: transform 0.05s linear;
 }

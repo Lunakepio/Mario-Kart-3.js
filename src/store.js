@@ -19,5 +19,9 @@ export const useGameStore = create((set) => ({
   wheelPositions: null,
   setWheelPositions: (wheelPositions) => set({wheelPositions: wheelPositions}),
   body: null,
-  setBody: (body) => set({body: body})
+  setBody: (body) => set({body: body}),
+  joystick: {x: 0, y: 0, distance: 0},
+  setJoystick: (joystick) => set({ joystick: joystick }),
+  jumpButtonPressed: false,
+  setJumpButtonPressed: (pressed) => set({ jumpButtonPressed: pressed }),
 }));
