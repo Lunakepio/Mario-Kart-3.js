@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 */
 
 import React, { useEffect, useRef } from "react";
-import { useGLTF, useKeyboardControls } from "@react-three/drei";
+import { Box, useGLTF, useKeyboardControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { lerp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
@@ -32,6 +32,12 @@ export function Kart({
   const wheel2 = useRef(null);
   const wheel1 = useRef(null);
   const wheel0 = useRef(null);
+  
+  const wheel0Base = useRef(null)
+  const wheel1Base = useRef(null)
+  const wheel2Base = useRef(null)
+  const wheel3Base = useRef(null)
+  
   const groupRef = useRef(null);
   const frontWheels = useRef(null);
   const dustWheelStates = useRef([
@@ -70,6 +76,8 @@ export function Kart({
   const flamePositionRightRef = useRef(null);
 
   const groundMeshes = useRef([]);
+  
+  const rayRef = useRef()
 
   const setFlamePositions = useGameStore((state) => state.setFlamePositions);
   const setBoostPower = useGameStore((state) => state.setBoostPower);
@@ -78,6 +86,8 @@ export function Kart({
   const setWheelPositions = useGameStore((state) => state.setWheelPositions);
   const setBody = useGameStore((state) => state.setBody);
   const { scene } = useThree();
+  const direction = new Vector3(0, -1, 0)
+
 
   function rotateWheels(left, right, delta) {
     const rotationSpeed = speed.current * 0.01;
@@ -96,42 +106,45 @@ export function Kart({
     wheelRef.current.rotation.y = -yRotation.current;
   }
 
-  function getGroundPosition(wheel, offset = 0, wheelIndex) {
+  function getGroundPosition(wheelBase, wheel, offset = 0, wheelIndex) {
     const origin = new Vector3();
-    const direction = new Vector3(0, -1, 0);
 
-    wheel.current.getWorldPosition(origin);
 
+  
+    wheelBase.current.getWorldPosition(origin);
+  
     raycaster.set(origin, direction);
-    raycaster.far = 1;
+    raycaster.far = 3;
     raycaster.firstHitOnly = true;
-
+  
     const intersects = raycaster.intersectObjects(scene.children, true);
-
+  
     if (intersects.length > 0) {
       const hit = intersects[0];
       if (hit.object.name.includes("ground")) {
-        wheel.current.position.y =
-          hit.point.y + 0.78 + jumpOffset.current + offset;
+        const safeY = Math.max(
+          hit.point.y + 0.78 + jumpOffset.current + offset,
+          wheel.current.position.y - 0.1
+        );
+        wheel.current.position.y = safeY;
+  
+        wheel.current.lastSafeY = safeY;
       }
-      wheel.current.isOnDirt =
-        hit.object.name.includes("dirt") &&
+  
+      wheel.current.isOnDirt = hit.object.name.includes("dirt") &&
         speed.current > 5 &&
         jumpOffset.current === 0;
-
-      if (wheelIndex === 2 || wheelIndex === 3) {
-        if (
-          driftPower.current > 0.01 &&
-          jumpOffset.current === 0 &&
-          offset < 0.05
-        ) {
-          wheel.current.isOnDirt = true;
-        } else {
-          wheel.current.isOnDirt =
-            hit.object.name.includes("dirt") &&
-            speed.current > 5 &&
-            jumpOffset.current === 0;
-        }
+  
+      if ((wheelIndex === 2 || wheelIndex === 3) && driftPower.current > 0.01 && jumpOffset.current === 0 && offset < 0.05) {
+        wheel.current.isOnDirt = true;
+      }
+    } else {
+      if (typeof wheel.current.lastSafeY === "number") {
+        wheel.current.position.y = lerp(
+          wheel.current.position.y,
+          wheel.current.lastSafeY,
+          0.1
+        );
       }
     }
   }
@@ -213,10 +226,10 @@ export function Kart({
 
       rotateWheels(left, right, delta);
 
-      getGroundPosition(wheel0, backWheelOffset.current.right, 0);
-      getGroundPosition(wheel1, backWheelOffset.current.left, 1);
-      getGroundPosition(wheel2, backWheelOffset.current.right, 2);
-      getGroundPosition(wheel3, backWheelOffset.current.left, 3);
+      getGroundPosition(wheel0Base, wheel0, backWheelOffset.current.right, 0);
+      getGroundPosition(wheel1Base, wheel1, backWheelOffset.current.left, 1);
+      getGroundPosition(wheel2Base, wheel2, backWheelOffset.current.right, 2);
+      getGroundPosition(wheel3Base, wheel3, backWheelOffset.current.left, 3);
 
       const wheelPositions = getWheelPositions();
 
@@ -317,6 +330,10 @@ export function Kart({
             material={materials.m_Body}
             ref={bodyRef}
           >
+            <group ref={wheel2Base} position={[-.77, 0, -.7]} />
+            <group ref={wheel3Base} position={[0.77, 0, -0.7]} />
+            <group ref={wheel1Base} position={[0.7, 0, 0.7]} />
+            <group ref={wheel0Base} position={[-0.7, 0, 0.7]} />
             <KartDust wheelStates={dustWheelStates.current} />
             <mesh
               ref={wheelRef}
@@ -402,15 +419,17 @@ export function Kart({
             geometry={nodes.wheel_2.geometry}
             material={materials.m_Tire}
             position={[-0.77, -0.137, -0.7]}
-          />
+            layers={1}
+            />
           <mesh
             ref={wheel3}
             castShadow
             receiveShadow
             geometry={nodes.wheel_3.geometry}
             material={materials.m_Tire}
-            position={[0.74, -0.137, -0.7]}
-          ></mesh>
+            position={[0.77, -0.137, -0.7]}
+            layers={1}
+            />
           <group ref={frontWheels}>
             <mesh
               ref={wheel1}
@@ -419,7 +438,8 @@ export function Kart({
               geometry={nodes.wheel_1.geometry}
               material={materials.m_Tire}
               position={[0.7, -0.2, 0.7]}
-            ></mesh>
+              layers={1}
+              />
             <mesh
               ref={wheel0}
               castShadow
@@ -427,6 +447,7 @@ export function Kart({
               geometry={nodes.wheel_0.geometry}
               material={materials.m_Tire}
               position={[-0.7, -0.2, 0.7]}
+              layers={1}
             />
           </group>
 

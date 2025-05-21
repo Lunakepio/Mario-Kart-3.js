@@ -76,7 +76,7 @@ export const Sparks = forwardRef(({ left }, ref) => {
       currentOpacity = lerp(currentOpacity, targetOpacity, 0.1);
 
       if (shouldEmitRef.current) {
-        simulationTimeRef.current += delta;
+        simulationTimeRef.current += delta * 1.3;
         materialRef.current.uniforms.uTime.value = simulationTimeRef.current;
       } else {
         materialRef.current.uniforms.uTime.value = 0;

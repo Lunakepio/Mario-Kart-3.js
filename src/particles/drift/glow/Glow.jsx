@@ -14,7 +14,7 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
 
   useFrame((state) => {
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = state.clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = state.clock.getElapsedTime() * 1.3;
     
       materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
     }

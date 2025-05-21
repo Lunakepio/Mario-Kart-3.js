@@ -148,7 +148,7 @@ export const PlayerController = () => {
   
 
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));
-    camera.position.lerp(cameraGroupRef.current.getWorldPosition(new Vector3()), 12 * delta);
+    camera.position.lerp(cameraGroupRef.current.getWorldPosition(new Vector3()), 8 * delta);
     
     // const body = useGameStore.getState().body;
     // if(body){

@@ -1,4 +1,5 @@
- uniform float time;
+precision highp float;
+uniform float time;
  uniform float opacity;
  varying vec2 vUv;
  varying vec3 vPosition;

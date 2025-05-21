@@ -1,4 +1,4 @@
-import { Bvh, KeyboardControls, Preload, useTexture,} from "@react-three/drei";
+import { Bvh, OrbitControls, KeyboardControls, Preload, useTexture,} from "@react-three/drei";
 import { Suspense, useEffect } from "react";
 import { TrackScene } from "./TrackScene";
 import { Lighting } from "./misc/Lighting";
@@ -29,6 +29,8 @@ export const App = () => {
   return (
 
       <>
+        {/* <OrbitControls /> */}
+
           <VFXParticles
             name="smoke"
             settings={{
@@ -47,7 +49,7 @@ export const App = () => {
             settings={{
               fadeAlpha: [1, 0],
               fadeSize: [0, 1],
-              intensity: 50,
+              intensity: 10,
               nbParticles: 1000,
               renderMode: "billboard",
               gravity: [0, 1, 0],
@@ -71,7 +73,6 @@ export const App = () => {
           collapsed // default = false, when true the GUI is collpased
           hidden // def
         />
-        {/* <OrbitControls /> */}
       </>
   );
 };
