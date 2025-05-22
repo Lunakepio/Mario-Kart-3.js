@@ -303,6 +303,12 @@ vec3 speedLineEffect(vec2 uv, float iTime, sampler2D noiseTexture) {
 
     vec3 rainbow = hsvToRgb(vec3(hue, 1.0, 1.0));
 
+    float luminance = dot(rainbow, vec3(0.299, 0.587, 0.114));
+
+    vec3 grayscale = vec3(luminance);
+
+    rainbow = mix(grayscale, rainbow, 0.4);
+
     return rainbow * final;
 }
 
