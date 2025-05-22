@@ -7,6 +7,7 @@ import { Composer } from "./Composer";
 import { useThree } from "@react-three/fiber";
 import { Skid } from "./particles/drift/Skid";
 import { Leva } from "leva";
+import { useGameStore } from "./store";
 
 export const App = () => {
   const controls = [
@@ -18,11 +19,15 @@ export const App = () => {
   ];
   
   const smokeTexture = useTexture('./textures/particles/smoke.png');
+  const noiseTexture = useTexture('./textures/noise.png');
+  
+  const setNoiseTexture = useGameStore((state) => state.setNoiseTexture);
   const {camera} = useThree()
 
   useEffect(() => {
     if(camera){
       camera.layers.enable(1);
+      setNoiseTexture(noiseTexture);
     }
   }, [camera])
 

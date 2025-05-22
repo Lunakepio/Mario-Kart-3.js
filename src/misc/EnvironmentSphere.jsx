@@ -1,5 +1,4 @@
 import { Billboard, Environment, useTexture } from "@react-three/drei";
-import { useControls } from "leva";
 import { BackSide, Color, DoubleSide } from "three";
 
 export const EnvironmentSphere = () => {
@@ -34,7 +33,7 @@ const color2 = "#1461C5";
       float t = smoothstep(-1., 1., vWorldNormal.y);
       vec3 color = mix(color1, color2, t);
     
-      color *= 6.;
+      color *= 4.;
     
     
       gl_FragColor = vec4(color, 1.0);

@@ -12,7 +12,7 @@ extend({ InstancedMesh2 });
 export const Flames = () => {
   const ref = useRef();
 
-  const geometry = useMemo(() => new PlaneGeometry(1, 1), []);
+  const geometry = useMemo(() => new PlaneGeometry(1.5, 1.5), []);
 
   const material = useMemo(
     () =>
@@ -20,7 +20,8 @@ export const Flames = () => {
         uniforms: { 
           uCurrentTime: { value: 0 },
           color: { value: new Color(0xFFA22B).multiplyScalar(4)},
-          uTimeOffset: { value: 0}
+          uTimeOffset: { value: 0 },
+          noiseTexture: { value: null }
         },        
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
@@ -35,6 +36,8 @@ export const Flames = () => {
 
   useEffect(() => {
     if (ref.current) {
+      const noiseTexture = useGameStore.getState().noiseTexture;
+      material.uniforms.noiseTexture.value = noiseTexture;
       ref.current.initUniformsPerInstance({ fragment: { uCurrentTime: "float", uTimeOffset: "float" } });
     }
   }, []);
@@ -83,6 +86,7 @@ export const Flames = () => {
       const particleQuaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), toCamera);
       
       const randomRotationQuaternion = new Quaternion().setFromEuler(new Euler(0, 0, obj.randomZRotation));
+      obj.scale.lerp(obj.scale, 0, delta * 30);
       
       particleQuaternion.multiply(randomRotationQuaternion);
       

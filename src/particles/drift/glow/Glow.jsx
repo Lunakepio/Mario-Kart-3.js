@@ -1,23 +1,30 @@
-import { Billboard, useKeyboardControls } from "@react-three/drei";
+import { Billboard } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { AdditiveBlending, Color } from "three";
 import { Spark } from "../Spark";
-import { lerp } from "three/src/math/MathUtils.js";
 import fragmentShader from './fragment.glsl';
 import vertexShader from './vertex.glsl';
+import { useGameStore } from "../../../store";
 
 
 export const Glow = forwardRef(({ driftDirection }, ref) => {
   const materialRef = useRef(null);
   const sparkRef = useRef(null);
-
+  let noiseTexture = null;
+  
   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime() * 1.3;
     
       materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
+      if(noiseTexture === null){
+        noiseTexture = useGameStore.getState().noiseTexture;
+        materialRef.current.uniforms.noiseTexture.value = noiseTexture;
+        
+      }
     }
+    
   });
 
   useImperativeHandle(ref, () => {
@@ -60,11 +67,12 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
-            color: { value: new Color(0xffffff) },
-            level: { value: 0 },
+            color: { value: new Color(0xffffff)},
+            level: { value: 2 },
             opacity: { value: 1 },
             timeOffset: { value: Math.random() * 3},
             xDisplacement: { value: 0 },
+            noiseTexture: { value : null}
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}

@@ -1,8 +1,10 @@
 import { useFrame } from "@react-three/fiber";
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { AdditiveBlending, BackSide, DoubleSide } from "three";
+import { DoubleSide } from "three";
 import fragmentShader from './fragment.glsl';
 import vertexShader from './vertex.glsl';
+import { useGameStore } from "../../../store";
+import { useEffect } from "react";
 
 
 export const Skate = forwardRef((props, ref) => {
@@ -19,12 +21,18 @@ export const Skate = forwardRef((props, ref) => {
     return {
       setOpacity: (newOpacity) => {
         if (materialRef.current) {
-          materialRef.current.uniforms.opacity.value = newOpacity;
+          materialRef.current.uniforms.opacity.value = true;
         }
       },
     };
   });
   
+  useEffect(() => {
+    const texture = useGameStore.getState().noiseTexture;
+    if (materialRef.current && texture) {
+      materialRef.current.uniforms.noiseTexture.value = texture;
+    }
+  }, []);
 
   const size = 0.7;
 
@@ -36,7 +44,8 @@ export const Skate = forwardRef((props, ref) => {
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
-            opacity: { value: 0. },
+            opacity: { value: 1. },
+            noiseTexture: {value: null}
           }}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}

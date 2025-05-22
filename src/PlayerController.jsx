@@ -1,12 +1,11 @@
 import { Kart } from "./models/Kart"
-import { PerspectiveCamera, useKeyboardControls, OrbitControls } from "@react-three/drei"
+import { useKeyboardControls } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react";
-import { Vector3, Quaternion } from "three";
+import { Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils.js";
 import { kartSettings } from "./constants";
 import { useGameStore } from "./store";
-import { useEffect } from "react";
 import gsap from "gsap";
 import { useTouchScreen } from "./hooks/useTouchScreen";
 
@@ -44,7 +43,7 @@ export const PlayerController = () => {
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
   const setSpeed = useGameStore((state) => state.setSpeed);
   
-  const jumpAnim = (left, right) => {
+  const jumpAnim = () => {
       gsap.to(jumpOffset, {
         current: .3,
         duration: 0.1,
@@ -53,7 +52,6 @@ export const PlayerController = () => {
         repeat: 1,
         onComplete: () => {
           isJumping.current = false;
-          // driftDirection.current = left ? driftDirections.left : right ? driftDirections.right : driftDirections.none;
           setTimeout(() => {
             if(driftDirection.current !== 0){
               gsap.killTweensOf(backWheelOffset.current);
@@ -102,7 +100,7 @@ export const PlayerController = () => {
     if(spaceKey && !jumpIsHeld.current && !isJumping.current){
       // rb.applyImpulse({ x: 0, y: 45, z: 0 }, true);
   
-      jumpAnim(left, right);
+      jumpAnim();
       isJumping.current = true;
       jumpIsHeld.current = true;
       driftDirection.current = left || joystickX < 0 ? driftDirections.left : right || joystickX > 0 ? driftDirections.right : driftDirections.none;

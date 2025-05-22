@@ -1,4 +1,3 @@
-import { Vector3 } from "three";
 import { create } from "zustand";
 
 export const useGameStore = create((set) => ({
@@ -24,4 +23,6 @@ export const useGameStore = create((set) => ({
   setJoystick: (joystick) => set({ joystick: joystick }),
   jumpButtonPressed: false,
   setJumpButtonPressed: (pressed) => set({ jumpButtonPressed: pressed }),
+  noiseTexture: null,
+  setNoiseTexture: (noiseTexture) => set({noiseTexture: noiseTexture})
 }));

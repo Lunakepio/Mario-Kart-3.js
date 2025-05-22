@@ -1,6 +1,6 @@
 import { Effect } from "postprocessing";
 import { Uniform, Vector2, Vector3, Euler, Quaternion, Color} from "three";
-import { forwardRef, useEffect, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useMemo} from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGameStore } from "./store";
 import { lerp } from "three/src/math/MathUtils.js";
@@ -53,26 +53,6 @@ vec3 rgbToHsv(vec3 c) {
 vec3 hsvToRgb(vec3 c) {
     vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
     return c.z * mix(vec3(1.0), rgb, c.y);
-}
-
-float noise(in vec2 p) {
-  const float K1 = 0.366025404;
-  const float K2 = 0.211324865;
-
-  vec2 i = floor(p + (p.x + p.y) * K1);
-  vec2 a = p - i + (i.x + i.y) * K2;
-  vec2 o = (a.x > a.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-  vec2 b = a - o + K2;
-  vec2 c = a - 1.0 + 2.0 * K2;
-
-  vec3 h = max(0.5 - vec3(dot(a,a), dot(b,b), dot(c,c)), 0.0);
-  vec3 n = h * h * h * h * vec3(
-    dot(a, hash(i + 0.0)),
-    dot(b, hash(i + o)),
-    dot(c, hash(i + 1.0))
-  );
-
-  return dot(n, vec3(70.0));
 }
 
 vec3 colorChannelMixer( vec3 inputColor, vec3 redMix, vec3 greenMix, vec3 blueMix, float brightness, float contrast )
@@ -456,7 +436,7 @@ export const ColorGrading = forwardRef((props, ref) => {
 
   const hueControls = useControls("Hue Adjustments", () =>
     Object.fromEntries(
-      hues.map((hue, i) => [
+      hues.map((hue) => [
         `${hue}`,
         {
           value: { hue: 0, sat: 0, lum: 0 },
@@ -503,7 +483,7 @@ export const ColorGrading = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (ref) ref.current = effect;
-  }, [effect, camera]);
+  }, [effect, camera, ref]);
 
   return <primitive object={effect} />;
 });

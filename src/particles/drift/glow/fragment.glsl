@@ -1,8 +1,10 @@
 uniform float time;
 uniform vec3 color;
 uniform float opacity;
+
 varying vec2 vUv;
 varying vec3 vPosition;
+
 
 void main() {
   float displacedRadius = length(vPosition.xy);
