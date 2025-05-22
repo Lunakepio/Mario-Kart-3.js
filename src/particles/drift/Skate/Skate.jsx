@@ -21,7 +21,7 @@ export const Skate = forwardRef((props, ref) => {
     return {
       setOpacity: (newOpacity) => {
         if (materialRef.current) {
-          materialRef.current.uniforms.opacity.value = true;
+          materialRef.current.uniforms.opacity.value = newOpacity;
         }
       },
     };
@@ -44,7 +44,7 @@ export const Skate = forwardRef((props, ref) => {
           ref={materialRef}
           uniforms={{
             time: { value: 0 },
-            opacity: { value: 1. },
+            opacity: { value: 0. },
             noiseTexture: {value: null}
           }}
           vertexShader={vertexShader}
