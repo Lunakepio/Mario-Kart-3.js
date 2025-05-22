@@ -1,6 +1,6 @@
 import { Effect } from "postprocessing";
 import { Uniform, Vector2, Vector3, Euler, Quaternion, Color} from "three";
-import { forwardRef, useEffect, useMemo} from "react";
+import { forwardRef, useEffect, useMemo, useRef} from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGameStore } from "./store";
 import { lerp } from "three/src/math/MathUtils.js";
@@ -8,7 +8,8 @@ import { useControls } from "leva";
 
 const fragmentShader = /* glsl */ `
 uniform sampler2D tDiffuse;
-uniform float time;
+uniform sampler2D noiseTexture;
+uniform float iTime;
 
 uniform vec3 uRedMix;
 uniform vec3 uGreenMix;
@@ -29,6 +30,7 @@ uniform float uSplitToneBalance;
 uniform float uExposure;
 uniform float uKelvin;
 uniform float uChromaticAberration;
+
 
 vec2 hash(vec2 p) {
   p = vec2(
@@ -282,9 +284,33 @@ vec3 applyLiftGammaGain(vec3 color, vec3 lift, vec3 gamma, vec3 gain) {
     return clamp(corrected, 0.0, 1.0);
 }
 
+vec3 speedLineEffect(vec2 uv, float iTime, sampler2D noiseTexture) {
+    vec2 center = vec2(0.5, 0.5);
+    vec2 dir = normalize(uv - center);
+    vec2 p = center + dir * min(length(uv - center), 0.05);
+
+    vec3 p3 = 3. * vec3(p.xy, 0.0) + vec3(0.0, 0.0, 0.0);
+    vec2 noiseUV = fract(p3.xy * 32. + vec2(0.0, iTime * 0.5));
+    float noise = texture2D(noiseTexture, noiseUV).r;
+
+    float dist = distance(uv, center);
+    const float e = 0.4;
+    float stepped = smoothstep(e - 0.5, e + 0.5, noise * pow(dist, 1.));
+    float final = smoothstep(e - 0.05, e + 0.05, noise * stepped);
+
+    float radius = length(uv); // distance from center
+    float hue = mod(radius * 2.0 + iTime, 1.0);
+
+    vec3 rainbow = hsvToRgb(vec3(hue, 1.0, 1.0));
+
+    return rainbow * final;
+}
+
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
-  vec3 color = texture2D(tDiffuse, uv).rgb;
+  vec2 vUv = uv;
+  vUv.x += iTime;
+  vec3 color = texture2D(tDiffuse, vUv).rgb;
   color = chromaticAberration(uv, uChromaticAberration);
   color = colorChannelMixer(color, uRedMix, uGreenMix, uBlueMix, uBrightness, 1.0);
   color = applyExposure(color, uExposure);
@@ -298,6 +324,10 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   color = applyHslPerRange(color);
   color = toneMapFilmic(color);
 
+  color.rgb += speedLineEffect(uv, iTime, noiseTexture) * uChromaticAberration * 2.;
+
+
+
   fragColor = vec4(color, 1.0);
 }
 
@@ -308,7 +338,7 @@ export class ColorGradingEffect extends Effect {
   constructor() {
     super("ColorGradingEffect", fragmentShader, {
       uniforms: new Map([
-        ["time", new Uniform(0)],
+        ["iTime", new Uniform(0)],
         ["motionDirection", new Uniform(new Vector2(0, 0))],
         ["motionStrength", new Uniform(0)],
         ["uRedMix", new Uniform(new Vector3(1, 0, 0))],
@@ -329,13 +359,14 @@ export class ColorGradingEffect extends Effect {
         ["hueAdjust", new Uniform(new Float32Array(8))],
         ["satAdjust", new Uniform(new Float32Array(8))],
         ["lumAdjust", new Uniform(new Float32Array(8))],
-
+        ["noiseTexture", new Uniform(null)],
       ]),
     });
   }
 
   updateTime(t) {
-    this.uniforms.get("time").value = t;
+
+    this.uniforms.get("iTime").value = t;
   }
 
   updateColorMix(
@@ -382,6 +413,10 @@ export class ColorGradingEffect extends Effect {
     this.uniforms.get("hueAdjust").value.set(hueAdjust);
     this.uniforms.get("satAdjust").value.set(satAdjust);
     this.uniforms.get("lumAdjust").value.set(lumAdjust);
+  }
+
+  setNoiseTexture(texture){
+    this.uniforms.get("noiseTexture").value = texture;
   }
 }
 
@@ -448,6 +483,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     )
   );
 
+  const currentTime = useRef(0);
 
   useFrame((state, delta) => {
     if (!camera) return;
@@ -456,8 +492,8 @@ export const ColorGrading = forwardRef((props, ref) => {
     const hueAdjust = hues.map(h => hueControls[0][h].hue);
     const satAdjust = hues.map(h => hueControls[0][h].sat);
     const lumAdjust = hues.map(h => hueControls[0][h].lum);
-    effect.updateTime(state.clock.elapsedTime);
-
+    currentTime.current += delta;
+    
     const isBoosting = useGameStore.getState().isBoosting;
     chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.2 : 0, 4 * delta);
 
@@ -479,10 +515,12 @@ export const ColorGrading = forwardRef((props, ref) => {
       chromaticAberration
     );
     effect.setHslAdjustments(hueAdjust, satAdjust, lumAdjust);
+    effect.updateTime(currentTime.current);
   });
 
   useEffect(() => {
     if (ref) ref.current = effect;
+    effect.setNoiseTexture(useGameStore.getState().noiseTexture);
   }, [effect, camera, ref]);
 
   return <primitive object={effect} />;

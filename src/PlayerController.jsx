@@ -192,7 +192,7 @@ export const PlayerController = () => {
 
       </group>
     <group ref={playerRef}>
-      <group ref={cameraGroupRef} position={[0, 2, 8]} >
+      <group ref={cameraGroupRef} position={[0, 2, 5]} >
       </group>
 
       <group ref={kartRef}>
