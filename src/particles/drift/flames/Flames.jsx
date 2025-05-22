@@ -40,7 +40,7 @@ export const Flames = () => {
       material.uniforms.noiseTexture.value = noiseTexture;
       ref.current.initUniformsPerInstance({ fragment: { uCurrentTime: "float", uTimeOffset: "float" } });
     }
-  }, []);
+  }, [material.uniforms.noiseTexture]);
 
   const lastFiredTimeRef = useRef(0);
   const addInterval = 0.03;

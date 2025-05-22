@@ -133,7 +133,7 @@ export const PlayerController = () => {
       -Math.cos(player.rotation.y)
     );
 
-    smoothedDirectionRef.current.lerp(desiredDirection, 8 * delta);
+    smoothedDirectionRef.current.lerp(desiredDirection, 12 * delta);
     const dir = smoothedDirectionRef.current;
     
       const angle = Math.atan2(

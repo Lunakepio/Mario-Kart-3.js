@@ -15,7 +15,7 @@ export const WebGPUCanvas = () => {
             <App/>
           </Bvh>
           </Suspense>
-      <Perf />
+      {/* <Perf /> */}
     </Canvas>
   );
 }

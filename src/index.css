@@ -124,3 +124,7 @@
   pointer-events: none;
   transition: transform 0.05s linear;
 }
+
+canvas{
+  filter: saturate(1.4);
+}
