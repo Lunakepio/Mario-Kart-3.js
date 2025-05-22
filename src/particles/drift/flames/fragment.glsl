@@ -19,7 +19,7 @@ varying vec2 vUv;
       end = clamp(end, 0.0, 0.3);
       float innerFade = smoothstep(start, uCurrentTime, dist);
       float fade = dist < end ? innerFade : 0.0;
-      float colorScalar = 10.;
+      float colorScalar = 10. - uCurrentTime;
       float o = clamp(uCurrentTime * 20., 0., 1.);
       gl_FragColor = vec4(color * (colorScalar * fade), fade * o);
     }
