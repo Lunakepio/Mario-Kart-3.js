@@ -30,7 +30,7 @@
   justify-content: center;
   align-items: center;
   height: 100dvh;
-  width: 100dvw; // retrigger deploy
+  width: 100dvw;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   .bottom-left {
