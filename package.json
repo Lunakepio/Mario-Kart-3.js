@@ -25,6 +25,7 @@
     "three-custom-shader-material": "^6.3.6",
     "three.meshline": "^1.4.0",
     "vite-plugin-glsl": "^1.4.1",
+    "vite-plugin-pwa": "^1.0.0",
     "zustand": "^5.0.4"
   },
   "devDependencies": {
