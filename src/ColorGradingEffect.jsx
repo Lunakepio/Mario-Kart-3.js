@@ -1,9 +1,9 @@
 import { Effect } from "postprocessing";
 import { Uniform, Vector2, Vector3, Euler, Quaternion, Color} from "three";
-import { forwardRef, useEffect, useMemo, useRef} from "react";
+import { forwardRef, useEffect, useRef} from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGameStore } from "./store";
-import { lerp } from "three/src/math/MathUtils.js";
+import { damp } from "three/src/math/MathUtils.js";
 import { useControls } from "leva";
 
 const fragmentShader = /* glsl */ `
@@ -501,7 +501,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     currentTime.current += delta;
     
     const isBoosting = useGameStore.getState().isBoosting;
-    chromaticAberration = lerp(chromaticAberration, isBoosting ? 0.2 : 0, 4 * delta);
+    chromaticAberration = damp(chromaticAberration, isBoosting ? 0.2 : 0, 4, delta);
 
     effect.updateColorMix(
       redMix,

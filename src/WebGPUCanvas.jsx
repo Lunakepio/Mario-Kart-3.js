@@ -14,7 +14,7 @@ export const WebGPUCanvas = () => {
             <Preload all/>
           </Bvh>
           
-      {/* <Perf /> */}
+      <Perf />
     </Canvas>
   );
 }

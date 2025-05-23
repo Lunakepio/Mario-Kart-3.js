@@ -3,7 +3,7 @@ import { useKeyboardControls } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react";
 import { Vector3 } from "three";
-import { lerp } from "three/src/math/MathUtils.js";
+import { damp } from "three/src/math/MathUtils.js";
 import { kartSettings } from "./constants";
 import { useGameStore } from "./store";
 import gsap from "gsap";
@@ -81,7 +81,7 @@ export const PlayerController = () => {
     const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
     const forwardAccel = Number(isTouchScreen || forward);
-    speedRef.current = lerp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward), 1.5 * delta);
+    speedRef.current = damp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward), 1.5, delta);
     setSpeed(speedRef.current);
     turbo.current -= delta;
 
@@ -90,10 +90,10 @@ export const PlayerController = () => {
   function rotatePlayer(left, right, player, joystickX, delta) {
     const inputTurn = (-joystickX + (Number(left) - Number(right)) + driftDirection.current) * 0.1;
   
-    rotationSpeedRef.current = lerp(rotationSpeedRef.current, inputTurn, 8 * delta);
+    rotationSpeedRef.current = damp(rotationSpeedRef.current, inputTurn, 8, delta);
     const targetRotation = player.rotation.y + rotationSpeedRef.current * (speedRef.current > 40 ? 40 : speedRef.current) / (kartSettings.speed.max ) ;
   
-    player.rotation.y = lerp(player.rotation.y, targetRotation, 8 * delta);
+    player.rotation.y = damp(player.rotation.y, targetRotation, 8, delta);
   }
   
   function jumpPlayer(spaceKey, left, right, joystickX ){
@@ -142,7 +142,7 @@ export const PlayerController = () => {
       );
     
 
-    kart.rotation.y = lerp(kart.rotation.y, angle * 1.3 + driftDirection.current * 0.1, 6 * delta);
+    kart.rotation.y = damp(kart.rotation.y, angle * 1.3 + driftDirection.current * 0.1, 6, delta);
   
 
     camera.lookAt(cameraLookAtRef.current.getWorldPosition(new Vector3()));

@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 import { useEffect, useRef } from "react";
 import { useGLTF, useKeyboardControls, useProgress} from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { lerp } from "three/src/math/MathUtils.js";
+import { damp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
 import { getDriftLevel } from "../constants.js";
 import { Glow } from "../particles/drift/glow/Glow.jsx";
@@ -91,17 +91,17 @@ export function Kart({
     wheel2.current.rotation.x += rotationSpeed;
     wheel3.current.rotation.x += rotationSpeed;
 
-    yRotation.current = lerp(
+    yRotation.current = damp(
       yRotation.current,
       Number(right) - Number(left),
-      4 * delta,
+      4, delta
     );
 
     frontWheels.current.rotation.y = -yRotation.current * 0.1;
     wheelRef.current.rotation.y = -yRotation.current;
   }
 
-  function getGroundPosition(wheelBase, wheel, offset = 0, wheelIndex) {
+  function getGroundPosition(wheelBase, wheel, offset = 0, wheelIndex, delta) {
     const origin = new Vector3();
 
 
@@ -135,10 +135,11 @@ export function Kart({
       }
     } else {
       if (typeof wheel.current.lastSafeY === "number") {
-        wheel.current.position.y = lerp(
+        wheel.current.position.y = damp(
           wheel.current.position.y,
           wheel.current.lastSafeY,
-          0.1
+          4,
+          delta
         );
       }
     }
@@ -185,22 +186,22 @@ export function Kart({
     const averageYPos = 0.65 + (a.y + b.y + c.y + d.y) / 4;
     setGroundPosition(averageYPos);
 
-    bodyRef.current.rotation.x = lerp(
+    bodyRef.current.rotation.x = damp(
       bodyRef.current.rotation.x,
       pitch,
-      30 * delta,
+      30, delta
     );
 
-    bodyRef.current.rotation.z = lerp(
+    bodyRef.current.rotation.z = damp(
       bodyRef.current.rotation.z,
       roll,
-      30 * delta,
+      30, delta
     );
 
-    bodyRef.current.position.y = lerp(
+    bodyRef.current.position.y = damp(
       bodyRef.current.position.y,
       averageYPos + jumpOffset.current * 0.1,
-      15 * delta,
+      15, delta
     );
   }
   useFrame((_, delta) => {
@@ -221,10 +222,10 @@ export function Kart({
 
       rotateWheels(left, right, delta);
 
-      getGroundPosition(wheel0Base, wheel0, backWheelOffset.current.right, 0);
-      getGroundPosition(wheel1Base, wheel1, backWheelOffset.current.left, 1);
-      getGroundPosition(wheel2Base, wheel2, backWheelOffset.current.right, 2);
-      getGroundPosition(wheel3Base, wheel3, backWheelOffset.current.left, 3);
+      getGroundPosition(wheel0Base, wheel0, backWheelOffset.current.right, 0, delta);
+      getGroundPosition(wheel1Base, wheel1, backWheelOffset.current.left, 1, delta);
+      getGroundPosition(wheel2Base, wheel2, backWheelOffset.current.right, 2, delta);
+      getGroundPosition(wheel3Base, wheel3, backWheelOffset.current.left, 3, delta);
 
       const wheelPositions = getWheelPositions();
 
@@ -239,10 +240,10 @@ export function Kart({
         smoke2Ref.current?.startEmitting();
       }
 
-      groupRef.current.rotation.y = lerp(
+      groupRef.current.rotation.y = damp(
         groupRef.current.rotation.y,
         driftDirection.current * 0.4,
-        4 * delta,
+        4, delta
       );
 
       const driftLevel = getDriftLevel(driftPower.current);
