@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 */
 
 import { useEffect, useRef } from "react";
-import { useGLTF, useKeyboardControls} from "@react-three/drei";
+import { useGLTF, useKeyboardControls, useProgress} from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { lerp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";
@@ -46,6 +46,7 @@ export function Kart({
     { position: new Vector3(), shouldEmit: false },
   ]);
 
+  const {progress} = useProgress();
   const bodyRef = useRef(null);
 
   const leftParticles = useRef(null);
@@ -79,7 +80,6 @@ export function Kart({
   const setDriftLevel = useGameStore((state) => state.setDriftLevel);
   const setGroundPosition = useGameStore((state) => state.setGroundPosition);
   const setWheelPositions = useGameStore((state) => state.setWheelPositions);
-  const setBody = useGameStore((state) => state.setBody);
   const { scene } = useThree();
   const direction = new Vector3(0, -1, 0)
 
@@ -289,14 +289,13 @@ export function Kart({
     if (glow1Ref.current && glow2Ref.current && bodyRef.current) {
       glow1Ref?.current?.setOpacity(0);
       glow2Ref?.current?.setOpacity(0);
-      setBody(bodyRef.current);
     }
-  }, [setBody]);
+  }, []);
   return (
     <>
       {/* <pointLight intensity={2000} position={[0, 10, 0]}/> */}
 
-      <group ref={groupRef} dispose={null}>
+      <group key={progress} ref={groupRef} dispose={null}>
         <group rotation-y={Math.PI}>
           <group ref={leftParticles}>
             <Glow ref={glow1Ref} driftDirection={driftDirection} />

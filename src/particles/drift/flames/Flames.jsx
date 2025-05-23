@@ -36,8 +36,7 @@ export const Flames = () => {
 
   useEffect(() => {
     if (ref.current) {
-      const noiseTexture = useGameStore.getState().noiseTexture;
-      material.uniforms.noiseTexture.value = noiseTexture;
+
       ref.current.initUniformsPerInstance({ fragment: { uCurrentTime: "float", uTimeOffset: "float" } });
     }
   }, [material.uniforms.noiseTexture]);
@@ -52,6 +51,8 @@ export const Flames = () => {
     const flamePositions = useGameStore.getState().flamePositions;
     const isBoosting = useGameStore.getState().isBoosting;
     if (flamePositions && state.clock.getElapsedTime() - lastFiredTimeRef.current >= addInterval && isBoosting) {
+      const noiseTexture = useGameStore.getState().noiseTexture;
+      material.uniforms.noiseTexture.value = noiseTexture;
       const [left, right] = flamePositions;
       ref.current.addInstances(1, (obj) => {
         obj.position.set(left.x, left.y -.1, left.z);

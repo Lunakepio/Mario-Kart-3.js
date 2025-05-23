@@ -1,7 +1,7 @@
 import { Billboard } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { forwardRef, useImperativeHandle, useRef } from "react";
-import { AdditiveBlending, Color } from "three";
+import { forwardRef, useImperativeHandle, useRef, useMemo } from "react";
+import { AdditiveBlending, Color, ShaderMaterial } from "three";
 import { Spark } from "../Spark";
 import fragmentShader from './fragment.glsl';
 import vertexShader from './vertex.glsl';
@@ -13,14 +13,33 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
   const sparkRef = useRef(null);
   let noiseTexture = null;
   
+  const material = useMemo(() => new ShaderMaterial({
+    uniforms: {
+      time: { value: 0 },
+      color: { value: new Color(0xffffff)},
+      level: { value: 2 },
+      opacity: { value: 1 },
+      timeOffset: { value: Math.random() * 3},
+      xDisplacement: { value: 0 },
+      noiseTexture: { value : null}
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending:AdditiveBlending
+  }), [])
+  
   useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.time.value = state.clock.getElapsedTime() * 1.3;
+    if (material) {
+      material.uniforms.time.value = state.clock.getElapsedTime() * 1.3;
     
-      materialRef.current.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
+      material.uniforms.xDisplacement.value = -(driftDirection.current) * 0.3;
       if(noiseTexture === null){
         noiseTexture = useGameStore.getState().noiseTexture;
-        materialRef.current.uniforms.noiseTexture.value = noiseTexture;
+        material.uniforms.noiseTexture.value = noiseTexture;
+        console.log(noiseTexture);
         
       }
     }
@@ -36,7 +55,7 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
   
         if (!newCol.equals(prevColor)) {
           prevColor.copy(newCol);
-          materialRef.current.uniforms.color.value.copy(newCol);
+          material.uniforms.color.value.copy(newCol);
   
           const isWhite = newCol.r === 1 && newCol.g === 1 && newCol.b === 1;
           if (!isWhite) {
@@ -46,12 +65,10 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
         }
       },
       setLevel: (level) => {
-        materialRef.current.uniforms.level.value = level;
+        material.uniforms.level.value = level;
       },
       setOpacity: (newOpacity) => {
-        if (materialRef.current) {
-          materialRef.current.uniforms.opacity.value = newOpacity;
-        }
+          material.uniforms.opacity.value = newOpacity;
       },
     };
   });
@@ -61,26 +78,8 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
 
   return (
     <Billboard layers={1}>
-      <mesh layers={1}>
+      <mesh layers={1} material={material}>
         <circleGeometry args={[size, 22]} />
-        <shaderMaterial
-          ref={materialRef}
-          uniforms={{
-            time: { value: 0 },
-            color: { value: new Color(0xffffff)},
-            level: { value: 2 },
-            opacity: { value: 1 },
-            timeOffset: { value: Math.random() * 3},
-            xDisplacement: { value: 0 },
-            noiseTexture: { value : null}
-          }}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          transparent={true}
-          depthWrite={false}
-          depthTest={false}
-          blending={AdditiveBlending}
-        />
       </mesh>
       <Spark ref={sparkRef}/>
     </Billboard>
