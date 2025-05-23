@@ -27,7 +27,9 @@ export const App = () => {
   useEffect(() => {
     if(camera){
       camera.layers.enable(1);
-      setNoiseTexture(noiseTexture);
+      if(noiseTexture){
+        setNoiseTexture(noiseTexture);
+      }
     }
   }, [camera])
 
