@@ -285,13 +285,12 @@ export function Kart({
     }
   });
 
-  // useEffect(() => {
-  //   if (glow1Ref.current && glow2Ref.current && bodyRef.current) {
-  //     glow1Ref?.current?.setOpacity(0);
-  //     glow2Ref?.current?.setOpacity(0);
-  //     setBody(bodyRef.current);
-  //   }
-  // }, [setBody]);
+  useEffect(() => {
+    if (glow1Ref.current && glow2Ref.current && bodyRef.current) {
+      glow1Ref?.current?.setOpacity(0);
+      glow2Ref?.current?.setOpacity(0);
+    }
+  }, []);
   return (
     <>
       {/* <pointLight intensity={2000} position={[0, 10, 0]}/> */}

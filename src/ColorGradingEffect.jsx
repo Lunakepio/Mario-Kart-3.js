@@ -428,7 +428,7 @@ export class ColorGradingEffect extends Effect {
 
 
 export const ColorGrading = forwardRef((props, ref) => {
-  const effect = useMemo(() => new ColorGradingEffect(), []);
+  const effect = new ColorGradingEffect();
   const { camera } = useThree();
 
   let {
