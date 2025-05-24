@@ -20,6 +20,7 @@ export const LoadingScreen = () => {
       gsap.to(backgroundRef.current,{
         filter: "blur(0px)",
         duration: 1,
+        delay: 1,
         onComplete:() => {
           gsap.to(screenRef.current,{
             autoAlpha: 0,
