@@ -8,6 +8,10 @@
   font-optical-sizing: auto;
   font-style: normal;
   user-select: none;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 @font-face {
