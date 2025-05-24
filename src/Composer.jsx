@@ -11,7 +11,7 @@ export const Composer = () => {
 
 
   return (
-    <EffectComposer disableNormalPass multisampling={8}>
+    <EffectComposer disableNormalPass multisampling={false}>
       <ColorGrading/>
 
       <Bloom luminanceThreshold={1.} intensity={0.5} mipmapBlur />

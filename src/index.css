@@ -10,6 +10,16 @@
   user-select: none;
 }
 
+@font-face {
+    font-family: "mario_kart_f2";
+    src: url('/fonts/mario_kart_f2.ttf');
+}
+
+@font-face {
+  src: url('https://assets.codepen.io/4175254/DIN2014-DemiBold.ttf') format('truetype');
+  font-family: 'DIN 2014';
+  font-weight: 600;
+}
 
 .canvas-container {
     width: 100vw;
@@ -129,4 +139,59 @@
 
 canvas{
   filter: saturate(1.4);
+}
+
+.loading-screen{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    .background{
+        position:fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+    }
+    .loading{
+        font-family: "DIN 2014";
+
+        font-weight: 600;
+
+        font-size: 32px;
+        /* transform: scale(1.2, 1.0); */
+    }
+    .mention{
+        position:absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center justify;
+    }
+}
+
+.button-text-character {
+  animation: fadeInMoveUp 1s cubic-bezier(0.3, 0.8, 0.3, 2.3) forwards;
+  animation-delay: var(--delay);
+  display: inline-block;
+  transform:skewX(-6deg);
+  font-family: "DIN 2014";
+
+  font-weight: 600;
+}
+
+@keyframes fadeInMoveUp {
+  0%, 100% {
+    transform: translateY(0px) skewX(-6deg);
+  }
+  50% {
+    transform: translateY(-5px) skewX(-6deg);
+  }
 }

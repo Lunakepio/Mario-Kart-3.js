@@ -9,9 +9,9 @@ createRoot(document.getElementById('root')).render(
 
     <div className='canvas-container'>
       <MobileControls/>
-      <Suspense fallback={<div className="loading-screen">Loading...</div>}>
+      <Suspense fallback={false}>
       <WebGPUCanvas />
       </Suspense>
-      {/* <LoadingScreen /> */}
+      <LoadingScreen />
     </div>
 )
