@@ -294,7 +294,7 @@ vec3 speedLineEffect(vec2 uv, float iTime, sampler2D noiseTexture) {
     float noise = texture2D(noiseTexture, noiseUV).r;
 
     float dist = distance(uv, center);
-    const float e = 0.4;
+    const float e = 0.37;
     float stepped = smoothstep(e - 0.5, e + 0.5, noise * pow(dist, 1.));
     float final = smoothstep(e - 0.05, e + 0.05, noise * stepped);
 

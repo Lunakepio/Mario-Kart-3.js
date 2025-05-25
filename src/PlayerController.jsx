@@ -30,6 +30,8 @@ export const PlayerController = () => {
     left: 0,
     right: 0
   })
+  const gamepadRef = useRef(null);
+  const inputTurn = useRef(0);
   
   const [, get] = useKeyboardControls();
   
@@ -42,6 +44,15 @@ export const PlayerController = () => {
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
   const setSpeed = useGameStore((state) => state.setSpeed);
+
+  const getGamepad = () => {
+    if(navigator.getGamepads){
+      const gamepads = navigator.getGamepads();
+      if(gamepads.length > 0){
+        gamepadRef.current = gamepads[0];
+      }
+    }
+  }
   
   const jumpAnim = () => {
       gsap.to(jumpOffset, {
@@ -80,17 +91,36 @@ export const PlayerController = () => {
   function updateSpeed(forward, backward, delta) {
     const maxSpeed = kartSettings.speed.max + (turbo.current > 0 ? 40 : 0);
     maxSpeed > kartSettings.speed.max ? setIsBoosting(true) : setIsBoosting(false);
-    const forwardAccel = Number(isTouchScreen || forward);
-    speedRef.current = damp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward), 1.5, delta);
+
+    const gamepadButtons = {
+      forward: false,
+      backward: false
+    }
+    
+    if(gamepadRef.current){
+      gamepadButtons.forward = gamepadRef.current.buttons[0].pressed;
+      gamepadButtons.backward = gamepadRef.current.buttons[1].pressed;
+    }
+    const forwardAccel = Number(isTouchScreen && !gamepadRef.current || forward || gamepadButtons.forward);
+
+    speedRef.current = damp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward || gamepadButtons.backward), 1.5, delta);
     setSpeed(speedRef.current);
     turbo.current -= delta;
 
   }
   
   function rotatePlayer(left, right, player, joystickX, delta) {
-    const inputTurn = (-joystickX + (Number(left) - Number(right)) + driftDirection.current) * 0.1;
+    const gamepadJoystick = {
+      x: 0,
+    }
+
+    if(gamepadRef.current){
+      gamepadJoystick.x = gamepadRef.current.axes[0];
+    }
+
+    inputTurn.current = (-gamepadJoystick.x -joystickX + (Number(left) - Number(right)) + driftDirection.current) * 0.1;
   
-    rotationSpeedRef.current = damp(rotationSpeedRef.current, inputTurn, 8, delta);
+    rotationSpeedRef.current = damp(rotationSpeedRef.current, inputTurn.current, 8, delta);
     const targetRotation = player.rotation.y + rotationSpeedRef.current * (speedRef.current > 40 ? 40 : speedRef.current) / (kartSettings.speed.max ) ;
   
     player.rotation.y = damp(player.rotation.y, targetRotation, 8, delta);
@@ -177,12 +207,23 @@ export const PlayerController = () => {
   
     const { forward, backward, left, right, jump } = get();
     
+    const gamepadButtons = {
+      jump: false,
+      x: 0
+      
+    }
+
+    if(gamepadRef.current){
+      gamepadButtons.jump = gamepadRef.current.buttons[5].pressed || gamepadRef.current.buttons[7].pressed;
+      gamepadButtons.x = gamepadRef.current.axes[0];
+    }
     updateSpeed(forward, backward, delta); 
     rotatePlayer(left, right, player, joystick.x, delta);
     updatePlayer(player, speedRef.current, camera, kart, delta);
-    const isJumpPressed = jumpButtonPressed || jump;
-    jumpPlayer(isJumpPressed, left, right, joystick.x);
+    const isJumpPressed = jumpButtonPressed || jump || gamepadButtons.jump;
+    jumpPlayer(isJumpPressed, left, right, joystick.x || gamepadButtons.x);
     driftPlayer(delta);
+    getGamepad();
 
   })
   
@@ -197,7 +238,7 @@ export const PlayerController = () => {
 
       <group ref={kartRef}>
       
-          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} backWheelOffset={backWheelOffset} />
+          <Kart speed={speedRef} driftDirection={driftDirection} driftPower={driftPower} jumpOffset={jumpOffset} backWheelOffset={backWheelOffset} inputTurn={inputTurn} />
 
         <group ref={cameraLookAtRef} position={[0, -2,-9]}>
 

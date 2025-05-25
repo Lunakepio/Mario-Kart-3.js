@@ -24,6 +24,7 @@ export function Kart({
   driftPower,
   jumpOffset,
   backWheelOffset,
+  inputTurn
 }) {
   const { nodes, materials } = useGLTF("/models/kart.glb");
 
@@ -93,11 +94,11 @@ export function Kart({
 
     yRotation.current = damp(
       yRotation.current,
-      Number(right) - Number(left),
+      inputTurn.current,
       4, delta
     );
 
-    frontWheels.current.rotation.y = -yRotation.current * 0.1;
+    frontWheels.current.rotation.y = yRotation.current;
     wheelRef.current.rotation.y = -yRotation.current;
   }
 
