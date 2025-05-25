@@ -22,7 +22,7 @@
 @font-face {
   src: url('https://assets.codepen.io/4175254/DIN2014-DemiBold.ttf') format('truetype');
   font-family: 'DIN 2014';
-  font-weight: 600;
+
 }
 
 .canvas-container {
@@ -191,6 +191,15 @@ canvas{
 
   font-weight: 600;
   text-shadow: #fff 1px 0 10px;
+}
+
+.version{
+  position:fixed;
+  bottom: 15px;
+  font-family: "DIN 2014";
+  color:white;
+
+  font-weight: 300;
 }
 
 @keyframes fadeInMoveUp {

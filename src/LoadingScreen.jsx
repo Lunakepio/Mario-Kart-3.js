@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react";
 import { useProgress } from "@react-three/drei";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 
 const BUTTON_TEXT = "Loading...";

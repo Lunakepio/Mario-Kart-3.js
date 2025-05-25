@@ -24,5 +24,7 @@ export const useGameStore = create((set) => ({
   jumpButtonPressed: false,
   setJumpButtonPressed: (pressed) => set({ jumpButtonPressed: pressed }),
   noiseTexture: null,
-  setNoiseTexture: (noiseTexture) => set({noiseTexture: noiseTexture})
+  setNoiseTexture: (noiseTexture) => set({noiseTexture: noiseTexture}),
+  gamepad: null,
+  setGamepad: (gamepad) => set({gamepad: gamepad})
 }));

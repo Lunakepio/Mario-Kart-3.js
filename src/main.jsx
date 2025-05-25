@@ -13,5 +13,6 @@ createRoot(document.getElementById('root')).render(
       <WebGPUCanvas />
       </Suspense>
       <LoadingScreen />
+      <div className="version">v0.3.1</div>
     </div>
 )

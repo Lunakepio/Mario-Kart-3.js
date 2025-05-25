@@ -44,12 +44,14 @@ export const PlayerController = () => {
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const setIsBoosting = useGameStore((state) => state.setIsBoosting);
   const setSpeed = useGameStore((state) => state.setSpeed);
+  const setGamepad = useGameStore((state) => state.setGamepad);
 
   const getGamepad = () => {
     if(navigator.getGamepads){
       const gamepads = navigator.getGamepads();
       if(gamepads.length > 0){
         gamepadRef.current = gamepads[0];
+        setGamepad(gamepadRef.current);
       }
     }
   }
@@ -100,6 +102,7 @@ export const PlayerController = () => {
     if(gamepadRef.current){
       gamepadButtons.forward = gamepadRef.current.buttons[0].pressed;
       gamepadButtons.backward = gamepadRef.current.buttons[1].pressed;
+      
     }
     const forwardAccel = Number(isTouchScreen && !gamepadRef.current || forward || gamepadButtons.forward);
 
