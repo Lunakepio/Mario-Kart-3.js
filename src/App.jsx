@@ -31,7 +31,7 @@ export const App = () => {
         setNoiseTexture(noiseTexture);
       }
     }
-  }, [camera])
+  }, [camera, noiseTexture, setNoiseTexture])
 
   return (
 

@@ -84,7 +84,6 @@ export function Kart({
   const { scene } = useThree();
   const direction = new Vector3(0, -1, 0)
 
-
   function rotateWheels(left, right, delta) {
     const rotationSpeed = speed.current * 0.01;
     wheel0.current.rotation.x += rotationSpeed;
@@ -175,7 +174,7 @@ export function Kart({
     return wheelPositions;
   }
 
-  function moveAndRotateKart(wheelPositions, delta) {
+  function moveAndRotateKart(wheelPositions) {
     const a = wheelPositions[0];
     const b = wheelPositions[1];
     const c = wheelPositions[2];
@@ -187,23 +186,11 @@ export function Kart({
     const averageYPos = 0.65 + (a.y + b.y + c.y + d.y) / 4;
     setGroundPosition(averageYPos);
 
-    bodyRef.current.rotation.x = damp(
-      bodyRef.current.rotation.x,
-      pitch,
-      30, delta
-    );
+    bodyRef.current.rotation.x = pitch;
 
-    bodyRef.current.rotation.z = damp(
-      bodyRef.current.rotation.z,
-      roll,
-      30, delta
-    );
+    bodyRef.current.rotation.z = roll;
 
-    bodyRef.current.position.y = damp(
-      bodyRef.current.position.y,
-      averageYPos + jumpOffset.current * 0.1,
-      15, delta
-    );
+    bodyRef.current.position.y = averageYPos + jumpOffset.current * 0.1;
   }
   useFrame((_, delta) => {
     if (wheel0.current && wheel1.current && wheel2.current && wheel3.current) {

@@ -59,7 +59,7 @@ export const PlayerController = () => {
   const jumpAnim = () => {
       gsap.to(jumpOffset, {
         current: .3,
-        duration: 0.1,
+        duration: 0.125,
         ease: "power2.out",
         yoyo: true,
         repeat: 1,
