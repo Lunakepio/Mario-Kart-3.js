@@ -342,7 +342,6 @@ vec3 lensDirt(vec2 uv, float iTime, sampler2D lensDirtTexture, sampler2D noiseTe
   return lensDirtColor;
 }
 
-
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
   vec2 vUv = uv;
@@ -364,8 +363,6 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
   color.rgb += speedLineEffect(uv, iTime, noiseTexture) * uChromaticAberration * 2.;
 
   color.rgb = mix(color.rgb, color.rgb + lensDirt(uv, iTime, lensDirtTexture, noiseTexture), uDirtOpacity);
-
-
   fragColor = vec4(color, 1.0);
 }
 
@@ -549,7 +546,7 @@ export const ColorGrading = forwardRef((props, ref) => {
     chromaticAberration = damp(chromaticAberration, isBoosting ? 0.2 : 0, 4, delta);
 
     const isOnDirt = useGameStore.getState().isOnDirt;
-    dirtOpacity.current = damp(dirtOpacity.current, isOnDirt ? 1 : 0, 4, delta);
+    dirtOpacity.current = damp(dirtOpacity.current, isOnDirt ? 0.4 : 0, 4, delta);
     effect.setDirtOpacity(dirtOpacity.current);
     effect.updateColorMix(
       redMix,

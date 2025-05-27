@@ -108,6 +108,10 @@ export const PlayerController = () => {
 
     speedRef.current = damp(speedRef.current, maxSpeed * forwardAccel + kartSettings.speed.min * Number(backward || gamepadButtons.backward), 1.5, delta);
     setSpeed(speedRef.current);
+    if(speedRef.current < 20){
+      driftDirection.current = driftDirections.none;
+      driftPower.current = 0;
+    }
     turbo.current -= delta;
 
   }
@@ -137,6 +141,7 @@ export const PlayerController = () => {
       isJumping.current = true;
       jumpIsHeld.current = true;
       driftDirection.current = left || joystickX < 0 ? driftDirections.left : right || joystickX > 0 ? driftDirections.right : driftDirections.none;
+    
 
     }
     
