@@ -123,7 +123,7 @@ export const PlayerController = () => {
 
     inputTurn.current = (-gamepadJoystick.x -joystickX + (Number(left) - Number(right)) + driftDirection.current) * 0.1;
   
-    rotationSpeedRef.current = damp(rotationSpeedRef.current, inputTurn.current, 8, delta);
+    rotationSpeedRef.current = damp(rotationSpeedRef.current, inputTurn.current, 4, delta);
     const targetRotation = player.rotation.y + rotationSpeedRef.current * (speedRef.current > 40 ? 40 : speedRef.current) / (kartSettings.speed.max ) ;
   
     player.rotation.y = damp(player.rotation.y, targetRotation, 8, delta);

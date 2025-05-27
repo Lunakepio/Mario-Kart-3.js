@@ -36,7 +36,7 @@ export const App = () => {
   return (
 
       <>
-        {/* <OrbitControls /> */}
+      
 
           <VFXParticles
             name="smoke"

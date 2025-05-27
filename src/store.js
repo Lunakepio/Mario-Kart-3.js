@@ -26,5 +26,7 @@ export const useGameStore = create((set) => ({
   noiseTexture: null,
   setNoiseTexture: (noiseTexture) => set({noiseTexture: noiseTexture}),
   gamepad: null,
-  setGamepad: (gamepad) => set({gamepad: gamepad})
+  setGamepad: (gamepad) => set({gamepad: gamepad}),
+  isOnDirt:null,
+  setIsOnDirt: (isOnDirt) => set({isOnDirt: isOnDirt})
 }));

@@ -98,7 +98,7 @@ export function Kart({
     );
 
     frontWheels.current.rotation.y = yRotation.current;
-    wheelRef.current.rotation.y = -yRotation.current;
+    wheelRef.current.rotation.y = yRotation.current * Math.PI * 4;
   }
 
   function getGroundPosition(wheelBase, wheel, offset = 0, wheelIndex, delta) {

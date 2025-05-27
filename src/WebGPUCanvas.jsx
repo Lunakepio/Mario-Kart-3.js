@@ -8,7 +8,7 @@ export const WebGPUCanvas = () => {
   
   return (
     <Canvas shadows dpr={1} gl={{ depth: false, alpha: false, antialias: false, stencil: false, toneMapping: NoToneMapping }} camera={{far: 2500}} >
-          
+
           <Bvh >
             <App/>
             <Preload all/>

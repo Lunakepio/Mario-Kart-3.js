@@ -5,11 +5,14 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGameStore } from "./store";
 import { damp } from "three/src/math/MathUtils.js";
 import { useControls } from "leva";
+import { useTexture } from "@react-three/drei";
 
 const fragmentShader = /* glsl */ `
 uniform sampler2D tDiffuse;
 uniform sampler2D noiseTexture;
+uniform sampler2D lensDirtTexture;
 uniform float iTime;
+uniform float uDirtOpacity;
 
 uniform vec3 uRedMix;
 uniform vec3 uGreenMix;
@@ -295,10 +298,10 @@ vec3 speedLineEffect(vec2 uv, float iTime, sampler2D noiseTexture) {
 
     float dist = distance(uv, center);
     const float e = 0.37;
-    float stepped = smoothstep(e - 0.5, e + 0.5, noise * pow(dist, 1.));
+    float stepped = smoothstep(e - 0.5, e + 0.5, noise * dist);
     float final = smoothstep(e - 0.05, e + 0.05, noise * stepped);
 
-    float radius = length(uv); // distance from center
+    float radius = length(uv - center);
     float hue = mod(radius * 2.0 + iTime, 1.0);
 
     vec3 rainbow = hsvToRgb(vec3(hue, 1.0, 1.0));
@@ -311,6 +314,34 @@ vec3 speedLineEffect(vec2 uv, float iTime, sampler2D noiseTexture) {
 
     return rainbow * final;
 }
+
+vec3 lensDirt(vec2 uv, float iTime, sampler2D lensDirtTexture, sampler2D noiseTexture) {
+  vec2 center = vec2(0.5);
+
+  float dist = distance(uv, center);
+
+  vec2 noiseUV = fract(uv * 0.1 + vec2(0.0, -iTime * 0.012));
+  float noise = texture2D(noiseTexture, noiseUV).r;
+  noise = pow(noise, 5.0);
+  float strength = pow(dist, 2.0) * 0.1;
+
+  vec2 direction = normalize(uv - center);
+
+  vec2 rOffset = direction * strength *  1.0;
+  vec2 bOffset = direction * strength * -1.0;
+
+  float r = texture2D(lensDirtTexture, uv * 0.7 + rOffset).r;
+  float g = texture2D(lensDirtTexture, uv * 0.7).g;
+  float b = texture2D(lensDirtTexture, uv * 0.7 + bOffset).b;
+
+  vec3 lensDirtColor = vec3(r, g, b);
+
+
+  lensDirtColor *= noise;
+
+  return lensDirtColor;
+}
+
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
@@ -332,6 +363,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
   color.rgb += speedLineEffect(uv, iTime, noiseTexture) * uChromaticAberration * 2.;
 
+  color.rgb = mix(color.rgb, color.rgb + lensDirt(uv, iTime, lensDirtTexture, noiseTexture), uDirtOpacity);
 
 
   fragColor = vec4(color, 1.0);
@@ -366,6 +398,8 @@ export class ColorGradingEffect extends Effect {
         ["satAdjust", new Uniform(new Float32Array(8))],
         ["lumAdjust", new Uniform(new Float32Array(8))],
         ["noiseTexture", new Uniform(null)],
+        ["lensDirtTexture", new Uniform(null)],
+        ["uDirtOpacity", new Uniform(0)],
       ]),
     });
   }
@@ -423,6 +457,14 @@ export class ColorGradingEffect extends Effect {
 
   setNoiseTexture(texture){
     this.uniforms.get("noiseTexture").value = texture;
+  }
+
+  setLensDirtTexture(texture){
+    this.uniforms.get("lensDirtTexture").value = texture;
+  }
+
+  setDirtOpacity(opacity){
+    this.uniforms.get("uDirtOpacity").value = opacity;
   }
 }
 
@@ -491,6 +533,9 @@ export const ColorGrading = forwardRef((props, ref) => {
 
   const currentTime = useRef(0);
 
+  const dirtOpacity = useRef(0);
+  const lensDirtTexture = useTexture('./textures/lensDirt.jpg');
+
   useFrame((state, delta) => {
     if (!camera) return;
 
@@ -503,6 +548,9 @@ export const ColorGrading = forwardRef((props, ref) => {
     const isBoosting = useGameStore.getState().isBoosting;
     chromaticAberration = damp(chromaticAberration, isBoosting ? 0.2 : 0, 4, delta);
 
+    const isOnDirt = useGameStore.getState().isOnDirt;
+    dirtOpacity.current = damp(dirtOpacity.current, isOnDirt ? 1 : 0, 4, delta);
+    effect.setDirtOpacity(dirtOpacity.current);
     effect.updateColorMix(
       redMix,
       greenMix,
@@ -520,6 +568,7 @@ export const ColorGrading = forwardRef((props, ref) => {
       kelvin,
       chromaticAberration
     );
+    
     effect.setHslAdjustments(hueAdjust, satAdjust, lumAdjust);
     effect.updateTime(currentTime.current);
   });
@@ -527,7 +576,8 @@ export const ColorGrading = forwardRef((props, ref) => {
   useEffect(() => {
     if (ref) ref.current = effect;
     effect.setNoiseTexture(useGameStore.getState().noiseTexture);
-  }, [effect, camera, ref]);
+    effect.setLensDirtTexture(lensDirtTexture);
+  }, [effect, camera, ref, lensDirtTexture]);
 
   return <primitive object={effect} />;
 });
