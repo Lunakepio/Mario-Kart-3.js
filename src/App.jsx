@@ -36,7 +36,20 @@ export const App = () => {
   return (
 
       <>
-      
+                <VFXParticles
+            name="confettis"
+            geometry={<boxGeometry args={[0.5, 1, 0.01]} />}
+            settings={{
+              fadeAlpha: [0, 1],
+              fadeSize: [1, 0],
+              intensity: 3,
+              nbParticles: 10000,
+              renderMode: "mesh",
+              gravity: [0, 0, 0],
+              frustumCulled: false,
+            }}
+            // alphaMap={smokeTexture}
+          />
 
           <VFXParticles
             name="smoke"
