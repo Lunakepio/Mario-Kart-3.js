@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 --shadows ./models/kart.glb
 */
 
 import { useEffect, useRef } from "react";
-import { useGLTF, useKeyboardControls, useProgress} from "@react-three/drei";
+import { MeshTransmissionMaterial, useGLTF, useKeyboardControls, useProgress} from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { damp } from "three/src/math/MathUtils.js";
 import VFXEmitter from "../wawa-vfx/VFXEmitter.tsx";

@@ -12,14 +12,15 @@ extend({ InstancedMesh2 });
 export const Flames = () => {
   const ref = useRef();
 
-  const geometry = useMemo(() => new PlaneGeometry(1.5, 1.5), []);
+  const geometry = useMemo(() => new PlaneGeometry(2, 2), []);
 
   const material = useMemo(
     () =>
       new ShaderMaterial({
         uniforms: { 
           uCurrentTime: { value: 0 },
-          color: { value: new Color(0xFFA22B).multiplyScalar(4)},
+          baseColor: { value: new Color(0x19abff) },
+          color: { value: new Color(0xFFA22B).multiplyScalar(5)},
           uTimeOffset: { value: 0 },
           noiseTexture: { value: null }
         },        
@@ -42,7 +43,7 @@ export const Flames = () => {
   }, [material.uniforms.noiseTexture]);
 
   const lastFiredTimeRef = useRef(0);
-  const addInterval = 0.03;
+  const addInterval = 0.02;
   const scaleTarget = 2;
 
   useFrame((state, delta) => {

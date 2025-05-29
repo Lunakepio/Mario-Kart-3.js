@@ -266,7 +266,6 @@ export const PlayerController = () => {
 
   return (
     <>
-      <group></group>
       <group ref={playerRef}>
         <group ref={cameraGroupRef} position={[0, 2, 5]}></group>
 
@@ -274,9 +273,9 @@ export const PlayerController = () => {
           <VFXEmitter
             emitter="confettis"
             settings={{
-              duration: 0.5,
+              duration: 1,
               delay: 0.1,
-              nbParticles: 1000,
+              nbParticles: 100,
               spawnMode: "time",
               loop: true,
               startPositionMin: [-100, 0, -100],

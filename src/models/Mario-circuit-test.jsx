@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh'
 import { useGameStore } from '../store'
 import { useRef } from 'react'
+import { ItemBox } from '../particles/items/ItemBox/ItemBox'
 
 export function Track(props) {
   const { nodes, materials, scene } = useGLTF('./models/mario-circuit-test-transformed.glb')
@@ -23,6 +24,8 @@ export function Track(props) {
   }, [setTrackScene])
 
   return (
+    <>
+    <ItemBox/>
     <group {...props} dispose={null} position={[155, -28., 15]} scale={0.08}>
       <mesh name="ground" receiveShadow geometry={nodes.Object_10.geometry} material={materials.material_5} />
       <mesh name="ground dirt" receiveShadow geometry={nodes.Object_11.geometry} material={materials.material_6} />
@@ -36,6 +39,7 @@ export function Track(props) {
       <mesh name="ground" receiveShadow geometry={nodes.Object_47.geometry} material={materials.material_3} />
 
     </group>
+    </>
   )
 }
 

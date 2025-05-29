@@ -31,7 +31,7 @@ const color2 = "#137aff";
           <planeGeometry args={[1, 1]}/>
           <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(100)} map={sunTexture} transparent depthWrite={false} />
         </mesh>
-    <Environment preset={'warehouse'}>
+    <Environment preset={'apartment'}>
       <mesh scale={100} position={[450,300, -1000]}>
         <planeGeometry args={[1, 1]}/>
         <meshBasicMaterial color={new Color(0xFCEAC9).multiplyScalar(5000)} map={sunTexture} transparent depthWrite={false} />

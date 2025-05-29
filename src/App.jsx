@@ -43,7 +43,7 @@ export const App = () => {
               fadeAlpha: [0, 1],
               fadeSize: [1, 0],
               intensity: 3,
-              nbParticles: 10000,
+              nbParticles: 500,
               renderMode: "mesh",
               gravity: [0, 0, 0],
               frustumCulled: false,

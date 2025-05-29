@@ -39,7 +39,6 @@ export const Glow = forwardRef(({ driftDirection }, ref) => {
       if(noiseTexture === null){
         noiseTexture = useGameStore.getState().noiseTexture;
         material.uniforms.noiseTexture.value = noiseTexture;
-        console.log(noiseTexture);
         
       }
     }
